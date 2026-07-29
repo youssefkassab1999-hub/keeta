@@ -689,18 +689,20 @@ function countByTitleCaseInsensitive(records){
 /* ============================================================
    CHART.JS GLOBAL STYLE
    ============================================================ */
-Chart.defaults.font.family = "'Lexend', system-ui, sans-serif";
-Chart.defaults.color = COLORS.textSecondary;
-Chart.defaults.borderColor = COLORS.hair;
-Chart.defaults.plugins.tooltip.backgroundColor = "#0f0f0f";
-Chart.defaults.plugins.tooltip.titleColor = COLORS.text;
-Chart.defaults.plugins.tooltip.bodyColor = COLORS.text;
-Chart.defaults.plugins.tooltip.borderColor = COLORS.hair;
-Chart.defaults.plugins.tooltip.borderWidth = 1;
-Chart.defaults.plugins.tooltip.padding = 10;
-Chart.defaults.plugins.tooltip.cornerRadius = 8;
-Chart.defaults.plugins.tooltip.displayColors = true;
-Chart.defaults.plugins.legend.display = false;
+function applyChartDefaults(){
+  Chart.defaults.font.family = "'Lexend', system-ui, sans-serif";
+  Chart.defaults.color = COLORS.textSecondary;
+  Chart.defaults.borderColor = COLORS.hair;
+  Chart.defaults.plugins.tooltip.backgroundColor = "#0f0f0f";
+  Chart.defaults.plugins.tooltip.titleColor = COLORS.text;
+  Chart.defaults.plugins.tooltip.bodyColor = COLORS.text;
+  Chart.defaults.plugins.tooltip.borderColor = COLORS.hair;
+  Chart.defaults.plugins.tooltip.borderWidth = 1;
+  Chart.defaults.plugins.tooltip.padding = 10;
+  Chart.defaults.plugins.tooltip.cornerRadius = 8;
+  Chart.defaults.plugins.tooltip.displayColors = true;
+  Chart.defaults.plugins.legend.display = false;
+}
 
 function gridOpts(){
   return { color: COLORS.hair, drawTicks:false };
@@ -769,6 +771,7 @@ function makeHBar(canvasId, color){
 }
 
 function initCharts(){
+  applyChartDefaults();
   makeVolumeChart();
   charts.sentiment = makeDonut("chartSentiment");
   charts.topics = makeHBar("chartTopics", COLORS.red);
@@ -1000,29 +1003,55 @@ function updateSourceBadge(){
 /* ============================================================
    INIT
    ============================================================ */
+function showFatalError(message){
+  var wrap = document.querySelector(".wrap");
+  var banner = document.createElement("div");
+  banner.style.cssText = "background:#3a1414;border:1px solid #E50914;color:#F4F2EF;border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:13.5px;line-height:1.5;";
+  var strong = document.createElement("strong");
+  strong.textContent = "Dashboard failed to load: ";
+  banner.appendChild(strong);
+  banner.appendChild(document.createTextNode(message));
+  wrap.insertBefore(banner, wrap.firstChild);
+  document.getElementById("headerDateRange").textContent = "Unavailable";
+}
+
 async function init(){
-  initCharts();
-  buildSentimentToggles();
-  wireFilterInputs();
-  document.getElementById("refreshBtn").addEventListener("click", async function(){
-    this.disabled = true; this.textContent = "Refreshing…";
+  if(typeof Chart === "undefined"){
+    showFatalError("Chart.js did not load from cdnjs.cloudflare.com. Check your browser console's Network tab for a blocked/failed request to chart.umd.min.js (ad blocker, CSP, or offline CDN access are the usual causes).");
+    return;
+  }
+  if(typeof Papa === "undefined"){
+    showFatalError("PapaParse did not load from cdnjs.cloudflare.com. Live Google Sheet sync will not work; check your browser console's Network tab for a blocked/failed request to papaparse.min.js.");
+    return;
+  }
+
+  try{
+    initCharts();
+    buildSentimentToggles();
+    wireFilterInputs();
+    document.getElementById("refreshBtn").addEventListener("click", async function(){
+      this.disabled = true; this.textContent = "Refreshing…";
+      await loadLiveData();
+      initFilterRange();
+      updateSourceBadge();
+      renderAll();
+      this.disabled = false; this.textContent = "Refresh data";
+    });
+
     await loadLiveData();
     initFilterRange();
     updateSourceBadge();
     renderAll();
-    this.disabled = false; this.textContent = "Refresh data";
-  });
 
-  await loadLiveData();
-  initFilterRange();
-  updateSourceBadge();
-  renderAll();
-
-  setInterval(async function(){
-    await loadLiveData();
-    updateSourceBadge();
-    renderAll();
-  }, AUTO_REFRESH_MS);
+    setInterval(async function(){
+      await loadLiveData();
+      updateSourceBadge();
+      renderAll();
+    }, AUTO_REFRESH_MS);
+  }catch(e){
+    console.error("[Netflix MENA Dashboard] init failed:", e);
+    showFatalError(e.message || String(e));
+  }
 }
 
 document.addEventListener("DOMContentLoaded", init);
