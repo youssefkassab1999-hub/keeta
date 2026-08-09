@@ -153,6 +153,16 @@ License: MIT
     transition:border-color .15s, color .15s;
   }
   #refreshBtn:hover{ border-color:var(--lime); color:var(--lime); }
+  #reportsLink{
+    color:var(--text-secondary);
+    font-size:11.5px;
+    text-decoration:none;
+    border:1px solid var(--card-border);
+    padding:4px 10px;
+    border-radius:100px;
+    transition:border-color .15s, color .15s;
+  }
+  #reportsLink:hover{ border-color:var(--lime); color:var(--lime); }
 
   /* ---------- Filters ---------- */
   .filters{
@@ -400,6 +410,7 @@ License: MIT
     </div>
     <div class="status-block">
       <span class="source-badge embedded" id="sourceBadge"><span class="dot"></span><span id="sourceBadgeText">Loading…</span></span>
+      <a href="reports.html" id="reportsLink">Reports archive &rarr;</a>
       <button id="refreshBtn" type="button">Refresh data</button>
       <span id="lastUpdated"></span>
     </div>

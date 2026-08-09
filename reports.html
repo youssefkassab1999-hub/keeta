@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Netflix MENA — Reports Archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#141414;
+    --card:#1E1E1E;
+    --card-border: rgba(244,242,239,0.08);
+    --text:#F4F2EF;
+    --text-secondary:#B9B6AC;
+    --text-muted:#7A776F;
+    --red:#E50914;
+    --lime:#D4FF66;
+    --hairline: rgba(244,242,239,0.10);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Lexend', system-ui, -apple-system, sans-serif;
+    font-weight:400;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 24px 80px;}
+
+  header.top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:24px;
+    flex-wrap:wrap;
+    padding-bottom:22px;
+    border-bottom:1px solid var(--hairline);
+    margin-bottom:28px;
+  }
+  .brand-row{display:flex; align-items:center; gap:14px;}
+  .logo-lockup{display:flex; align-items:center; gap:14px; flex-shrink:0;}
+  .logo-netflix{height:34px; width:auto; flex-shrink:0; display:block;}
+  .logo-kijamii{height:20px; width:auto; flex-shrink:0; display:block;}
+  .logo-sep{
+    font-family:'Playfair Display', serif;
+    font-weight:600;
+    font-size:16px;
+    color:var(--text-muted);
+    line-height:1;
+  }
+  .title-block h1{
+    font-family:'Playfair Display', serif;
+    font-weight:700;
+    font-size:26px;
+    margin:0 0 4px;
+    color:var(--text);
+  }
+  .title-block .sub{
+    font-size:13px;
+    color:var(--text-secondary);
+  }
+  .back-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    color:var(--text-secondary);
+    text-decoration:none;
+    font-size:13px;
+    border:1px solid var(--card-border);
+    padding:7px 14px;
+    border-radius:100px;
+    transition:border-color .15s, color .15s;
+  }
+  .back-link:hover{ border-color:var(--lime); color:var(--lime); }
+
+  .report-list{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    margin-bottom:36px;
+  }
+  .report-card{
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius);
+    padding:18px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    flex-wrap:wrap;
+    cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,0,0,0.22);
+    transition:border-color .15s;
+  }
+  .report-card:hover{ border-color:rgba(212,255,102,0.35); }
+  .report-card.active{ border-color:var(--lime); }
+  .report-meta{ display:flex; flex-direction:column; gap:4px; }
+  .report-title{ font-size:16px; font-weight:600; color:var(--text); }
+  .report-sub{ font-size:12.5px; color:var(--text-muted); }
+  .report-actions{ display:flex; gap:10px; align-items:center; flex-shrink:0; }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-family:inherit;
+    font-size:12.5px;
+    font-weight:500;
+    padding:8px 16px;
+    border-radius:100px;
+    border:1px solid var(--card-border);
+    background:transparent;
+    color:var(--text);
+    cursor:pointer;
+    text-decoration:none;
+  }
+  .btn.primary{ background:var(--red); border-color:var(--red); color:#fff; }
+  .btn.primary:hover{ background:#c40810; }
+  .btn:not(.primary):hover{ border-color:var(--lime); color:var(--lime); }
+
+  .viewer-card{
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius);
+    padding:0;
+    overflow:hidden;
+    box-shadow:0 6px 18px rgba(0,0,0,0.22);
+    display:none;
+  }
+  .viewer-card.visible{ display:block; }
+  .viewer-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 22px;
+    border-bottom:1px solid var(--hairline);
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .viewer-header h2{
+    font-family:'Playfair Display', serif;
+    font-size:17px;
+    font-weight:700;
+    margin:0;
+  }
+  .viewer-frame-holder{
+    background:#0d0d0d;
+    height:80vh;
+    min-height:520px;
+  }
+  .viewer-frame-holder iframe{
+    width:100%;
+    height:100%;
+    border:0;
+    display:block;
+  }
+  .empty-note{
+    color:var(--text-muted);
+    font-size:13.5px;
+    text-align:center;
+    padding:50px 20px;
+    border:1px dashed var(--card-border);
+    border-radius:var(--radius);
+  }
+
+  footer{
+    margin-top:40px;
+    padding-top:18px;
+    border-top:1px solid var(--hairline);
+    font-size:11.5px;
+    color:var(--text-muted);
+  }
+
+  @media (max-width: 640px){
+    .viewer-frame-holder{ height:65vh; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand-row">
+      <div class="logo-lockup" role="img" aria-label="Netflix × Kijamii">
+        <svg class="logo-netflix" viewBox="0 0 551.11109 999.99998" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path style="fill:#e50914;fill-opacity:1;stroke:none" d="M -1.1524947,-1.1524946 2.3049893,1002.6704 C 75.577724,988.55904 133.19716,990.10098 198.22908,984.23044 V 0 Z"/>
+          <path style="fill:#7b010c;fill-opacity:1;stroke:none" d="m 353.81586,0 h 199.38158 l 2.30498,1000.3654 -202.83905,-33.42238 z"/>
+          <path style="fill:#e50914;fill-opacity:1;stroke:none" d="M 1.1524964,-3.6590427e-7 C 5.7624764,11.524946 346.90086,981.92546 346.90086,981.92546 c 56.0558,-0.40033 131.2191,8.75315 205.1441,17.28745 L 197.07656,-3.6590427e-7 Z"/>
+        </svg>
+        <span class="logo-sep" aria-hidden="true">&times;</span>
+        <svg class="logo-kijamii" viewBox="0 0 757.2 233.46" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="#F4F2EF">
+            <rect x="160.97" y="63.47" width="44.89" height="125.18"/>
+            <path d="M380.41,63.3l.25,14.46h-.25c-5.49-6.32-11.43-10.8-17.83-13.47-6.4-2.66-13.51-3.99-21.32-3.99-8.98,0-17.08,1.79-24.31,5.36-7.23,3.58-13.38,8.35-18.45,14.34-5.07,5.98-9.02,12.97-11.85,20.95-2.83,7.98-4.24,16.38-4.24,25.19s1.37,17.42,4.11,25.31c2.74,7.9,6.65,14.84,11.72,20.82,5.07,5.98,11.22,10.72,18.45,14.21,7.23,3.49,15.34,5.24,24.31,5.24,7.98,0,15.04-1.58,21.2-4.74,6.15-3.16,12.22-7.73,18.2-13.72h.25l8.88,15.21h35.01v-94.6l-16.96-30.58h-27.18ZM374.55,146.96c-5.07,5.4-11.85,8.1-20.32,8.1s-15.09-2.74-19.82-8.23c-4.74-5.49-7.11-12.47-7.11-20.95s2.45-15.21,7.36-20.7c4.9-5.49,11.51-8.23,19.83-8.23s15,2.74,20.07,8.23c5.07,5.49,7.61,12.47,7.61,20.95s-2.54,15.42-7.61,20.82Z"/>
+            <rect x="160.97" y=".79" width="44.89" height="43.68"/>
+            <rect x="648.62" y="63.47" width="44.89" height="125.18"/>
+            <rect x="648.62" y=".79" width="44.89" height="43.68"/>
+            <polygon points="96.82 0 47.73 88.38 68.96 88.38 96.82 188.76 141.14 188.76 113.8 88.38 92.57 88.38 141.14 0 96.82 0"/>
+            <rect y="0" width="44.89" height="188.76"/>
+            <polygon points="712.31 188.66 732.93 188.66 757.2 144.27 757.2 63.48 712.31 63.48 712.31 188.66"/>
+            <polygon points="225.06 188.56 225.11 233.46 245.35 233.46 269.94 188.55 269.94 63.28 225.06 63.28 225.06 188.56"/>
+            <rect x="225.29" y=".79" width="44.89" height="43.68"/>
+            <rect x="712.31" y=".79" width="44.89" height="43.68"/>
+            <polygon points="443.23 62.37 443.23 92.47 443.23 92.47 443.23 188.82 486.44 188.82 486.44 92.47 486.44 92.47 469.85 62.37 443.23 62.37"/>
+            <path d="M614.01,63.95h-55.46v30.09h10.85c10.65.02,19.29,8.66,19.29,19.32v75.3h41.92v-94.61h0l-16.59-30.09Z"/>
+            <path d="M541.95,63.95h-55.46v30.09h10.85c10.65.02,19.28,8.66,19.29,19.32v75.3h41.92v-94.61h0l-16.59-30.09Z"/>
+          </g>
+        </svg>
+      </div>
+      <div class="title-block">
+        <h1>Reports Archive</h1>
+        <div class="sub">Netflix MENA — Social Listening &amp; Digital Intelligence</div>
+      </div>
+    </div>
+    <a class="back-link" href="index.html">&larr; Back to dashboard</a>
+  </header>
+
+  <div class="report-list" id="reportList"></div>
+
+  <div class="viewer-card" id="viewerCard">
+    <div class="viewer-header">
+      <h2 id="viewerTitle"></h2>
+      <a class="btn" id="viewerDownload" href="#" download>Download PDF</a>
+    </div>
+    <div class="viewer-frame-holder">
+      <iframe id="viewerFrame" title="Report viewer"></iframe>
+    </div>
+  </div>
+
+  <div class="empty-note" id="emptyNote" style="display:none;">
+    No reports have been added yet.
+  </div>
+
+  <footer>
+    Netflix MENA — Reports Archive · Prepared by Kijamii
+  </footer>
+
+</div>
+
+<script>
+"use strict";
+
+// Add future reports here — each entry needs a title, a short label
+// (month/period), and the PDF's path relative to this file. Drop the
+// PDF into the reports/ folder and add one line below.
+var REPORTS = [
+  { title: "Netflix MENA Digital Intelligence Deck", period: "July 2026", file: "reports/netflix-mena-july-2026.pdf" }
+];
+
+function escapeAttr(s){
+  return s.replace(/&/g,"&amp;").replace(/"/g,"&quot;");
+}
+
+function renderList(){
+  var listEl = document.getElementById("reportList");
+  var emptyEl = document.getElementById("emptyNote");
+  listEl.innerHTML = "";
+
+  if(!REPORTS.length){
+    emptyEl.style.display = "block";
+    return;
+  }
+  emptyEl.style.display = "none";
+
+  REPORTS.forEach(function(report, idx){
+    var card = document.createElement("div");
+    card.className = "report-card";
+    card.dataset.idx = idx;
+
+    var meta = document.createElement("div");
+    meta.className = "report-meta";
+    var title = document.createElement("div"); title.className = "report-title"; title.textContent = report.title;
+    var sub = document.createElement("div"); sub.className = "report-sub"; sub.textContent = report.period;
+    meta.appendChild(title); meta.appendChild(sub);
+
+    var actions = document.createElement("div");
+    actions.className = "report-actions";
+    var viewBtn = document.createElement("button");
+    viewBtn.className = "btn primary"; viewBtn.type = "button"; viewBtn.textContent = "View report";
+    var dlLink = document.createElement("a");
+    dlLink.className = "btn"; dlLink.href = report.file; dlLink.setAttribute("download", "");
+    dlLink.textContent = "Download";
+
+    actions.appendChild(viewBtn);
+    actions.appendChild(dlLink);
+    card.appendChild(meta);
+    card.appendChild(actions);
+    listEl.appendChild(card);
+
+    function open(){
+      openViewer(report, card);
+    }
+    viewBtn.addEventListener("click", open);
+    card.addEventListener("click", function(e){
+      if(e.target === dlLink) return;
+      open();
+    });
+  });
+}
+
+function openViewer(report, cardEl){
+  document.querySelectorAll(".report-card").forEach(function(c){ c.classList.remove("active"); });
+  cardEl.classList.add("active");
+
+  document.getElementById("viewerTitle").textContent = report.title + " — " + report.period;
+  document.getElementById("viewerDownload").href = report.file;
+  document.getElementById("viewerFrame").src = report.file + "#toolbar=1&view=FitH";
+
+  var viewerCard = document.getElementById("viewerCard");
+  viewerCard.classList.add("visible");
+  viewerCard.scrollIntoView({ behavior:"smooth", block:"start" });
+}
+
+renderList();
+</script>
+</body>
+</html>
