@@ -168,6 +168,79 @@
     border-radius:var(--radius);
   }
 
+  .admin-toggle-row{ display:flex; justify-content:flex-end; margin-bottom:16px; gap:10px; }
+  .admin-toggle-row .btn{ cursor:pointer; }
+
+  .admin-panel{
+    background:var(--card);
+    border:1px solid rgba(212,255,102,0.3);
+    border-radius:var(--radius);
+    padding:20px 22px;
+    margin-bottom:20px;
+    display:none;
+  }
+  .admin-panel.visible{ display:block; }
+  .admin-panel h3{
+    font-family:'Playfair Display', serif;
+    font-size:15px;
+    margin:0 0 4px;
+  }
+  .admin-panel .admin-note{
+    font-size:12px;
+    color:var(--text-muted);
+    margin:0 0 16px;
+    line-height:1.5;
+  }
+  .admin-form{ display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-bottom:6px; }
+  .admin-field{ display:flex; flex-direction:column; gap:5px; flex:1; min-width:150px; }
+  .admin-field label{ font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-muted); font-weight:600; }
+  .admin-field input{
+    background:#141414;
+    border:1px solid var(--card-border);
+    color:var(--text);
+    font-family:inherit;
+    font-size:13px;
+    padding:8px 10px;
+    border-radius:8px;
+  }
+  .admin-field input:focus{ outline:2px solid var(--lime); outline-offset:1px; }
+  .admin-form-msg{ font-size:12px; margin-top:8px; min-height:16px; }
+  .admin-form-msg.error{ color:var(--red); }
+  .admin-form-msg.success{ color:var(--lime); }
+
+  .admin-subsection{ border-top:1px solid var(--hairline); margin-top:18px; padding-top:16px; }
+  .admin-subsection summary{ cursor:pointer; font-size:12.5px; color:var(--text-secondary); }
+  .admin-subsection summary:hover{ color:var(--lime); }
+  .admin-subsection textarea{
+    width:100%;
+    background:#141414;
+    border:1px solid var(--card-border);
+    color:var(--text-secondary);
+    font-family:ui-monospace, monospace;
+    font-size:11.5px;
+    padding:10px;
+    border-radius:8px;
+    margin-top:10px;
+    resize:vertical;
+  }
+  .admin-subsection .btn{ margin-top:8px; }
+
+  .report-card .btn.danger{ border-color:rgba(229,9,20,0.4); color:var(--red); }
+  .report-card .btn.danger:hover{ background:rgba(229,9,20,0.14); border-color:var(--red); }
+  .custom-tag{
+    display:inline-block;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--lime);
+    background:rgba(212,255,102,0.12);
+    border:1px solid rgba(212,255,102,0.3);
+    padding:1px 7px;
+    border-radius:100px;
+    margin-left:8px;
+    vertical-align:middle;
+  }
+
   footer{
     margin-top:40px;
     padding-top:18px;
@@ -220,6 +293,49 @@
     <a class="back-link" href="index.html">&larr; Back to dashboard</a>
   </header>
 
+  <div class="admin-toggle-row">
+    <button class="btn" id="adminToggleBtn" type="button">+ Add a report</button>
+  </div>
+
+  <div class="admin-panel" id="adminPanel">
+    <h3>Add a report</h3>
+    <p class="admin-note">
+      Upload the PDF to your <code>reports/</code> folder on Cloudflare first (exact filename,
+      case-sensitive). Then register it here — this only saves to <strong>this browser</strong>,
+      it doesn't upload anything.
+    </p>
+    <form class="admin-form" id="adminForm">
+      <div class="admin-field">
+        <label for="fieldTitle">Title</label>
+        <input type="text" id="fieldTitle" placeholder="Netflix MENA Digital Intelligence Deck" required>
+      </div>
+      <div class="admin-field">
+        <label for="fieldPeriod">Period</label>
+        <input type="text" id="fieldPeriod" placeholder="August 2026" required>
+      </div>
+      <div class="admin-field">
+        <label for="fieldFile">Filename (in reports/ folder)</label>
+        <input type="text" id="fieldFile" placeholder="netflix-mena-august-2026.pdf" required>
+      </div>
+      <button class="btn primary" type="submit">Add report</button>
+    </form>
+    <div class="admin-form-msg" id="adminFormMsg"></div>
+
+    <details class="admin-subsection">
+      <summary>Backup / restore this browser's added reports (for using another device)</summary>
+      <p class="admin-note" style="margin-top:10px;">
+        Copy this text to move your added reports to another browser or device — paste it into the
+        Import box there and click Import.
+      </p>
+      <textarea id="exportBox" rows="3" readonly></textarea>
+      <button class="btn" id="copyExportBtn" type="button">Copy backup text</button>
+      <div style="margin-top:14px;">
+        <textarea id="importBox" rows="3" placeholder="Paste backup text here"></textarea>
+        <button class="btn" id="importBtn" type="button">Import</button>
+      </div>
+    </details>
+  </div>
+
   <div class="report-list" id="reportList"></div>
 
   <div class="viewer-card" id="viewerCard">
@@ -245,16 +361,35 @@
 <script>
 "use strict";
 
-// Add future reports here — each entry needs a title, a short label
-// (month/period), and the PDF's path relative to this file. Drop the
-// PDF into the reports/ folder and add one line below.
-var REPORTS = [
+// Baked-in reports — always shown to every visitor on every device.
+// Add future reports here directly if you want them permanent instead
+// of using the "+ Add a report" panel (which only saves to one browser).
+var BASE_REPORTS = [
   { title: "Netflix MENA Digital Intelligence Deck", period: "July 2026", file: "reports/netflix-mena-july-2026.pdf" },
   { title: "Netflix MENA Digital Intelligence Deck", period: "June 2026", file: "reports/netlfix-mena-june-2026.pdf" }
 ];
 
-function escapeAttr(s){
-  return s.replace(/&/g,"&amp;").replace(/"/g,"&quot;");
+var CUSTOM_STORAGE_KEY = "netflixMenaCustomReports";
+
+function loadCustomReports(){
+  try{
+    var raw = localStorage.getItem(CUSTOM_STORAGE_KEY);
+    var parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  }catch(e){
+    return [];
+  }
+}
+
+function saveCustomReports(list){
+  localStorage.setItem(CUSTOM_STORAGE_KEY, JSON.stringify(list));
+}
+
+function getAllReports(){
+  var custom = loadCustomReports().map(function(r){
+    return { title: r.title, period: r.period, file: r.file, custom: true };
+  });
+  return BASE_REPORTS.concat(custom);
 }
 
 function renderList(){
@@ -262,13 +397,14 @@ function renderList(){
   var emptyEl = document.getElementById("emptyNote");
   listEl.innerHTML = "";
 
-  if(!REPORTS.length){
+  var all = getAllReports();
+  if(!all.length){
     emptyEl.style.display = "block";
     return;
   }
   emptyEl.style.display = "none";
 
-  REPORTS.forEach(function(report, idx){
+  all.forEach(function(report, idx){
     var card = document.createElement("div");
     card.className = "report-card";
     card.dataset.idx = idx;
@@ -276,6 +412,10 @@ function renderList(){
     var meta = document.createElement("div");
     meta.className = "report-meta";
     var title = document.createElement("div"); title.className = "report-title"; title.textContent = report.title;
+    if(report.custom){
+      var tag = document.createElement("span"); tag.className = "custom-tag"; tag.textContent = "Added here";
+      title.appendChild(tag);
+    }
     var sub = document.createElement("div"); sub.className = "report-sub"; sub.textContent = report.period;
     meta.appendChild(title); meta.appendChild(sub);
 
@@ -289,6 +429,17 @@ function renderList(){
 
     actions.appendChild(viewBtn);
     actions.appendChild(dlLink);
+
+    if(report.custom){
+      var delBtn = document.createElement("button");
+      delBtn.className = "btn danger"; delBtn.type = "button"; delBtn.textContent = "Remove";
+      delBtn.addEventListener("click", function(e){
+        e.stopPropagation();
+        removeCustomReport(report.file);
+      });
+      actions.appendChild(delBtn);
+    }
+
     card.appendChild(meta);
     card.appendChild(actions);
     listEl.appendChild(card);
@@ -304,6 +455,12 @@ function renderList(){
   });
 }
 
+function removeCustomReport(file){
+  var list = loadCustomReports().filter(function(r){ return r.file !== file; });
+  saveCustomReports(list);
+  renderList();
+}
+
 function openViewer(report, cardEl){
   document.querySelectorAll(".report-card").forEach(function(c){ c.classList.remove("active"); });
   cardEl.classList.add("active");
@@ -317,6 +474,96 @@ function openViewer(report, cardEl){
   viewerCard.scrollIntoView({ behavior:"smooth", block:"start" });
 }
 
+function normalizeFilePath(raw){
+  var v = raw.trim();
+  if(!v) return "";
+  if(v.indexOf("reports/") === 0) return v;
+  if(v.indexOf("/") === -1) return "reports/" + v;
+  return v;
+}
+
+function setFormMsg(text, kind){
+  var el = document.getElementById("adminFormMsg");
+  el.textContent = text;
+  el.className = "admin-form-msg" + (kind ? " " + kind : "");
+}
+
+function wireAdminPanel(){
+  var toggleBtn = document.getElementById("adminToggleBtn");
+  var panel = document.getElementById("adminPanel");
+  toggleBtn.addEventListener("click", function(){
+    var open = panel.classList.toggle("visible");
+    toggleBtn.textContent = open ? "Close" : "+ Add a report";
+    if(open) refreshExportBox();
+  });
+
+  document.getElementById("adminForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var title = document.getElementById("fieldTitle").value.trim();
+    var period = document.getElementById("fieldPeriod").value.trim();
+    var file = normalizeFilePath(document.getElementById("fieldFile").value);
+
+    if(!title || !period || !file){
+      setFormMsg("Fill in all three fields.", "error");
+      return;
+    }
+
+    var list = loadCustomReports();
+    if(list.some(function(r){ return r.file === file; }) || BASE_REPORTS.some(function(r){ return r.file === file; })){
+      setFormMsg("A report with that filename is already in the list.", "error");
+      return;
+    }
+
+    list.push({ title: title, period: period, file: file });
+    saveCustomReports(list);
+    renderList();
+    refreshExportBox();
+
+    document.getElementById("fieldTitle").value = "";
+    document.getElementById("fieldPeriod").value = "";
+    document.getElementById("fieldFile").value = "";
+    setFormMsg("Added. Remember the PDF must already be uploaded at " + file + " on your server.", "success");
+  });
+
+  document.getElementById("copyExportBtn").addEventListener("click", function(){
+    var box = document.getElementById("exportBox");
+    box.select();
+    navigator.clipboard && navigator.clipboard.writeText(box.value).catch(function(){});
+    document.execCommand && document.execCommand("copy");
+  });
+
+  document.getElementById("importBtn").addEventListener("click", function(){
+    var raw = document.getElementById("importBox").value.trim();
+    if(!raw) return;
+    try{
+      var incoming = JSON.parse(raw);
+      if(!Array.isArray(incoming)) throw new Error("not a list");
+      var existing = loadCustomReports();
+      var existingFiles = existing.map(function(r){ return r.file; });
+      var added = 0;
+      incoming.forEach(function(r){
+        if(r && r.title && r.period && r.file && existingFiles.indexOf(r.file) === -1){
+          existing.push({ title: String(r.title), period: String(r.period), file: String(r.file) });
+          existingFiles.push(r.file);
+          added++;
+        }
+      });
+      saveCustomReports(existing);
+      renderList();
+      refreshExportBox();
+      document.getElementById("importBox").value = "";
+      setFormMsg("Imported " + added + " report(s).", "success");
+    }catch(e){
+      setFormMsg("That backup text couldn't be read — paste it exactly as copied.", "error");
+    }
+  });
+}
+
+function refreshExportBox(){
+  document.getElementById("exportBox").value = JSON.stringify(loadCustomReports());
+}
+
+wireAdminPanel();
 renderList();
 </script>
 </body>
