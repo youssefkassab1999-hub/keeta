@@ -204,6 +204,28 @@ License: MIT
   .chip-check input{ position:absolute; opacity:0; width:0; height:0; }
   .chip-check .sw{width:9px;height:9px;border-radius:3px;display:inline-block;}
   .chip-check.active{ color:var(--text); background:rgba(244,242,239,0.06); }
+  .click-hint{
+    font-size:11.5px;
+    color:var(--text-muted);
+    margin:8px 2px 26px;
+  }
+  .quick-filter-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(229,9,20,0.14);
+    border:1px solid rgba(229,9,20,0.4);
+    color:var(--text);
+    font-family:inherit;
+    font-size:12.5px;
+    font-weight:500;
+    padding:6px 10px 6px 13px;
+    border-radius:100px;
+    cursor:pointer;
+  }
+  .quick-filter-chip:hover{ border-color:var(--red); background:rgba(229,9,20,0.2); }
+  .quick-filter-chip .qf-field{ color:var(--text-muted); }
+  .quick-filter-chip .qf-x{ color:var(--red); font-size:11px; font-weight:700; }
   .filter-reset{
     margin-left:auto;
     background:transparent;
@@ -394,8 +416,10 @@ License: MIT
       <span class="filter-label">Sentiment</span>
       <div class="sentiment-toggles" id="sentimentToggles"></div>
     </div>
+    <div class="filter-group" id="quickFilterChip"></div>
     <button class="filter-reset" id="resetFilters" type="button">Reset filters</button>
   </div>
+  <p class="click-hint">Tip: click any bar or donut slice to filter the whole dashboard by that value. Click it again to clear.</p>
 
   <!-- 1. KPI Strip -->
   <section class="block">
@@ -646,7 +670,7 @@ var state = {
   records: EMBEDDED_DATA,
   source: "embedded",
   lastLoaded: null,
-  filters: { start:null, end:null, sentiments: new Set(SENTIMENT_ORDER) },
+  filters: { start:null, end:null, sentiments: new Set(SENTIMENT_ORDER), dim:null },
   fullRange: null
 };
 
@@ -698,8 +722,62 @@ function applyFilters(){
     if(f.start && r.date < f.start) return false;
     if(f.end && r.date > f.end) return false;
     if(!f.sentiments.has(r.sentiment)) return false;
+    if(f.dim){
+      var rv = r[f.dim.field];
+      var match = f.dim.matchFn ? f.dim.matchFn(rv, f.dim.value) : (rv === f.dim.value);
+      if(!match) return false;
+    }
     return true;
   });
+}
+
+var FIELD_LABELS = {
+  mainTopic:"Topic", title:"Title", country:"Country",
+  competitor:"Competitor", subtopic:"Subtopic", genre:"Genre", platform:"Platform"
+};
+
+function titleMatch(recordValue, clickedValue){
+  return (recordValue||"").toLowerCase() === clickedValue.toLowerCase();
+}
+
+function toggleDimFilter(field, value, matchFn){
+  var f = state.filters;
+  if(f.dim && f.dim.field === field && f.dim.value === value){
+    f.dim = null;
+  }else{
+    f.dim = { field: field, value: value, matchFn: matchFn || null };
+  }
+  renderQuickFilterChip();
+  renderAll();
+}
+
+function renderQuickFilterChip(){
+  var el = document.getElementById("quickFilterChip");
+  if(!el) return;
+  el.innerHTML = "";
+  if(!state.filters.dim) return;
+  var d = state.filters.dim;
+  var chip = document.createElement("button");
+  chip.type = "button";
+  chip.className = "quick-filter-chip";
+  chip.title = "Click to clear this filter";
+  var fieldSpan = document.createElement("span");
+  fieldSpan.className = "qf-field";
+  fieldSpan.textContent = (FIELD_LABELS[d.field] || d.field) + ":";
+  var valueSpan = document.createElement("span");
+  valueSpan.textContent = d.value;
+  var xSpan = document.createElement("span");
+  xSpan.className = "qf-x";
+  xSpan.textContent = "✕";
+  chip.appendChild(fieldSpan);
+  chip.appendChild(valueSpan);
+  chip.appendChild(xSpan);
+  chip.addEventListener("click", function(){
+    state.filters.dim = null;
+    renderQuickFilterChip();
+    renderAll();
+  });
+  el.appendChild(chip);
 }
 
 function countBy(records, keyFn, excludeEmpty){
@@ -823,17 +901,105 @@ function makeHBar(canvasId, color){
   });
 }
 
+/* ------------------------------------------------------------
+   Click-to-filter: clicking a bar or donut slice cross-filters
+   every chart on the dashboard by that value. Clicking the same
+   element again clears it.
+   ------------------------------------------------------------ */
+function setPointerCursor(chart, isClickable){
+  return function(evt, elements){
+    evt.native.target.style.cursor = (elements.length && isClickable(elements)) ? "pointer" : "default";
+  };
+}
+
+function wireBarClick(chart, field, matchFn){
+  chart.options.onClick = function(evt, elements){
+    if(!elements.length) return;
+    var label = chart.data.labels[elements[0].index];
+    if(!label) return;
+    toggleDimFilter(field, label, matchFn);
+  };
+  chart.options.onHover = setPointerCursor(chart, function(){ return true; });
+}
+
+function wireDonutClick(chart, field){
+  chart.options.onClick = function(evt, elements){
+    if(!elements.length) return;
+    var label = chart.data.labels[elements[0].index];
+    if(!label || label === "Other") return;
+    toggleDimFilter(field, label);
+  };
+  chart.options.onHover = setPointerCursor(chart, function(elements){
+    return chart.data.labels[elements[0].index] !== "Other";
+  });
+}
+
+function wireSentimentClick(chart){
+  chart.options.onClick = function(evt, elements){
+    if(!elements.length) return;
+    var label = chart.data.labels[elements[0].index];
+    if(!label) return;
+    var f = state.filters;
+    var isIsolated = f.sentiments.size === 1 && f.sentiments.has(label);
+    if(isIsolated){
+      SENTIMENT_ORDER.forEach(function(s){ f.sentiments.add(s); });
+    }else{
+      f.sentiments.clear();
+      f.sentiments.add(label);
+    }
+    syncSentimentChips();
+    renderAll();
+  };
+  chart.options.onHover = setPointerCursor(chart, function(){ return true; });
+}
+
+function wireVolumeClick(chart){
+  chart.options.onClick = function(evt, elements){
+    if(!elements.length) return;
+    var iso = chart.data.labels._iso && chart.data.labels._iso[elements[0].index];
+    if(!iso) return;
+    if(state.filters.start === iso && state.filters.end === iso){
+      state.filters.start = state.fullRange.min;
+      state.filters.end = state.fullRange.max;
+    }else{
+      state.filters.start = iso;
+      state.filters.end = iso;
+    }
+    document.getElementById("startDate").value = state.filters.start;
+    document.getElementById("endDate").value = state.filters.end;
+    renderAll();
+  };
+  chart.options.onHover = setPointerCursor(chart, function(){ return true; });
+}
+
 function initCharts(){
   applyChartDefaults();
   makeVolumeChart();
+  wireVolumeClick(charts.volume);
+
   charts.sentiment = makeDonut("chartSentiment");
+  wireSentimentClick(charts.sentiment);
+
   charts.topics = makeHBar("chartTopics", COLORS.red);
+  wireBarClick(charts.topics, "mainTopic");
+
   charts.titles = makeHBar("chartTitles", COLORS.lime);
+  wireBarClick(charts.titles, "title", titleMatch);
+
   charts.genre = makeDonut("chartGenre");
+  wireDonutClick(charts.genre, "genre");
+
   charts.country = makeHBar("chartCountry", COLORS.red);
+  wireBarClick(charts.country, "country");
+
   charts.competitors = makeHBar("chartCompetitors", COLORS.lime);
+  wireBarClick(charts.competitors, "competitor");
+
   charts.platform = makeDonut("chartPlatform");
+  wireDonutClick(charts.platform, "platform");
+
   charts.subtopics = makeHBar("chartSubtopics", COLORS.gray);
+  wireBarClick(charts.subtopics, "subtopic");
 }
 
 /* ============================================================
@@ -1005,6 +1171,18 @@ function buildSentimentToggles(){
   });
 }
 
+// Reflects state.filters.sentiments back onto the checkbox chips —
+// used when a sentiment donut slice click changes the selection
+// programmatically instead of via direct checkbox interaction.
+function syncSentimentChips(){
+  document.querySelectorAll("#sentimentToggles .chip-check").forEach(function(label){
+    var input = label.querySelector("input");
+    var active = state.filters.sentiments.has(input.value);
+    input.checked = active;
+    label.classList.toggle("active", active);
+  });
+}
+
 function initFilterRange(){
   var range = computeRange(state.records);
   state.fullRange = range;
@@ -1040,6 +1218,8 @@ function wireFilterInputs(){
       l.classList.add("active");
       l.querySelector("input").checked = true;
     });
+    state.filters.dim = null;
+    renderQuickFilterChip();
     renderAll();
   });
 }
