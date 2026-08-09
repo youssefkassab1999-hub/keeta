@@ -367,9 +367,95 @@ License: MIT
   @media (max-width: 560px){
     .kpi-grid{ grid-template-columns:repeat(2, 1fr); }
   }
+
+  /* ---------- Splash screen ---------- */
+  html.splash-lock, html.splash-lock body{ overflow:hidden; height:100%; }
+  #splashScreen{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    background:var(--bg);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:opacity 0.7s ease;
+  }
+  #splashScreen.splash-hide{
+    opacity:0;
+    pointer-events:none;
+  }
+  .splash-logo{
+    display:flex;
+    align-items:center;
+    gap:26px;
+    animation:splashBlip 1.3s cubic-bezier(.2,.7,.3,1) both;
+  }
+  .splash-netflix{ height:96px; width:auto; display:block; }
+  .splash-kijamii{ height:52px; width:auto; display:block; }
+  .splash-sep{
+    font-family:'Playfair Display', serif;
+    font-weight:600;
+    font-size:42px;
+    color:var(--text-muted);
+    line-height:1;
+  }
+  @keyframes splashBlip{
+    0%   { opacity:0;   transform:scale(0.82); filter:brightness(0.25); }
+    18%  { opacity:1;   transform:scale(1.06); filter:brightness(2.2); }
+    32%  { opacity:0.55;transform:scale(0.96); filter:brightness(0.4); }
+    46%  { opacity:1;   transform:scale(1.03); filter:brightness(1.8); }
+    62%  { transform:scale(0.99); filter:brightness(0.9); }
+    100% { opacity:1;   transform:scale(1);    filter:brightness(1); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .splash-logo{ animation:none; opacity:1; }
+    #splashScreen{ transition:none; }
+  }
 </style>
 </head>
 <body>
+<div id="splashScreen" aria-hidden="true">
+  <div class="splash-logo">
+    <svg class="splash-netflix" viewBox="0 0 551.11109 999.99998" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path style="fill:#e50914;fill-opacity:1;stroke:none" d="M -1.1524947,-1.1524946 2.3049893,1002.6704 C 75.577724,988.55904 133.19716,990.10098 198.22908,984.23044 V 0 Z"/>
+      <path style="fill:#7b010c;fill-opacity:1;stroke:none" d="m 353.81586,0 h 199.38158 l 2.30498,1000.3654 -202.83905,-33.42238 z"/>
+      <path style="fill:#e50914;fill-opacity:1;stroke:none" d="M 1.1524964,-3.6590427e-7 C 5.7624764,11.524946 346.90086,981.92546 346.90086,981.92546 c 56.0558,-0.40033 131.2191,8.75315 205.1441,17.28745 L 197.07656,-3.6590427e-7 Z"/>
+    </svg>
+    <span class="splash-sep" aria-hidden="true">&times;</span>
+    <svg class="splash-kijamii" viewBox="0 0 757.2 233.46" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g fill="#F4F2EF">
+        <rect x="160.97" y="63.47" width="44.89" height="125.18"/>
+        <path d="M380.41,63.3l.25,14.46h-.25c-5.49-6.32-11.43-10.8-17.83-13.47-6.4-2.66-13.51-3.99-21.32-3.99-8.98,0-17.08,1.79-24.31,5.36-7.23,3.58-13.38,8.35-18.45,14.34-5.07,5.98-9.02,12.97-11.85,20.95-2.83,7.98-4.24,16.38-4.24,25.19s1.37,17.42,4.11,25.31c2.74,7.9,6.65,14.84,11.72,20.82,5.07,5.98,11.22,10.72,18.45,14.21,7.23,3.49,15.34,5.24,24.31,5.24,7.98,0,15.04-1.58,21.2-4.74,6.15-3.16,12.22-7.73,18.2-13.72h.25l8.88,15.21h35.01v-94.6l-16.96-30.58h-27.18ZM374.55,146.96c-5.07,5.4-11.85,8.1-20.32,8.1s-15.09-2.74-19.82-8.23c-4.74-5.49-7.11-12.47-7.11-20.95s2.45-15.21,7.36-20.7c4.9-5.49,11.51-8.23,19.83-8.23s15,2.74,20.07,8.23c5.07,5.49,7.61,12.47,7.61,20.95s-2.54,15.42-7.61,20.82Z"/>
+        <rect x="160.97" y=".79" width="44.89" height="43.68"/>
+        <rect x="648.62" y="63.47" width="44.89" height="125.18"/>
+        <rect x="648.62" y=".79" width="44.89" height="43.68"/>
+        <polygon points="96.82 0 47.73 88.38 68.96 88.38 96.82 188.76 141.14 188.76 113.8 88.38 92.57 88.38 141.14 0 96.82 0"/>
+        <rect y="0" width="44.89" height="188.76"/>
+        <polygon points="712.31 188.66 732.93 188.66 757.2 144.27 757.2 63.48 712.31 63.48 712.31 188.66"/>
+        <polygon points="225.06 188.56 225.11 233.46 245.35 233.46 269.94 188.55 269.94 63.28 225.06 63.28 225.06 188.56"/>
+        <rect x="225.29" y=".79" width="44.89" height="43.68"/>
+        <rect x="712.31" y=".79" width="44.89" height="43.68"/>
+        <polygon points="443.23 62.37 443.23 92.47 443.23 92.47 443.23 188.82 486.44 188.82 486.44 92.47 486.44 92.47 469.85 62.37 443.23 62.37"/>
+        <path d="M614.01,63.95h-55.46v30.09h10.85c10.65.02,19.29,8.66,19.29,19.32v75.3h41.92v-94.61h0l-16.59-30.09Z"/>
+        <path d="M541.95,63.95h-55.46v30.09h10.85c10.65.02,19.28,8.66,19.29,19.32v75.3h41.92v-94.61h0l-16.59-30.09Z"/>
+      </g>
+    </svg>
+  </div>
+</div>
+<script>
+(function(){
+  document.documentElement.classList.add("splash-lock");
+  window.addEventListener("load", function(){
+    setTimeout(function(){
+      var el = document.getElementById("splashScreen");
+      if(!el) return;
+      el.classList.add("splash-hide");
+      document.documentElement.classList.remove("splash-lock");
+      setTimeout(function(){ el.remove(); }, 750);
+    }, 5000);
+  });
+})();
+</script>
 <div class="wrap">
 
   <header class="top">
