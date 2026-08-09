@@ -445,15 +445,17 @@ License: MIT
 <script>
 (function(){
   document.documentElement.classList.add("splash-lock");
-  window.addEventListener("load", function(){
-    setTimeout(function(){
-      var el = document.getElementById("splashScreen");
-      if(!el) return;
-      el.classList.add("splash-hide");
-      document.documentElement.classList.remove("splash-lock");
-      setTimeout(function(){ el.remove(); }, 750);
-    }, 5000);
-  });
+  // Deliberately not gated on window "load" — that waits for every
+  // subresource (fonts, CDN scripts) to finish, and a single blocked
+  // request can leave it stuck forever. This timer starts as soon as
+  // this script runs, independent of anything else on the page.
+  setTimeout(function(){
+    var el = document.getElementById("splashScreen");
+    if(!el) return;
+    el.classList.add("splash-hide");
+    document.documentElement.classList.remove("splash-lock");
+    setTimeout(function(){ el.remove(); }, 750);
+  }, 5000);
 })();
 </script>
 <div class="wrap">
