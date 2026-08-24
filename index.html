@@ -6,7 +6,7 @@
 <title>Netflix MENA — Social Listening Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lexend:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 <script>
 /* Chart.js v4.4.4 — bundled inline so the dashboard has zero runtime dependency on any external CDN */
 /*!
@@ -121,17 +121,19 @@ License: MIT
     color:var(--text-muted);
     line-height:1;
   }
+  .title-block{ min-width:0; flex:1; }
   .title-block h1{
-    font-family:'Playfair Display', serif;
-    font-weight:700;
-    font-size:32px;
-    letter-spacing:-0.3px;
-    margin:0 0 6px;
+    font-family:'Bebas Neue', 'Playfair Display', sans-serif;
+    font-weight:400;
+    font-size:44px;
+    line-height:1.02;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    margin:0 0 8px;
     color:var(--text);
   }
   .title-block h1 em{
-    font-style:italic;
-    font-weight:600;
+    font-style:normal;
     color:var(--lime);
   }
   .title-block .sub{
@@ -532,6 +534,8 @@ License: MIT
   }
   @media (max-width: 560px){
     .kpi-grid{ grid-template-columns:repeat(2, 1fr); }
+    .brand-row{ flex-wrap:wrap; }
+    .title-block h1{ font-size:30px; }
   }
 
   /* ---------- Splash screen ---------- */
