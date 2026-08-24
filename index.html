@@ -472,6 +472,48 @@ License: MIT
 
   .empty-note{ color:var(--text-muted); font-size:13px; padding:30px 0; text-align:center; }
 
+  /* ---------- Executive summary ---------- */
+  .exec-summary-card{
+    padding:28px 32px;
+    position:relative;
+  }
+  .exec-summary-tag{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--lime);
+    background:rgba(212,255,102,0.10);
+    border:1px solid rgba(212,255,102,0.28);
+    padding:3px 10px;
+    border-radius:100px;
+    margin-bottom:16px;
+  }
+  .exec-summary-body p{
+    font-size:15.5px;
+    line-height:1.75;
+    color:var(--text);
+    margin:0 0 14px;
+  }
+  .exec-summary-body p:first-of-type{
+    font-family:'Playfair Display', serif;
+    font-size:19px;
+    line-height:1.6;
+    color:var(--text);
+  }
+  .exec-summary-body p:last-child{ margin-bottom:0; }
+  .exec-summary-body strong{ color:var(--lime); font-weight:600; }
+  .exec-summary-note{
+    margin-top:18px;
+    padding-top:14px;
+    border-top:1px solid var(--hairline);
+    font-size:11px;
+    color:var(--text-muted);
+  }
+
   footer{
     margin-top:40px;
     padding-top:18px;
@@ -645,9 +687,21 @@ License: MIT
   </div>
   <p class="click-hint">Tip: click any bar or donut slice to filter the whole dashboard by that value. Click it again to clear.</p>
 
+  <!-- 0. Executive Summary -->
+  <section class="block">
+    <div class="section-kicker" style="--accent:var(--lime);"><span class="num">01</span><span class="rule"></span></div>
+    <h2 class="section-title">Executive Summary</h2>
+    <p class="section-desc">A running narrative of the selected date range and filters — updates automatically as you adjust them.</p>
+    <div class="card exec-summary-card" style="--accent:var(--lime);">
+      <span class="exec-summary-tag">Auto-generated from current filters</span>
+      <div class="exec-summary-body" id="execSummaryBody"></div>
+      <p class="exec-summary-note">Generated automatically from the data currently in view — not a live model call. Numbers always match the charts below.</p>
+    </div>
+  </section>
+
   <!-- 1. KPI Strip -->
   <section class="block">
-    <div class="section-kicker" style="--accent:var(--red);"><span class="num">01</span><span class="rule"></span></div>
+    <div class="section-kicker" style="--accent:var(--red);"><span class="num">02</span><span class="rule"></span></div>
     <h2 class="section-title">Overview</h2>
     <p class="section-desc">Headline volume and sentiment for the selected range.</p>
     <div class="kpi-grid" id="kpiGrid"></div>
@@ -655,7 +709,7 @@ License: MIT
 
   <!-- 2. Volume Over Time -->
   <section class="block">
-    <div class="section-kicker" style="--accent:var(--red);"><span class="num">02</span><span class="rule"></span></div>
+    <div class="section-kicker" style="--accent:var(--red);"><span class="num">03</span><span class="rule"></span></div>
     <h2 class="section-title">Volume Over Time</h2>
     <p class="section-desc">Posts per day across the selected date range.</p>
     <div class="card" style="--accent:var(--red);">
@@ -666,7 +720,7 @@ License: MIT
   <div class="grid-2">
     <!-- 3. Sentiment Breakdown -->
     <section class="block">
-      <div class="section-kicker" style="--accent:var(--lime);"><span class="num">03</span><span class="rule"></span></div>
+      <div class="section-kicker" style="--accent:var(--lime);"><span class="num">04</span><span class="rule"></span></div>
       <h2 class="section-title">Sentiment Breakdown</h2>
       <p class="section-desc">Share of Positive, Negative, Sharing News and Inquiry posts.</p>
       <div class="card" style="--accent:var(--lime);">
@@ -677,7 +731,7 @@ License: MIT
 
     <!-- 4. Top Main Topics -->
     <section class="block">
-      <div class="section-kicker" style="--accent:var(--red);"><span class="num">04</span><span class="rule"></span></div>
+      <div class="section-kicker" style="--accent:var(--red);"><span class="num">05</span><span class="rule"></span></div>
       <h2 class="section-title">Top Main Topics</h2>
       <p class="section-desc">Top 10 topics by post volume.</p>
       <div class="card" style="--accent:var(--red);">
@@ -689,7 +743,7 @@ License: MIT
   <div class="grid-2">
     <!-- 5. Top Titles Mentioned -->
     <section class="block">
-      <div class="section-kicker" style="--accent:var(--lime);"><span class="num">05</span><span class="rule"></span></div>
+      <div class="section-kicker" style="--accent:var(--lime);"><span class="num">06</span><span class="rule"></span></div>
       <h2 class="section-title">Top Titles Mentioned</h2>
       <p class="section-desc">Top 10 named titles (excludes untagged posts).</p>
       <div class="card" style="--accent:var(--lime);">
@@ -699,7 +753,7 @@ License: MIT
 
     <!-- 6. Genre Distribution -->
     <section class="block">
-      <div class="section-kicker" style="--accent:var(--teal);"><span class="num">06</span><span class="rule"></span></div>
+      <div class="section-kicker" style="--accent:var(--teal);"><span class="num">07</span><span class="rule"></span></div>
       <h2 class="section-title">Genre Distribution</h2>
       <p class="section-desc">All tagged genres — top slices shown, full breakdown below.</p>
       <div class="card" style="--accent:var(--teal);">
@@ -714,7 +768,7 @@ License: MIT
   <div class="grid-2">
     <!-- 7. Country Breakdown -->
     <section class="block">
-      <div class="section-kicker" style="--accent:var(--red);"><span class="num">07</span><span class="rule"></span></div>
+      <div class="section-kicker" style="--accent:var(--red);"><span class="num">08</span><span class="rule"></span></div>
       <h2 class="section-title">Country Breakdown</h2>
       <p class="section-desc">Top 10 tagged countries (blanks excluded).</p>
       <div class="card" style="--accent:var(--red);">
@@ -724,7 +778,7 @@ License: MIT
 
     <!-- 8. Competitive Mentions -->
     <section class="block">
-      <div class="section-kicker" style="--accent:var(--lime);"><span class="num">08</span><span class="rule"></span></div>
+      <div class="section-kicker" style="--accent:var(--lime);"><span class="num">09</span><span class="rule"></span></div>
       <h2 class="section-title">Competitive Mentions</h2>
       <p class="section-desc">Competitor platforms mentioned alongside Netflix.</p>
       <div class="card" style="--accent:var(--lime);">
@@ -736,7 +790,7 @@ License: MIT
   <div class="grid-2">
     <!-- 9. Platform Split -->
     <section class="block">
-      <div class="section-kicker" style="--accent:var(--violet);"><span class="num">09</span><span class="rule"></span></div>
+      <div class="section-kicker" style="--accent:var(--violet);"><span class="num">10</span><span class="rule"></span></div>
       <h2 class="section-title">Platform Split</h2>
       <p class="section-desc">Normalized platform names (Twitter/X, Tiktok/TikTok merged).</p>
       <div class="card" style="--accent:var(--violet);">
@@ -747,7 +801,7 @@ License: MIT
 
     <!-- 10. Top Subtopics -->
     <section class="block">
-      <div class="section-kicker" style="--accent:var(--gray-chip);"><span class="num">10</span><span class="rule"></span></div>
+      <div class="section-kicker" style="--accent:var(--gray-chip);"><span class="num">11</span><span class="rule"></span></div>
       <h2 class="section-title">Top Subtopics</h2>
       <p class="section-desc">Top 10 subtopics by post volume.</p>
       <div class="card" style="--accent:var(--gray-chip);">
@@ -1398,6 +1452,102 @@ function setHBar(chart, pairs, n){
   chart.update();
 }
 
+function dayCountBetween(startISO, endISO){
+  var s = new Date(startISO + "T00:00:00Z"), e = new Date(endISO + "T00:00:00Z");
+  return Math.round((e - s) / 86400000) + 1;
+}
+
+function pct(n, total){ return total ? Math.round(n / total * 1000) / 10 : 0; }
+
+// Builds a short narrative paragraph set from whatever is currently
+// filtered — no API call, just data-driven templating so it updates
+// instantly and always agrees with the charts below it.
+function renderExecutiveSummary(records, agg){
+  var el = document.getElementById("execSummaryBody");
+  if(!el) return;
+  el.innerHTML = "";
+
+  function addPara(text){
+    var p = document.createElement("p");
+    p.textContent = text;
+    el.appendChild(p);
+  }
+
+  var total = records.length;
+  if(total === 0){
+    addPara("No posts match the current filters. Try widening the date range or re-enabling more sentiment categories.");
+    return;
+  }
+
+  var f = state.filters;
+  var start = f.start || state.fullRange.min;
+  var end = f.end || state.fullRange.max;
+  var days = dayCountBetween(start, end);
+  var rangeLabel = (start === end)
+    ? fmtDatePretty(start)
+    : fmtDatePretty(start) + " – " + fmtDatePretty(end) + " (" + days + (days === 1 ? " day" : " days") + ")";
+
+  var bySent = {};
+  SENTIMENT_ORDER.forEach(function(s){ bySent[s] = 0; });
+  records.forEach(function(r){ if(bySent.hasOwnProperty(r.sentiment)) bySent[r.sentiment]++; });
+  var pos = bySent.Positive, neg = bySent.Negative;
+  var posPct = pct(pos, total), negPct = pct(neg, total);
+
+  var sentimentSentence;
+  if(neg === 0 && pos > 0){
+    sentimentSentence = "Sentiment is overwhelmingly positive, with no tracked Negative posts in this window and Positive posts at " + posPct + "% of volume.";
+  }else if(pos > neg * 1.3){
+    sentimentSentence = "Sentiment skews clearly positive, with Positive posts (" + posPct + "%) outweighing Negative (" + negPct + "%) by roughly " + (neg > 0 ? (pos/neg).toFixed(1) : "∞") + " to 1.";
+  }else if(neg > pos * 1.3){
+    sentimentSentence = "Sentiment leans negative in this window, with Negative posts (" + negPct + "%) outpacing Positive (" + posPct + "%) — worth a closer look at the driving topics below.";
+  }else{
+    var leadSent = agg.sentPairs.slice().sort(function(a,b){ return b[1]-a[1]; })[0];
+    sentimentSentence = "Sentiment is fairly balanced between Positive (" + posPct + "%) and Negative (" + negPct + "%)" + (leadSent ? ", with " + leadSent[0] + " the single largest category overall at " + pct(leadSent[1], total) + "%." : ".");
+  }
+
+  addPara("Across " + rangeLabel + ", Netflix MENA generated " + total.toLocaleString() + " tracked posts. " + sentimentSentence);
+
+  var topTopic = agg.topicPairs[0], secondTopic = agg.topicPairs[1];
+  if(topTopic){
+    var topicSentence = "Conversation is led by “" + topTopic[0] + "” (" + topTopic[1].toLocaleString() + " posts, " + pct(topTopic[1], total) + "% of volume)";
+    topicSentence += secondTopic ? ", followed by “" + secondTopic[0] + "” (" + pct(secondTopic[1], total) + "%)." : ".";
+    addPara(topicSentence);
+  }
+
+  var closing = "";
+  var topPlat = agg.platPairs[0], secondPlat = agg.platPairs[1];
+  if(topPlat){
+    closing += topPlat[0] + " accounts for " + pct(topPlat[1], total) + "% of tracked activity" + (secondPlat ? ", with " + secondPlat[0] + " a distant second at " + pct(secondPlat[1], total) + "%." : ".");
+  }
+
+  var taggedCountryTotal = agg.countryPairs.reduce(function(a,p){ return a + p[1]; }, 0);
+  if(agg.countryPairs.length && taggedCountryTotal > 0){
+    var topCountry = agg.countryPairs[0];
+    closing += " Among geo-tagged posts, " + topCountry[0] + " leads (" + pct(topCountry[1], taggedCountryTotal) + "% of tagged volume).";
+  }
+
+  var realCompetitors = agg.competitorPairs.filter(function(p){ return p[0]; });
+  if(realCompetitors.length){
+    var totalCompMentions = realCompetitors.reduce(function(a,p){ return a + p[1]; }, 0);
+    closing += " Competitive mentions remain a minor share of volume (" + totalCompMentions + " posts referencing rival platforms), led by " + realCompetitors[0][0] + ".";
+  }
+
+  if(days >= 4){
+    var mid = new Date(start + "T00:00:00Z");
+    mid.setUTCDate(mid.getUTCDate() + Math.floor(days / 2));
+    var midISO = mid.toISOString().slice(0, 10);
+    var firstHalf = records.filter(function(r){ return r.date < midISO; }).length;
+    var secondHalf = records.filter(function(r){ return r.date >= midISO; }).length;
+    if(firstHalf > 0 && secondHalf > firstHalf * 1.2){
+      closing += " Volume picked up notably in the second half of the period.";
+    }else if(secondHalf > 0 && firstHalf > secondHalf * 1.2){
+      closing += " Volume was heavier in the first half of the period and eased later on.";
+    }
+  }
+
+  if(closing) addPara(closing.trim());
+}
+
 function renderAll(){
   var records = applyFilters();
   document.getElementById("footerCount").textContent = records.length.toLocaleString() + " of " + state.records.length.toLocaleString() + " posts shown";
@@ -1410,19 +1560,27 @@ function renderAll(){
   }).filter(function(p){ return p[1] > 0; });
   setDonut(charts.sentiment, sentPairs, SENTIMENT_COLORS, [COLORS.limeDim, COLORS.redDim, COLORS.teal, COLORS.violet], "legendSentiment", null, 4);
 
-  setHBar(charts.topics, countBy(records, function(r){ return r.mainTopic; }, true), 10);
+  var topicPairs = countBy(records, function(r){ return r.mainTopic; }, true);
+  setHBar(charts.topics, topicPairs, 10);
   setHBar(charts.titles, countByTitleCaseInsensitive(records), 10);
 
   var genrePairs = countBy(records, function(r){ return r.genre; }, true);
   setDonut(charts.genre, genrePairs, null, [COLORS.redDim, COLORS.limeDim, COLORS.teal, COLORS.violet], null, "tableGenre", 4);
 
-  setHBar(charts.country, countBy(records, function(r){ return r.country; }, true), 10);
-  setHBar(charts.competitors, countBy(records, function(r){ return r.competitor; }, true), 11);
+  var countryPairs = countBy(records, function(r){ return r.country; }, true);
+  setHBar(charts.country, countryPairs, 10);
+  var competitorPairs = countBy(records, function(r){ return r.competitor; }, true);
+  setHBar(charts.competitors, competitorPairs, 11);
 
   var platPairs = countBy(records, function(r){ return r.platform; }, true);
   setDonut(charts.platform, platPairs, null, [COLORS.redDim, COLORS.limeDim, COLORS.teal, COLORS.violet], "legendPlatform", null, 4);
 
   setHBar(charts.subtopics, countBy(records, function(r){ return r.subtopic; }, true), 10);
+
+  renderExecutiveSummary(records, {
+    sentPairs: sentPairs, topicPairs: topicPairs, genrePairs: genrePairs,
+    countryPairs: countryPairs, competitorPairs: competitorPairs, platPairs: platPairs
+  });
 }
 
 /* ============================================================
