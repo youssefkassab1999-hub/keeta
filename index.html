@@ -257,6 +257,24 @@ License: MIT
   .chip-check input{ position:absolute; opacity:0; width:0; height:0; }
   .chip-check .sw{width:9px;height:9px;border-radius:3px;display:inline-block;}
   .chip-check.active{ color:var(--text); background:rgba(244,242,239,0.06); }
+  .brand-toggles{display:flex; gap:8px; flex-wrap:wrap;}
+  .chip-radio{
+    display:inline-flex;
+    align-items:center;
+    padding:6px 14px;
+    border-radius:100px;
+    border:1px solid var(--card-border);
+    font-size:12.5px;
+    font-weight:500;
+    cursor:pointer;
+    user-select:none;
+    color:var(--text-secondary);
+    background:transparent;
+    font-family:inherit;
+    transition:border-color .15s, color .15s, background .15s;
+  }
+  .chip-radio.active{ color:var(--bg); background:var(--lime); border-color:var(--lime); font-weight:600; }
+  .chip-radio:not(.active):hover{ border-color:var(--lime); color:var(--text); }
   .click-hint{
     font-size:11.5px;
     color:var(--text-muted);
@@ -811,6 +829,10 @@ License: MIT
       <span class="to-sep">to</span>
       <input type="date" id="endDate">
     </div>
+    <div class="filter-group" id="brandFilterGroup" style="display:none;">
+      <span class="filter-label">Brand</span>
+      <div class="brand-toggles" id="brandToggles"></div>
+    </div>
     <div class="filter-group">
       <span class="filter-label">Sentiment</span>
       <div class="sentiment-toggles" id="sentimentToggles"></div>
@@ -1124,7 +1146,7 @@ var state = {
   records: EMBEDDED_DATA,
   source: "embedded",
   lastLoaded: null,
-  filters: { start:null, end:null, sentiments: new Set(SENTIMENT_ORDER), dim:null },
+  filters: { start:null, end:null, sentiments: new Set(SENTIMENT_ORDER), dim:null, brand:null },
   fullRange: null
 };
 
@@ -1176,6 +1198,7 @@ function applyFilters(){
     if(f.start && r.date < f.start) return false;
     if(f.end && r.date > f.end) return false;
     if(!f.sentiments.has(r.sentiment)) return false;
+    if(f.brand && r.brand !== f.brand) return false;
     if(f.dim){
       var rv = r[f.dim.field];
       var match = f.dim.matchFn ? f.dim.matchFn(rv, f.dim.value) : (rv === f.dim.value);
@@ -1486,6 +1509,7 @@ function getPriorPeriodRecords(){
     records: state.records.filter(function(r){
       if(!r.date || r.date < priorStartISO || r.date > priorEndISO) return false;
       if(!f.sentiments.has(r.sentiment)) return false;
+      if(f.brand && r.brand !== f.brand) return false;
       if(f.dim){
         var rv = r[f.dim.field];
         var match = f.dim.matchFn ? f.dim.matchFn(rv, f.dim.value) : (rv === f.dim.value);
@@ -1840,7 +1864,8 @@ function renderExecutiveSummary(records, agg){
     }
   }
 
-  addPara("Across " + rangeLabel + ", Netflix MENA generated " + total.toLocaleString() + " tracked posts." + comparisonSentence + " " + sentimentSentence);
+  var brandLabel = state.filters.brand || "Netflix MENA";
+  addPara("Across " + rangeLabel + ", " + brandLabel + " generated " + total.toLocaleString() + " tracked posts." + comparisonSentence + " " + sentimentSentence);
 
   var topTopic = agg.topicPairs[0], secondTopic = agg.topicPairs[1];
   if(topTopic){
@@ -1923,6 +1948,45 @@ function renderAll(){
 /* ============================================================
    FILTER UI
    ============================================================ */
+// Rebuilds the Brand toggle from whatever distinct brand values are
+// actually present in the loaded data — not a fixed list, so a new
+// brand (e.g. a competitor's own dataset added to the same sheet)
+// shows up automatically once its rows appear. Hidden entirely when
+// only one brand is present. Preserves the current selection across
+// rebuilds (e.g. periodic refresh) if it's still a valid option.
+function buildBrandToggle(){
+  var group = document.getElementById("brandFilterGroup");
+  var wrap = document.getElementById("brandToggles");
+  var brands = Array.from(new Set(state.records.map(function(r){ return r.brand; }).filter(Boolean))).sort();
+
+  if(brands.length < 2){
+    group.style.display = "none";
+    state.filters.brand = null;
+    return;
+  }
+  group.style.display = "";
+
+  if(!state.filters.brand || brands.indexOf(state.filters.brand) === -1){
+    state.filters.brand = brands.indexOf("Netflix") !== -1 ? "Netflix" : brands[0];
+  }
+
+  wrap.innerHTML = "";
+  brands.forEach(function(b){
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chip-radio" + (b === state.filters.brand ? " active" : "");
+    btn.textContent = b;
+    btn.addEventListener("click", function(){
+      if(state.filters.brand === b) return;
+      state.filters.brand = b;
+      wrap.querySelectorAll(".chip-radio").forEach(function(el){ el.classList.remove("active"); });
+      btn.classList.add("active");
+      renderAll();
+    });
+    wrap.appendChild(btn);
+  });
+}
+
 function buildSentimentToggles(){
   var wrap = document.getElementById("sentimentToggles");
   wrap.innerHTML = "";
@@ -1992,6 +2056,8 @@ function wireFilterInputs(){
     });
     state.filters.dim = null;
     renderQuickFilterChip();
+    state.filters.brand = null;
+    buildBrandToggle();
     renderAll();
   });
 }
@@ -2069,6 +2135,7 @@ async function init(){
       this.disabled = true; this.textContent = "Refreshing…";
       await loadLiveData();
       initFilterRange();
+      buildBrandToggle();
       updateSourceBadge();
       renderAll();
       this.disabled = false; this.textContent = "Refresh data";
@@ -2076,11 +2143,13 @@ async function init(){
 
     await loadLiveData();
     initFilterRange();
+    buildBrandToggle();
     updateSourceBadge();
     renderAll();
 
     setInterval(async function(){
       await loadLiveData();
+      buildBrandToggle();
       updateSourceBadge();
       renderAll();
     }, AUTO_REFRESH_MS);
