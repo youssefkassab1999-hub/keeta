@@ -1015,6 +1015,12 @@ License: MIT
 // (offline, opened via file://, sheet unpublished) the dashboard
 // falls back to the embedded snapshot below with no visible error.
 var SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS7EJcLjrqzqdl2IwMgdET9M75QcDVaPxsRAqrTjRsRpiDbfV5z6tl42cOoKKSWyHQC4sP_4gC_crSA/pub?output=csv";
+// Optional second sheet/tab with a reduced column set for another
+// brand (e.g. "Shahid Dashboard Data"). Publish that specific tab to
+// the web as CSV (File > Share > Publish to web > select the tab >
+// CSV) and paste its link here. Leave empty to skip — the dashboard
+// works fine with just the primary sheet.
+var SHAHID_SHEET_CSV_URL = "";
 var AUTO_REFRESH_MS = 5 * 60 * 1000; // 5 minutes
 
 var COLORS = {
@@ -1119,6 +1125,29 @@ function normalizeCsvRow(row){
   };
 }
 
+// The Shahid tab (or any future reduced-schema brand tab) tracks fewer
+// fields than the primary sheet — Content type, Genre, and Subtopic
+// aren't collected for it, so those come through blank. Every other
+// field maps the same way. Accepts either "Competition" or "Competiton"
+// as the header spelling since that varies by sheet.
+function normalizeReducedSchemaRow(row){
+  return {
+    date: parseDateToISO(row["Date"]),
+    contentType: "",
+    userType: (row["User Type"]||"").toString().trim(),
+    brand: (row["Brand"]||"").toString().trim(),
+    platform: normPlatform(row["Platform"]),
+    sentiment: normSentiment(row["Sentiment"]),
+    mainTopic: (row["Main Topic"]||"").toString().trim(),
+    genre: "",
+    subtopic: "",
+    country: normCountry(row["Country"]),
+    competitor: (row["Competition"] || row["Competiton"] || "").toString().trim(),
+    title: normTitle(row["Title Name"]),
+    link: (row["Link"]||"").toString().trim()
+  };
+}
+
 /* ============================================================
    DATA LOAD
    ============================================================ */
@@ -1168,16 +1197,36 @@ function fmtDatePretty(iso){
   return d.toLocaleDateString("en-GB", { day:"numeric", month:"short", year:"numeric", timeZone:"UTC" });
 }
 
+async function fetchSheetCsv(url){
+  var busted = url + (url.indexOf("?") > -1 ? "&" : "?") + "cb=" + Date.now();
+  var res = await fetch(busted, { cache:"no-store" });
+  if(!res.ok) throw new Error("HTTP " + res.status);
+  var text = await res.text();
+  var parsed = Papa.parse(text, { header:true, skipEmptyLines:true });
+  if(!parsed.data || !parsed.data.length) throw new Error("empty sheet response");
+  return parsed.data;
+}
+
 async function loadLiveData(){
   try{
-    var url = SHEET_CSV_URL + (SHEET_CSV_URL.indexOf("?") > -1 ? "&" : "?") + "cb=" + Date.now();
-    var res = await fetch(url, { cache:"no-store" });
-    if(!res.ok) throw new Error("HTTP " + res.status);
-    var text = await res.text();
-    var parsed = Papa.parse(text, { header:true, skipEmptyLines:true });
-    if(!parsed.data || !parsed.data.length) throw new Error("empty sheet response");
-    var cleaned = parsed.data.map(normalizeCsvRow).filter(function(r){ return !!r.date; });
+    var rawRows = await fetchSheetCsv(SHEET_CSV_URL);
+    var cleaned = rawRows.map(normalizeCsvRow).filter(function(r){ return !!r.date; });
     if(!cleaned.length) throw new Error("no valid rows parsed");
+
+    // The second brand's tab is optional and independent of the
+    // primary sheet: if it's not configured, or its fetch fails, the
+    // dashboard still shows the primary sheet's data as "live" — it
+    // just won't have a second brand to switch to.
+    if(SHAHID_SHEET_CSV_URL){
+      try{
+        var rawShahidRows = await fetchSheetCsv(SHAHID_SHEET_CSV_URL);
+        var cleanedShahid = rawShahidRows.map(normalizeReducedSchemaRow).filter(function(r){ return !!r.date; });
+        cleaned = cleaned.concat(cleanedShahid);
+      }catch(shahidErr){
+        console.warn("[Netflix MENA Dashboard] Shahid sheet fetch failed, showing primary sheet only:", shahidErr.message);
+      }
+    }
+
     state.records = cleaned;
     state.source = "live";
   }catch(e){
