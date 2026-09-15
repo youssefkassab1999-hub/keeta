@@ -71,6 +71,12 @@
   .stat-card .lbl{color:var(--muted); font-size:12.5px; margin-top:6px; letter-spacing:.3px;}
 
   h2.heading{font-size:30px; font-weight:700; margin:6px 0 30px; max-width:720px;}
+  h2.heading.has-sub{margin-bottom:10px;}
+  .section-sub{color:var(--muted); font-size:14px; margin:0 0 24px;}
+  .chart-label{
+    font-size:11px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--lime); font-weight:600; margin-bottom:14px;
+  }
 
   /* generic card */
   .card{
@@ -156,9 +162,93 @@
   .metric-card .num{font-size:26px; font-weight:700; font-family:Georgia,serif; color:var(--lime);}
   .metric-card .lbl{color:var(--muted); font-size:12.5px; margin-top:6px;}
 
+  .split-grid{
+    display:grid;
+    grid-template-columns:1.4fr 0.85fr;
+    gap:24px;
+  }
+  .callout-pos{
+    background:rgba(94,204,107,0.08);
+    border:1px solid rgba(94,204,107,0.3);
+    border-radius:8px;
+    padding:16px 18px;
+    font-size:14.5px;
+    color:var(--lime);
+    line-height:1.5;
+  }
+  .callout-neg{
+    background:rgba(204,66,33,0.08);
+    border:1px solid rgba(204,66,33,0.3);
+    border-radius:8px;
+    padding:16px 18px;
+    font-size:14.5px;
+    color:var(--risk);
+    line-height:1.5;
+  }
   .legend-row{display:flex; gap:22px; margin-top:16px; flex-wrap:wrap;}
   .legend-item{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--muted);}
   .swatch{width:10px; height:10px; border-radius:2px; display:inline-block;}
+
+  /* perception shift */
+  .shift-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    margin-bottom:16px;
+  }
+  .shift-col .shift-title{
+    font-size:11.5px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--lime); font-weight:600;
+  }
+  .shift-col .shift-sub{color:var(--muted); font-size:12.5px; margin-top:4px; margin-bottom:18px;}
+  .shift-bar-row + .shift-bar-row{margin-top:14px;}
+  .shift-bar-label{display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:6px; color:var(--text);}
+  .shift-bar-track{width:100%; height:9px; background:#222; border-radius:4px; overflow:hidden;}
+  .shift-bar-fill{height:100%; border-radius:4px;}
+
+  .shift-summary-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-bottom:40px;
+  }
+  .shift-summary-row .card{font-size:14.5px; line-height:1.5;}
+
+  .sublabel{
+    font-size:11px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--lime); font-weight:600; margin-bottom:18px;
+  }
+  .lang-shift-row{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:20px;
+    display:grid;
+    grid-template-columns:90px 1fr 260px;
+    gap:20px;
+    align-items:center;
+  }
+  .lang-shift-row + .lang-shift-row{margin-top:16px;}
+  .lang-shift-name{font-size:15px; font-weight:600; color:var(--text);}
+  .lang-shift-compare{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    gap:16px;
+    align-items:center;
+  }
+  .lang-shift-arrow{color:var(--muted); font-size:18px; text-align:center;}
+  .lsb-label{font-size:11.5px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:6px;}
+  .lsb-n{color:var(--muted); text-transform:none; letter-spacing:0;}
+  .split-bar{width:100%; height:9px; border-radius:4px; overflow:hidden; display:flex; background:#222;}
+  .split-pos{height:100%; background:var(--pos);}
+  .split-neu{height:100%; background:#3A3A3A;}
+  .split-neg{height:100%; background:var(--risk);}
+  .lsb-legend{display:flex; justify-content:space-between; font-size:11.5px; margin-top:6px;}
+  .lang-shift-callout{font-size:13px; line-height:1.5;}
+
+  @media (max-width: 700px){
+    .lang-shift-row{grid-template-columns:1fr;}
+  }
 
   /* platform grid */
   .platform-grid{
@@ -190,7 +280,8 @@
   .strip-callout b{color:var(--lime);}
 
   /* themes table */
-  table{width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--border); border-radius:8px; overflow:hidden;}
+  .table-wrap{overflow-x:auto; border-radius:8px;}
+  table{width:100%; min-width:560px; border-collapse:collapse; background:var(--card); border:1px solid var(--border); border-radius:8px; overflow:hidden;}
   thead th{
     text-align:left;
     font-size:11.5px;
@@ -262,6 +353,9 @@
     .platform-grid{grid-template-columns:repeat(2,1fr);}
     .risk-grid{grid-template-columns:1fr 1fr;}
     .aud-grid{grid-template-columns:1fr;}
+    .split-grid{grid-template-columns:1fr;}
+    .shift-grid{grid-template-columns:1fr;}
+    .shift-summary-row{grid-template-columns:1fr;}
     .callout-row{grid-template-columns:1fr;}
     .hero h1{font-size:40px;}
   }
@@ -280,7 +374,7 @@
 <div class="wrap">
   <div class="hero fade-section visible">
     <h1>EgyptAir</h1>
-    <div class="sub">Social Intelligence Audit · Jan–Dec 2026</div>
+    <div class="sub">Social Intelligence Audit · Aug 17 – Sep 15, 2026</div>
     <div class="stat-row">
       <div class="stat-card">
         <div class="num">13,982</div>
@@ -306,15 +400,16 @@
 <section class="fade-section">
   <div class="wrap">
     <div class="label">Conversation Volume</div>
-    <h2 class="heading">One deal rewrote the year</h2>
+    <h2 class="heading has-sub">One day rewrote the month</h2>
+    <div class="section-sub">Daily post volume, Aug 17 – Sep 15, 2026</div>
     <div class="chart-wrap">
       <div class="chart-canvas-box" style="height:340px;">
         <canvas id="volumeChart"></canvas>
       </div>
     </div>
     <div class="callout-row">
-      <div class="callout"><b>65%</b> of annual conversation happened in one month</div>
-      <div class="callout"><b>75%</b> of annual engagement occurred in August</div>
+      <div class="callout"><b>33%</b> of total posts in a single day</div>
+      <div class="callout"><b>56%</b> of total engagement on Aug 26</div>
     </div>
   </div>
 </section>
@@ -357,21 +452,52 @@
     <div class="label">The Barça Effect</div>
     <h2 class="heading">A sponsorship that became a geopolitical conversation</h2>
     <div class="metric-row">
-      <div class="metric-card"><div class="num">6,141</div><div class="lbl">Posts</div></div>
+      <div class="metric-card"><div class="num">6,163</div><div class="lbl">Posts</div></div>
       <div class="metric-card"><div class="num">174K</div><div class="lbl">Engagements</div></div>
       <div class="metric-card"><div class="num">4.6%</div><div class="lbl">Negative rate</div></div>
       <div class="metric-card"><div class="num">12</div><div class="lbl">Countries</div></div>
     </div>
-    <div class="chart-wrap">
-      <div class="chart-canvas-box" style="height:340px;">
-        <canvas id="barcaChart"></canvas>
+    <div class="split-grid">
+      <div class="chart-wrap">
+        <div class="chart-label">Conversation Origin — All Posts</div>
+        <div class="chart-canvas-box" style="height:340px;">
+          <canvas id="barcaChart"></canvas>
+        </div>
+        <div class="legend-row">
+          <div class="legend-item"><span class="swatch" style="background:#D4FF66;"></span>MENA</div>
+          <div class="legend-item"><span class="swatch" style="background:#8A8A8A;"></span>Western</div>
+          <div class="legend-item"><span class="swatch" style="background:#CC4221;"></span>Africa growth markets</div>
+        </div>
       </div>
-      <div class="legend-row">
-        <div class="legend-item"><span class="swatch" style="background:#D4FF66;"></span>MENA</div>
-        <div class="legend-item"><span class="swatch" style="background:#8A8A8A;"></span>Western</div>
-        <div class="legend-item"><span class="swatch" style="background:#CC4221;"></span>Africa growth markets</div>
+      <div>
+        <div class="card">
+          <div class="chart-label">Language Split</div>
+          <div class="lang-list" id="barcaLangList"></div>
+        </div>
+        <div class="callout-pos" style="margin-top:16px;">
+          <b>Arabic: 44% positive</b> vs <b>English: 17.5% positive</b> — home audience views EgyptAir more favourably than the global internet.
+        </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- PERCEPTION SHIFT -->
+<section class="fade-section">
+  <div class="wrap">
+    <div class="label">Perception Shift</div>
+    <h2 class="heading has-sub">Did the sponsorship change how people feel about EgyptAir?</h2>
+    <div class="section-sub">Sentiment before vs. after Aug 26 — the day the deal was announced</div>
+
+    <div class="shift-grid" id="shiftGrid"></div>
+
+    <div class="shift-summary-row">
+      <div class="callout-pos">Overall: negative rate fell from 20.5% to 15.2% (−5.3pp). Positive share rose from 25.7% to 31.3% (+5.6pp).</div>
+      <div class="card">Deal day itself saw the lowest negative rate of the entire period (5.3%) — the announcement was received positively.</div>
+    </div>
+
+    <div class="sublabel">By Language</div>
+    <div id="langShiftList"></div>
   </div>
 </section>
 
@@ -392,12 +518,14 @@
   <div class="wrap">
     <div class="label">Conversation Themes</div>
     <h2 class="heading">What the internet is actually talking about</h2>
-    <table>
-      <thead>
-        <tr><th>Theme</th><th>Posts</th><th>Engagement</th><th>Signal</th></tr>
-      </thead>
-      <tbody id="themesBody"></tbody>
-    </table>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Theme</th><th>Posts</th><th>Engagement</th><th>Signal</th></tr>
+        </thead>
+        <tbody id="themesBody"></tbody>
+      </table>
+    </div>
   </div>
 </section>
 
@@ -435,7 +563,7 @@
 
 <footer>
   <div class="wrap">
-    Kijamii Consumer Insights · Built from 13,982 posts · Jan–Dec 2026
+    Kijamii Consumer Insights · Built from 13,982 posts · Aug 17 – Sep 15, 2026
   </div>
   <div class="footer-strip"></div>
 </footer>
@@ -450,31 +578,41 @@ const COLORS = {
 Chart.defaults.color = COLORS.muted;
 Chart.defaults.font.family = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
 
-const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const monthlyPosts = [234, 463, 290, 302, 259, 218, 184, 9127, 1417, 688, 437, 363];
+const dayLabels = ['Aug 17','Aug 18','Aug 19','Aug 20','Aug 21','Aug 22','Aug 23','Aug 24','Aug 25','Aug 26','Aug 27','Aug 28','Aug 29','Aug 30','Aug 31','Sep 1','Sep 2','Sep 3','Sep 4','Sep 5','Sep 6','Sep 7','Sep 8','Sep 9','Sep 10','Sep 11','Sep 12','Sep 13','Sep 14','Sep 15'];
+const dailyPosts = [147,170,114,143,323,379,136,179,147,4636,1252,304,336,340,240,234,463,290,302,259,218,184,281,856,688,437,363,178,202,181];
+const dealDayIndex = dayLabels.indexOf('Aug 26');
+
+const languagesData = [
+  { name:'Arabic', count:6136, pct:43.9 },
+  { name:'English', count:5963, pct:42.6 },
+  { name:'Spanish', count:647, pct:4.6 },
+  { name:'French', count:325, pct:2.3 },
+  { name:'Other', count:911, pct:6.6 }
+];
 
 /* ---------- Volume chart ---------- */
 const volumeCtx = document.getElementById('volumeChart');
 new Chart(volumeCtx, {
   type: 'bar',
   data: {
-    labels: months,
+    labels: dayLabels,
     datasets: [{
-      data: monthlyPosts,
+      data: dailyPosts,
       backgroundColor: COLORS.lime,
       borderRadius: 3,
-      maxBarThickness: 46
+      maxBarThickness: 30
     }]
   },
   options: {
     responsive: true, maintainAspectRatio: false,
+    layout: { padding: { top: 50 } },
     plugins: { legend: { display: false }, tooltip: {
       backgroundColor: '#0D0D0D', borderColor: COLORS.lime, borderWidth: 1,
       titleColor: COLORS.text, bodyColor: COLORS.text,
       callbacks: { label: (c) => c.parsed.y.toLocaleString() + ' posts' }
     } },
     scales: {
-      x: { grid: { display: false }, ticks: { color: COLORS.muted } },
+      x: { grid: { display: false }, ticks: { color: COLORS.muted, maxRotation: 90, minRotation: 90, autoSkip: true, maxTicksLimit: 15 } },
       y: { grid: { color: COLORS.border }, ticks: { color: COLORS.muted },
            border: { display: false } }
     }
@@ -483,15 +621,16 @@ new Chart(volumeCtx, {
     id: 'augAnnotation',
     afterDraw(chart){
       const meta = chart.getDatasetMeta(0);
-      const bar = meta.data[7];
+      const bar = meta.data[dealDayIndex];
       if(!bar) return;
       const {x, y} = bar.getProps(['x','y'], true);
       const ctx = chart.ctx;
-      const label = '9,127 posts — FC Barcelona deal';
+      const line1 = '4,636 posts on Aug 26';
+      const line2 = '94% referenced the FC Barcelona deal';
       ctx.save();
       ctx.font = '600 11.5px -apple-system,sans-serif';
-      const textW = ctx.measureText(label).width;
-      const boxW = textW + 20, boxH = 30;
+      const textW = Math.max(ctx.measureText(line1).width, ctx.measureText(line2).width);
+      const boxW = textW + 20, boxH = 46;
       let bx = x - boxW/2;
       const chartArea = chart.chartArea;
       bx = Math.max(chartArea.left, Math.min(bx, chartArea.right - boxW));
@@ -505,7 +644,8 @@ new Chart(volumeCtx, {
       ctx.fillStyle = COLORS.lime;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(label, bx + boxW/2, by + boxH/2);
+      ctx.fillText(line1, bx + boxW/2, by + 17);
+      ctx.fillText(line2, bx + boxW/2, by + 33);
       ctx.restore();
     }
   }]
@@ -561,9 +701,9 @@ new Chart(document.getElementById('sentimentChart'), {
   }]
 });
 
-/* ---------- Barça countries ---------- */
-const barcaCountries = ['Egypt','Spain','USA','Saudi Arabia','Nigeria','Ghana','UK','UAE'];
-const barcaValues = [1458, 1246, 711, 524, 211, 131, 128, 123];
+/* ---------- Countries (all posts) ---------- */
+const allCountries = ['Egypt','USA','Spain','Saudi Arabia','Nigeria','UK','France','UAE','Ghana','India','Tanzania','Kenya'];
+const allCountryValues = [2261, 1428, 1309, 1053, 459, 331, 230, 191, 146, 139, 138, 115];
 const regionColor = c => {
   if(['Egypt','Saudi Arabia','UAE','India'].includes(c)) return COLORS.lime;
   if(['Spain','USA','UK','France'].includes(c)) return COLORS.muted;
@@ -573,8 +713,8 @@ const regionColor = c => {
 new Chart(document.getElementById('barcaChart'), {
   type: 'bar',
   data: {
-    labels: barcaCountries,
-    datasets: [{ data: barcaValues, backgroundColor: barcaCountries.map(regionColor), borderRadius: 3 }]
+    labels: allCountries,
+    datasets: [{ data: allCountryValues, backgroundColor: allCountries.map(regionColor), borderRadius: 3 }]
   },
   options: {
     indexAxis: 'y',
@@ -586,6 +726,94 @@ new Chart(document.getElementById('barcaChart'), {
       y: { grid: { display: false }, ticks: { color: COLORS.text } }
     }
   }
+});
+
+/* ---------- Barça language panel ---------- */
+const barcaLangList = document.getElementById('barcaLangList');
+languagesData.forEach(l => {
+  const div = document.createElement('div');
+  div.className = 'lang-row';
+  div.innerHTML = `
+    <div class="top"><span class="name">${l.name}</span><span class="pct">${l.pct}% · ${l.count.toLocaleString()} posts</span></div>
+    <div class="lang-track"><div class="lang-fill" style="width:${l.pct}%"></div></div>
+  `;
+  barcaLangList.appendChild(div);
+});
+
+/* ---------- Perception shift: before/after/deal-day ---------- */
+const shiftPeriods = [
+  { title:'Before', sub:'Aug 17–25 · 1,738 posts', pos:25.7, neu:53.8, neg:20.5 },
+  { title:'Deal Day', sub:'Aug 26 · 4,636 posts', pos:27.1, neu:67.6, neg:5.3 },
+  { title:'After', sub:'Aug 27–Sep 15 · 7,608 posts', pos:31.3, neu:53.5, neg:15.2 }
+];
+const shiftGrid = document.getElementById('shiftGrid');
+shiftPeriods.forEach(p => {
+  const div = document.createElement('div');
+  div.className = 'card shift-col';
+  div.innerHTML = `
+    <div class="shift-title">${p.title}</div>
+    <div class="shift-sub">${p.sub}</div>
+    <div class="shift-bar-row">
+      <div class="shift-bar-label"><span>Positive</span><span class="pos-color">${p.pos}%</span></div>
+      <div class="shift-bar-track"><div class="shift-bar-fill" style="width:${p.pos}%;background:${COLORS.pos}"></div></div>
+    </div>
+    <div class="shift-bar-row">
+      <div class="shift-bar-label"><span>Neutral</span><span>${p.neu}%</span></div>
+      <div class="shift-bar-track"><div class="shift-bar-fill" style="width:${p.neu}%;background:#3A3A3A"></div></div>
+    </div>
+    <div class="shift-bar-row">
+      <div class="shift-bar-label"><span>Negative</span><span class="neg-color">${p.neg}%</span></div>
+      <div class="shift-bar-track"><div class="shift-bar-fill" style="width:${p.neg}%;background:${COLORS.risk}"></div></div>
+    </div>
+  `;
+  shiftGrid.appendChild(div);
+});
+
+/* ---------- Perception shift: by language ---------- */
+const langShifts = [
+  {
+    name:'Arabic',
+    before:{ pos:27.9, neg:23.8, n:971 },
+    after:{ pos:41.4, neg:9.7, n:3772 },
+    calloutClass:'callout-pos',
+    calloutText:'+13.5pp positive · −14.1pp negative — Arabic audiences responded most strongly to the deal.'
+  },
+  {
+    name:'English',
+    before:{ pos:26.8, neg:18.1, n:590 },
+    after:{ pos:21.6, neg:24.8, n:3016 },
+    calloutClass:'callout-neg',
+    calloutText:'−5.2pp positive · +6.7pp negative — Global English conversation grew more critical post-deal.'
+  }
+];
+const langShiftBlock = (label, s) => {
+  const neu = (100 - s.pos - s.neg).toFixed(1);
+  return `
+    <div class="lang-shift-bar-block">
+      <div class="lsb-label">${label} <span class="lsb-n">(n=${s.n.toLocaleString()})</span></div>
+      <div class="split-bar">
+        <div class="split-pos" style="width:${s.pos}%"></div>
+        <div class="split-neu" style="width:${neu}%"></div>
+        <div class="split-neg" style="width:${s.neg}%"></div>
+      </div>
+      <div class="lsb-legend"><span class="pos-color">${s.pos}% pos</span><span class="neg-color">${s.neg}% neg</span></div>
+    </div>
+  `;
+};
+const langShiftList = document.getElementById('langShiftList');
+langShifts.forEach(l => {
+  const div = document.createElement('div');
+  div.className = 'lang-shift-row';
+  div.innerHTML = `
+    <div class="lang-shift-name">${l.name}</div>
+    <div class="lang-shift-compare">
+      ${langShiftBlock('Before', l.before)}
+      <div class="lang-shift-arrow">→</div>
+      ${langShiftBlock('After', l.after)}
+    </div>
+    <div class="lang-shift-callout ${l.calloutClass}">${l.calloutText}</div>
+  `;
+  langShiftList.appendChild(div);
 });
 
 /* ---------- Platform grid ---------- */
@@ -644,22 +872,22 @@ themes.forEach(t => {
 
 /* ---------- Risk map ---------- */
 const risks = [
-  { title:'Zombie narratives', desc:'2016 hijack selfie incident resurfacing in viral cycles', eng:3194, posts:39 },
-  { title:'Barça ROI criticism', desc:'Questioning the value and returns of the sponsorship deal', eng:2719, posts:240 },
-  { title:'Safety / historical accidents', desc:'Legacy safety incidents referenced in ongoing conversation', eng:1962, posts:204 },
+  { title:'Recurring viral incidents', desc:'2016 hijack selfie incident resurfacing in viral cycles', eng:3194, posts:39 },
+  { title:'Sponsorship ROI debate', desc:'Questioning the value and returns of the sponsorship deal', eng:2719, posts:240 },
+  { title:'Historical safety incidents', desc:'Legacy safety incidents referenced in ongoing conversation', eng:1962, posts:204 },
   { title:'Service & delay complaints', desc:'Operational complaints about delays and customer service', eng:1614, posts:333 },
-  { title:'Nigeria / Africa service', desc:'Service quality concerns from Nigeria and African network', eng:1411, posts:245 }
+  { title:'Africa corridor complaints', desc:'Service quality concerns from Nigeria and African network', eng:1411, posts:245 }
 ];
-const maxRiskEng = Math.max(...risks.map(r => r.eng));
+const maxRiskPosts = Math.max(...risks.map(r => r.posts));
 const riskGrid = document.getElementById('riskGrid');
 risks.forEach(r => {
   const div = document.createElement('div');
   div.className = 'risk-card';
-  const pct = (r.eng / maxRiskEng * 100).toFixed(1);
+  const pct = (r.posts / maxRiskPosts * 100).toFixed(1);
   div.innerHTML = `
     <div class="heat-bar" style="width:${pct}%"></div>
-    <div class="eng">${r.eng.toLocaleString()}</div>
-    <div class="posts">${r.posts.toLocaleString()} posts</div>
+    <div class="eng">${r.posts.toLocaleString()}</div>
+    <div class="posts">posts · ${r.eng.toLocaleString()} eng.</div>
     <div class="title">${r.title}</div>
     <div class="desc">${r.desc}</div>
   `;
@@ -667,13 +895,11 @@ risks.forEach(r => {
 });
 
 /* ---------- Geography ---------- */
-const geoCountries = ['Egypt','USA','Spain','Saudi Arabia','Nigeria','UK','France','UAE','Ghana','India','Tanzania','Kenya'];
-const geoValues = [2261, 1428, 1309, 1053, 459, 331, 230, 191, 146, 139, 138, 115];
 new Chart(document.getElementById('geoChart'), {
   type: 'bar',
   data: {
-    labels: geoCountries,
-    datasets: [{ data: geoValues, backgroundColor: geoCountries.map(regionColor), borderRadius: 3 }]
+    labels: allCountries,
+    datasets: [{ data: allCountryValues, backgroundColor: allCountries.map(regionColor), borderRadius: 3 }]
   },
   options: {
     indexAxis: 'y',
@@ -688,15 +914,8 @@ new Chart(document.getElementById('geoChart'), {
 });
 
 /* ---------- Language list ---------- */
-const languages = [
-  { name:'Arabic', count:6136, pct:43.9 },
-  { name:'English', count:5963, pct:42.6 },
-  { name:'Spanish', count:647, pct:4.6 },
-  { name:'French', count:325, pct:2.3 },
-  { name:'Other', count:911, pct:6.6 }
-];
 const langList = document.getElementById('langList');
-languages.forEach(l => {
+languagesData.forEach(l => {
   const div = document.createElement('div');
   div.className = 'lang-row';
   div.innerHTML = `
