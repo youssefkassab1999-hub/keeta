@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EgyptAir — Social Intelligence Audit</title>
+<style>
+  :root{
+    --bg:#0D0D0D;
+    --card:#181818;
+    --border:#2A2A2A;
+    --lime:#D4FF66;
+    --risk:#CC4221;
+    --pos:#5ECC6B;
+    --text:#F4F2EF;
+    --muted:#8A8A8A;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:Georgia,"Times New Roman",serif;
+    margin:0;
+  }
+  .top-strip{
+    position:sticky; top:0; z-index:50;
+    height:4px;
+    background:var(--lime);
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+
+  .label{
+    font-size:11.5px;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color:var(--lime);
+    font-weight:600;
+    margin-bottom:10px;
+  }
+
+  section{padding:64px 0;}
+  section + section{border-top:1px solid var(--border);}
+
+  .fade-section{opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s ease;}
+  .fade-section.visible{opacity:1; transform:translateY(0);}
+
+  /* HERO */
+  .hero{padding:72px 0 48px;}
+  .hero h1{font-size:56px; font-weight:700; letter-spacing:-1px;}
+  .hero .sub{color:var(--muted); font-size:16px; margin-top:10px; letter-spacing:.3px;}
+  .stat-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin-top:40px;
+  }
+  .stat-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:22px 20px;
+  }
+  .stat-card .num{font-size:30px; font-weight:700; color:var(--text); font-family:Georgia,serif;}
+  .stat-card .lbl{color:var(--muted); font-size:12.5px; margin-top:6px; letter-spacing:.3px;}
+
+  h2.heading{font-size:30px; font-weight:700; margin:6px 0 30px; max-width:720px;}
+
+  /* generic card */
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:20px;
+  }
+
+  .chart-wrap{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:24px 20px 12px;
+    position:relative;
+  }
+  .chart-canvas-box{position:relative;}
+
+  .callout-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-top:20px;
+  }
+  .callout{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-left:3px solid var(--lime);
+    border-radius:8px;
+    padding:16px 18px;
+    font-size:15px;
+    color:var(--text);
+  }
+  .callout b{color:var(--lime);}
+
+  .annot-box{
+    position:absolute;
+    background:#0D0D0D;
+    border:1px solid var(--lime);
+    color:var(--lime);
+    font-size:11.5px;
+    padding:6px 10px;
+    border-radius:6px;
+    pointer-events:none;
+    white-space:nowrap;
+    transform:translate(-50%,-100%);
+    box-shadow:0 4px 14px rgba(0,0,0,.5);
+  }
+
+  /* sentiment */
+  .sent-grid{
+    display:grid;
+    grid-template-columns:0.85fr 1.4fr;
+    gap:24px;
+  }
+  .sent-blocks{display:flex; flex-direction:column; gap:16px;}
+  .sent-block{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:20px;
+  }
+  .sent-block .pct{font-size:40px; font-weight:700; font-family:Georgia,serif;}
+  .sent-block .name{color:var(--muted); font-size:12.5px; text-transform:uppercase; letter-spacing:1.5px; margin-top:4px;}
+  .sent-block .cnt{color:var(--muted); font-size:13px; margin-top:2px;}
+  .pos-color{color:var(--pos);}
+  .neu-color{color:var(--text);}
+  .neg-color{color:var(--risk);}
+
+  /* barca */
+  .metric-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin-bottom:28px;
+  }
+  .metric-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:20px;
+  }
+  .metric-card .num{font-size:26px; font-weight:700; font-family:Georgia,serif; color:var(--lime);}
+  .metric-card .lbl{color:var(--muted); font-size:12.5px; margin-top:6px;}
+
+  .legend-row{display:flex; gap:22px; margin-top:16px; flex-wrap:wrap;}
+  .legend-item{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--muted);}
+  .swatch{width:10px; height:10px; border-radius:2px; display:inline-block;}
+
+  /* platform grid */
+  .platform-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+  }
+  .plat-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:20px;
+  }
+  .plat-card .pname{font-size:14px; color:var(--text); font-weight:600;}
+  .plat-card .pbig{font-size:32px; font-weight:700; font-family:Georgia,serif; margin-top:10px;}
+  .plat-card .psub{color:var(--muted); font-size:12.5px; margin-top:8px; line-height:1.6;}
+  .lime-num{color:var(--lime);}
+  .grey-num{color:var(--text);}
+
+  .strip-callout{
+    margin-top:20px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-left:3px solid var(--lime);
+    border-radius:8px;
+    padding:18px 22px;
+    font-size:15.5px;
+  }
+  .strip-callout b{color:var(--lime);}
+
+  /* themes table */
+  table{width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--border); border-radius:8px; overflow:hidden;}
+  thead th{
+    text-align:left;
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    color:var(--muted);
+    padding:14px 18px;
+    border-bottom:1px solid var(--border);
+    font-weight:600;
+  }
+  tbody td{
+    padding:14px 18px;
+    border-bottom:1px solid var(--border);
+    font-size:14px;
+    vertical-align:middle;
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  tr.risk-tint{background:rgba(204,66,33,0.08);}
+  tr.warn-tint{background:rgba(204,120,33,0.08);}
+  .eng-bar-track{width:100%; background:#222; border-radius:3px; height:7px; overflow:hidden; margin-bottom:5px;}
+  .eng-bar-fill{height:100%; background:var(--lime); border-radius:3px;}
+  .eng-val{font-size:12px; color:var(--muted);}
+
+  /* risk map */
+  .risk-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+  }
+  .risk-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:20px;
+    position:relative;
+    overflow:hidden;
+  }
+  .heat-bar{position:absolute; top:0; left:0; height:3px; background:var(--risk);}
+  .risk-card .eng{font-size:26px; font-weight:700; color:var(--risk); font-family:Georgia,serif; margin-top:6px;}
+  .risk-card .posts{color:var(--muted); font-size:12.5px; margin-top:2px;}
+  .risk-card .title{font-size:14.5px; font-weight:600; margin-top:12px;}
+  .risk-card .desc{color:var(--muted); font-size:13px; margin-top:6px; line-height:1.5;}
+
+  /* audience */
+  .aud-grid{
+    display:grid;
+    grid-template-columns:1fr 0.85fr;
+    gap:24px;
+  }
+  .lang-list{display:flex; flex-direction:column; gap:14px;}
+  .lang-row .top{display:flex; justify-content:space-between; font-size:13.5px; margin-bottom:6px;}
+  .lang-row .name{color:var(--text); font-weight:600;}
+  .lang-row .pct{color:var(--muted);}
+  .lang-track{width:100%; height:9px; background:#222; border-radius:4px; overflow:hidden;}
+  .lang-fill{height:100%; background:var(--lime); border-radius:4px;}
+
+  footer{
+    padding:40px 0 0;
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
+  }
+  .footer-strip{height:4px; background:var(--lime); margin-top:32px;}
+
+  @media (max-width: 900px){
+    .stat-row{grid-template-columns:repeat(2,1fr);}
+    .sent-grid{grid-template-columns:1fr;}
+    .metric-row{grid-template-columns:repeat(2,1fr);}
+    .platform-grid{grid-template-columns:repeat(2,1fr);}
+    .risk-grid{grid-template-columns:1fr 1fr;}
+    .aud-grid{grid-template-columns:1fr;}
+    .callout-row{grid-template-columns:1fr;}
+    .hero h1{font-size:40px;}
+  }
+  @media (max-width: 560px){
+    .stat-row{grid-template-columns:1fr 1fr;}
+    .platform-grid{grid-template-columns:1fr;}
+    .risk-grid{grid-template-columns:1fr;}
+    .metric-row{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="top-strip"></div>
+
+<div class="wrap">
+  <div class="hero fade-section visible">
+    <h1>EgyptAir</h1>
+    <div class="sub">Social Intelligence Audit · Jan–Dec 2026</div>
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="num">13,982</div>
+        <div class="lbl">Total posts</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">311,774</div>
+        <div class="lbl">Total engagements</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">4.06B</div>
+        <div class="lbl">Estimated reach</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">101</div>
+        <div class="lbl">Data variables per post</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONVERSATION VOLUME -->
+<section class="fade-section">
+  <div class="wrap">
+    <div class="label">Conversation Volume</div>
+    <h2 class="heading">One deal rewrote the year</h2>
+    <div class="chart-wrap">
+      <div class="chart-canvas-box" style="height:340px;">
+        <canvas id="volumeChart"></canvas>
+      </div>
+    </div>
+    <div class="callout-row">
+      <div class="callout"><b>65%</b> of annual conversation happened in one month</div>
+      <div class="callout"><b>75%</b> of annual engagement occurred in August</div>
+    </div>
+  </div>
+</section>
+
+<!-- SENTIMENT -->
+<section class="fade-section">
+  <div class="wrap">
+    <div class="label">Sentiment Analysis</div>
+    <h2 class="heading">The brand has a Twitter problem</h2>
+    <div class="sent-grid">
+      <div class="sent-blocks">
+        <div class="sent-block">
+          <div class="pct pos-color">29.2%</div>
+          <div class="name">Positive</div>
+          <div class="cnt">4,082 posts</div>
+        </div>
+        <div class="sent-block">
+          <div class="pct neu-color">58.2%</div>
+          <div class="name">Neutral</div>
+          <div class="cnt">8,143 posts</div>
+        </div>
+        <div class="sent-block">
+          <div class="pct neg-color">12.6%</div>
+          <div class="name">Negative</div>
+          <div class="cnt">1,757 posts</div>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-canvas-box" style="height:320px;">
+          <canvas id="sentimentChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BARCA -->
+<section class="fade-section">
+  <div class="wrap">
+    <div class="label">The Barça Effect</div>
+    <h2 class="heading">A sponsorship that became a geopolitical conversation</h2>
+    <div class="metric-row">
+      <div class="metric-card"><div class="num">6,141</div><div class="lbl">Posts</div></div>
+      <div class="metric-card"><div class="num">174K</div><div class="lbl">Engagements</div></div>
+      <div class="metric-card"><div class="num">4.6%</div><div class="lbl">Negative rate</div></div>
+      <div class="metric-card"><div class="num">12</div><div class="lbl">Countries</div></div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-canvas-box" style="height:340px;">
+        <canvas id="barcaChart"></canvas>
+      </div>
+      <div class="legend-row">
+        <div class="legend-item"><span class="swatch" style="background:#D4FF66;"></span>MENA</div>
+        <div class="legend-item"><span class="swatch" style="background:#8A8A8A;"></span>Western</div>
+        <div class="legend-item"><span class="swatch" style="background:#CC4221;"></span>Africa growth markets</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORM INTELLIGENCE -->
+<section class="fade-section">
+  <div class="wrap">
+    <div class="label">Platform Intelligence</div>
+    <h2 class="heading">Instagram and Facebook punch far above their weight</h2>
+    <div class="platform-grid" id="platformGrid"></div>
+    <div class="strip-callout">
+      <b>Instagram delivers 152× the per-post engagement of Twitter.</b> The brand's distribution strategy doesn't match audience quality.
+    </div>
+  </div>
+</section>
+
+<!-- THEMES -->
+<section class="fade-section">
+  <div class="wrap">
+    <div class="label">Conversation Themes</div>
+    <h2 class="heading">What the internet is actually talking about</h2>
+    <table>
+      <thead>
+        <tr><th>Theme</th><th>Posts</th><th>Engagement</th><th>Signal</th></tr>
+      </thead>
+      <tbody id="themesBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- RISK MAP -->
+<section class="fade-section">
+  <div class="wrap">
+    <div class="label">Reputation Risk Map</div>
+    <h2 class="heading">Negative conversation — where it lives and why</h2>
+    <div class="risk-grid" id="riskGrid"></div>
+  </div>
+</section>
+
+<!-- AUDIENCE -->
+<section class="fade-section">
+  <div class="wrap">
+    <div class="label">Audience &amp; Geography</div>
+    <h2 class="heading">A conversation split almost evenly between Arabic and English</h2>
+    <div class="aud-grid">
+      <div class="chart-wrap">
+        <div class="chart-canvas-box" style="height:400px;">
+          <canvas id="geoChart"></canvas>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="lang-list" id="langList"></div>
+        </div>
+        <div class="callout" style="margin-top:16px;">
+          <b>Arabic: 44% positive</b> vs <b>English: 17.5% positive</b>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Kijamii Consumer Insights · Built from 13,982 posts · Jan–Dec 2026
+  </div>
+  <div class="footer-strip"></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const COLORS = {
+  bg:'#0D0D0D', card:'#181818', border:'#2A2A2A',
+  lime:'#D4FF66', risk:'#CC4221', pos:'#5ECC6B',
+  text:'#F4F2EF', muted:'#8A8A8A'
+};
+Chart.defaults.color = COLORS.muted;
+Chart.defaults.font.family = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const monthlyPosts = [234, 463, 290, 302, 259, 218, 184, 9127, 1417, 688, 437, 363];
+
+/* ---------- Volume chart ---------- */
+const volumeCtx = document.getElementById('volumeChart');
+new Chart(volumeCtx, {
+  type: 'bar',
+  data: {
+    labels: months,
+    datasets: [{
+      data: monthlyPosts,
+      backgroundColor: COLORS.lime,
+      borderRadius: 3,
+      maxBarThickness: 46
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: {
+      backgroundColor: '#0D0D0D', borderColor: COLORS.lime, borderWidth: 1,
+      titleColor: COLORS.text, bodyColor: COLORS.text,
+      callbacks: { label: (c) => c.parsed.y.toLocaleString() + ' posts' }
+    } },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: COLORS.muted } },
+      y: { grid: { color: COLORS.border }, ticks: { color: COLORS.muted },
+           border: { display: false } }
+    }
+  },
+  plugins: [{
+    id: 'augAnnotation',
+    afterDraw(chart){
+      const meta = chart.getDatasetMeta(0);
+      const bar = meta.data[7];
+      if(!bar) return;
+      const {x, y} = bar.getProps(['x','y'], true);
+      const ctx = chart.ctx;
+      const label = '9,127 posts — FC Barcelona deal';
+      ctx.save();
+      ctx.font = '600 11.5px -apple-system,sans-serif';
+      const textW = ctx.measureText(label).width;
+      const boxW = textW + 20, boxH = 30;
+      let bx = x - boxW/2;
+      const chartArea = chart.chartArea;
+      bx = Math.max(chartArea.left, Math.min(bx, chartArea.right - boxW));
+      const by = y - boxH - 14;
+      ctx.fillStyle = '#0D0D0D';
+      ctx.strokeStyle = COLORS.lime;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(bx, by, boxW, boxH, 6) : ctx.rect(bx, by, boxW, boxH);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = COLORS.lime;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, bx + boxW/2, by + boxH/2);
+      ctx.restore();
+    }
+  }]
+});
+
+/* ---------- Sentiment by platform (negative vs rest) ---------- */
+const sentPlatforms = ['Twitter/X','Blogs','Online News','Instagram','Facebook'];
+const sentNegative = [16.9, 3.6, 2.2, 3.1, 2.5];
+const sentRest = sentNegative.map(v => 100 - v);
+
+new Chart(document.getElementById('sentimentChart'), {
+  type: 'bar',
+  data: {
+    labels: sentPlatforms,
+    datasets: [
+      { label: 'Positive + Neutral', data: sentRest, backgroundColor: '#3A3A3A', stack: 's' },
+      { label: 'Negative', data: sentNegative, backgroundColor: COLORS.risk, stack: 's' }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    layout: { padding: { right: 44 } },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#0D0D0D', borderColor: COLORS.border, borderWidth: 1,
+        titleColor: COLORS.text, bodyColor: COLORS.text,
+        callbacks: { label: (c) => `${c.dataset.label}: ${c.parsed.x.toFixed(1)}%` }
+      }
+    },
+    scales: {
+      x: { stacked: true, max: 100, grid: { color: COLORS.border }, ticks: { color: COLORS.muted, callback: v => v+'%' }, border:{display:false} },
+      y: { stacked: true, grid: { display: false }, ticks: { color: COLORS.text } }
+    }
+  },
+  plugins: [{
+    id: 'negLabels',
+    afterDatasetsDraw(chart){
+      const meta = chart.getDatasetMeta(1);
+      const ctx = chart.ctx;
+      ctx.save();
+      ctx.font = '600 11.5px -apple-system,sans-serif';
+      ctx.fillStyle = COLORS.risk;
+      ctx.textBaseline = 'middle';
+      meta.data.forEach((bar, i) => {
+        const {x, y} = bar.getProps(['x','y'], true);
+        ctx.textAlign = 'left';
+        ctx.fillText(sentNegative[i].toFixed(1) + '%', x + 8, y);
+      });
+      ctx.restore();
+    }
+  }]
+});
+
+/* ---------- Barça countries ---------- */
+const barcaCountries = ['Egypt','Spain','USA','Saudi Arabia','Nigeria','Ghana','UK','UAE'];
+const barcaValues = [1458, 1246, 711, 524, 211, 131, 128, 123];
+const regionColor = c => {
+  if(['Egypt','Saudi Arabia','UAE','India'].includes(c)) return COLORS.lime;
+  if(['Spain','USA','UK','France'].includes(c)) return COLORS.muted;
+  if(['Nigeria','Ghana','Tanzania','Kenya'].includes(c)) return COLORS.risk;
+  return COLORS.muted;
+};
+new Chart(document.getElementById('barcaChart'), {
+  type: 'bar',
+  data: {
+    labels: barcaCountries,
+    datasets: [{ data: barcaValues, backgroundColor: barcaCountries.map(regionColor), borderRadius: 3 }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false },
+      tooltip: { backgroundColor: '#0D0D0D', borderColor: COLORS.border, borderWidth: 1, titleColor: COLORS.text, bodyColor: COLORS.text } },
+    scales: {
+      x: { grid: { color: COLORS.border }, ticks: { color: COLORS.muted }, border:{display:false} },
+      y: { grid: { display: false }, ticks: { color: COLORS.text } }
+    }
+  }
+});
+
+/* ---------- Platform grid ---------- */
+const platforms = [
+  { name:'Instagram', avg:1012.9, posts:64, eng:64826, big:'lime' },
+  { name:'Facebook', avg:962.7, posts:120, eng:115524, big:'lime' },
+  { name:'YouTube', avg:169.6, posts:104, eng:17638, big:'grey' },
+  { name:'Twitter/X', avg:11.4, posts:9732, eng:110925, big:'grey' },
+  { name:'Bluesky', avg:1.7, posts:null, eng:null, big:'grey' },
+  { name:'Online News', avg:0.8, posts:3045, eng:2436, big:'grey' }
+];
+const platformGrid = document.getElementById('platformGrid');
+platforms.forEach(p => {
+  const div = document.createElement('div');
+  div.className = 'plat-card';
+  const subParts = [];
+  if(p.posts !== null) subParts.push(`${p.posts.toLocaleString()} posts`);
+  if(p.eng !== null) subParts.push(`~${p.eng.toLocaleString()} engagements`);
+  div.innerHTML = `
+    <div class="pname">${p.name}</div>
+    <div class="pbig ${p.big === 'lime' ? 'lime-num' : 'grey-num'}">${p.avg.toLocaleString()}</div>
+    <div class="psub">avg engagement / post<br>${subParts.join(' · ')}</div>
+  `;
+  platformGrid.appendChild(div);
+});
+
+/* ---------- Themes table ---------- */
+const themes = [
+  { name:'Flights & Routes', posts:3062, eng:73113 },
+  { name:'Africa Network', posts:1029, eng:13924 },
+  { name:'Fleet & Aircraft', posts:1161, eng:12431 },
+  { name:'Awards & Recognition', posts:101, eng:7096 },
+  { name:'Safety / History', posts:243, eng:7349, tint:'risk-tint' },
+  { name:'Delays & Complaints', posts:371, eng:5840, tint:'risk-tint' },
+  { name:'Cargo', posts:178, eng:3284 },
+  { name:'Prices & Booking', posts:446, eng:1632 },
+  { name:'Loyalty / Miles', posts:60, eng:92, tint:'warn-tint' }
+];
+const maxEng = Math.max(...themes.map(t => t.eng));
+const themesBody = document.getElementById('themesBody');
+themes.forEach(t => {
+  const tr = document.createElement('tr');
+  if(t.tint) tr.className = t.tint;
+  const pct = (t.eng / maxEng * 100).toFixed(1);
+  tr.innerHTML = `
+    <td>${t.name}</td>
+    <td>${t.posts.toLocaleString()}</td>
+    <td>
+      <div class="eng-bar-track"><div class="eng-bar-fill" style="width:${pct}%"></div></div>
+      <div class="eng-val">${t.eng.toLocaleString()}</div>
+    </td>
+    <td>${(t.eng / t.posts).toFixed(1)} eng/post</td>
+  `;
+  themesBody.appendChild(tr);
+});
+
+/* ---------- Risk map ---------- */
+const risks = [
+  { title:'Zombie narratives', desc:'2016 hijack selfie incident resurfacing in viral cycles', eng:3194, posts:39 },
+  { title:'Barça ROI criticism', desc:'Questioning the value and returns of the sponsorship deal', eng:2719, posts:240 },
+  { title:'Safety / historical accidents', desc:'Legacy safety incidents referenced in ongoing conversation', eng:1962, posts:204 },
+  { title:'Service & delay complaints', desc:'Operational complaints about delays and customer service', eng:1614, posts:333 },
+  { title:'Nigeria / Africa service', desc:'Service quality concerns from Nigeria and African network', eng:1411, posts:245 }
+];
+const maxRiskEng = Math.max(...risks.map(r => r.eng));
+const riskGrid = document.getElementById('riskGrid');
+risks.forEach(r => {
+  const div = document.createElement('div');
+  div.className = 'risk-card';
+  const pct = (r.eng / maxRiskEng * 100).toFixed(1);
+  div.innerHTML = `
+    <div class="heat-bar" style="width:${pct}%"></div>
+    <div class="eng">${r.eng.toLocaleString()}</div>
+    <div class="posts">${r.posts.toLocaleString()} posts</div>
+    <div class="title">${r.title}</div>
+    <div class="desc">${r.desc}</div>
+  `;
+  riskGrid.appendChild(div);
+});
+
+/* ---------- Geography ---------- */
+const geoCountries = ['Egypt','USA','Spain','Saudi Arabia','Nigeria','UK','France','UAE','Ghana','India','Tanzania','Kenya'];
+const geoValues = [2261, 1428, 1309, 1053, 459, 331, 230, 191, 146, 139, 138, 115];
+new Chart(document.getElementById('geoChart'), {
+  type: 'bar',
+  data: {
+    labels: geoCountries,
+    datasets: [{ data: geoValues, backgroundColor: geoCountries.map(regionColor), borderRadius: 3 }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false },
+      tooltip: { backgroundColor: '#0D0D0D', borderColor: COLORS.border, borderWidth: 1, titleColor: COLORS.text, bodyColor: COLORS.text } },
+    scales: {
+      x: { grid: { color: COLORS.border }, ticks: { color: COLORS.muted }, border:{display:false} },
+      y: { grid: { display: false }, ticks: { color: COLORS.text } }
+    }
+  }
+});
+
+/* ---------- Language list ---------- */
+const languages = [
+  { name:'Arabic', count:6136, pct:43.9 },
+  { name:'English', count:5963, pct:42.6 },
+  { name:'Spanish', count:647, pct:4.6 },
+  { name:'French', count:325, pct:2.3 },
+  { name:'Other', count:911, pct:6.6 }
+];
+const langList = document.getElementById('langList');
+languages.forEach(l => {
+  const div = document.createElement('div');
+  div.className = 'lang-row';
+  div.innerHTML = `
+    <div class="top"><span class="name">${l.name}</span><span class="pct">${l.pct}% · ${l.count.toLocaleString()} posts</span></div>
+    <div class="lang-track"><div class="lang-fill" style="width:${l.pct}%"></div></div>
+  `;
+  langList.appendChild(div);
+});
+
+/* ---------- Fade-in on scroll ---------- */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('section.fade-section').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
