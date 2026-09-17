@@ -68,6 +68,11 @@
   .chart-canvas-box{position:relative;}
 
   /* HERO */
+  .brand-lockup{ display:flex; align-items:center; gap:16px; margin-bottom:28px; }
+  .brand-kijamii{ height:22px; width:auto; display:block; }
+  .brand-x{ color:var(--muted); font-size:16px; }
+  .brand-chip{ background:#fff; border-radius:6px; padding:6px 12px; display:flex; align-items:center; }
+  .brand-egyptair{ height:20px; width:auto; display:block; }
   .hero{padding:80px 0 60px;}
   .hero h1{font-size:52px; font-weight:700; letter-spacing:-1px;}
   .hero .sub{color:var(--muted); font-size:15px; margin-top:12px; letter-spacing:.2px;}
@@ -199,6 +204,11 @@
 <!-- SECTION 1: HERO -->
 <div class="wrap">
   <div class="hero fade-section visible">
+    <div class="brand-lockup">
+      <img src="assets/kijamii-logo.svg" alt="Kijamii" class="brand-logo brand-kijamii">
+      <span class="brand-x">×</span>
+      <div class="brand-chip" id="egyptairChip"><img src="assets/egyptair-logo.png" alt="EgyptAir" class="brand-logo brand-egyptair" onerror="this.closest('.brand-chip').style.display='none'; this.closest('.brand-chip').previousElementSibling.style.display='none';"></div>
+    </div>
     <h1>EgyptAir Social Intelligence</h1>
     <div class="sub">Aug 17 – Sep 15, 2026&nbsp;&nbsp;·&nbsp;&nbsp;30 days&nbsp;&nbsp;·&nbsp;&nbsp;13,982 posts</div>
     <div class="stat-row">
