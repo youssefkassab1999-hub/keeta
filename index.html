@@ -442,21 +442,43 @@ License: MIT
   .kpi-hero-bar-wrap{ flex:1; min-width:240px; display:flex; flex-direction:column; }
 
   /* ---------- Section / chart cards ---------- */
+  section.block{
+    position:relative;
+    margin-bottom:60px;
+    padding:34px 28px 6px;
+    border-radius:22px;
+    overflow:hidden;
+  }
+  section.block::before{
+    content:"";
+    position:absolute; inset:0; z-index:-1;
+    background:radial-gradient(ellipse 620px 320px at 0% 0%, color-mix(in srgb, var(--accent, var(--red)) 9%, transparent), transparent 70%);
+  }
+  section.block::after{
+    content:attr(data-kicker);
+    position:absolute; top:2px; right:20px; z-index:-1;
+    font-family:'Bebas Neue', sans-serif;
+    font-size:120px;
+    line-height:1;
+    letter-spacing:2px;
+    color:color-mix(in srgb, var(--accent, var(--red)) 10%, transparent);
+    pointer-events:none;
+    user-select:none;
+  }
   .section-kicker{
     display:flex;
     align-items:center;
-    gap:10px;
-    margin-bottom:8px;
+    gap:12px;
+    margin-bottom:10px;
   }
   .section-kicker .num{
-    font-family:'Lexend', sans-serif;
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:1px;
+    font-family:'Bebas Neue', sans-serif;
+    font-size:15px;
+    letter-spacing:1.5px;
     color:var(--accent, var(--red));
     background:color-mix(in srgb, var(--accent, var(--red)) 16%, transparent);
     border:1px solid color-mix(in srgb, var(--accent, var(--red)) 40%, transparent);
-    padding:2px 8px;
+    padding:3px 11px 1px;
     border-radius:100px;
   }
   .section-kicker .rule{
@@ -466,16 +488,19 @@ License: MIT
   }
   .section-title{
     font-family:'Playfair Display', serif;
-    font-weight:700;
-    font-size:24px;
-    letter-spacing:-0.2px;
-    margin:0 0 5px;
+    font-style:italic;
+    font-weight:800;
+    font-size:36px;
+    letter-spacing:-0.3px;
+    margin:0 0 6px;
     color:var(--text);
   }
   .section-desc{
-    font-size:12.5px;
-    color:var(--text-muted);
-    margin:0 0 16px;
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-size:14.5px;
+    color:var(--text-secondary);
+    margin:0 0 20px;
   }
   .grid-2{
     display:grid;
@@ -483,7 +508,6 @@ License: MIT
     gap:22px;
   }
   .grid-full{ display:grid; grid-template-columns:1fr; gap:20px; }
-  section.block{ margin-bottom:40px; }
   .card{
     background:linear-gradient(180deg, rgba(244,242,239,0.025), transparent 40%), var(--card);
     border:1px solid var(--card-border);
@@ -858,7 +882,7 @@ License: MIT
   </nav>
 
   <!-- 0. Executive Summary -->
-  <section class="block" id="sec-exec-summary">
+  <section class="block" id="sec-exec-summary" data-kicker="01">
     <div class="section-kicker" style="--accent:var(--lime);"><span class="num">01</span><span class="rule"></span></div>
     <h2 class="section-title">Executive Summary</h2>
     <p class="section-desc">A running narrative of the selected date range and filters — updates automatically as you adjust them.</p>
@@ -870,7 +894,7 @@ License: MIT
   </section>
 
   <!-- 0b. Sample Posts -->
-  <section class="block" id="sec-sample-posts">
+  <section class="block" id="sec-sample-posts" data-kicker="02">
     <div class="section-kicker" style="--accent:var(--red);"><span class="num">02</span><span class="rule"></span></div>
     <h2 class="section-title">Sample Posts</h2>
     <p class="section-desc">A random sample of posts from the current filters — real examples behind the numbers.</p>
@@ -884,7 +908,7 @@ License: MIT
   </section>
 
   <!-- 1. KPI Strip -->
-  <section class="block" id="sec-overview">
+  <section class="block" id="sec-overview" data-kicker="03">
     <div class="section-kicker" style="--accent:var(--red);"><span class="num">03</span><span class="rule"></span></div>
     <h2 class="section-title">Overview</h2>
     <p class="section-desc">Headline volume and sentiment for the selected range.</p>
@@ -892,7 +916,7 @@ License: MIT
   </section>
 
   <!-- 2. Volume Over Time -->
-  <section class="block" id="sec-volume">
+  <section class="block" id="sec-volume" data-kicker="04">
     <div class="section-kicker" style="--accent:var(--red);"><span class="num">04</span><span class="rule"></span></div>
     <h2 class="section-title">Volume Over Time</h2>
     <p class="section-desc">Posts per day across the selected date range.</p>
@@ -903,7 +927,7 @@ License: MIT
 
   <div class="grid-2">
     <!-- 3. Sentiment Breakdown -->
-    <section class="block" id="sec-sentiment">
+    <section class="block" id="sec-sentiment" data-kicker="05">
       <div class="section-kicker" style="--accent:var(--lime);"><span class="num">05</span><span class="rule"></span></div>
       <h2 class="section-title">Sentiment Breakdown</h2>
       <p class="section-desc">Share of Positive, Negative, Sharing News and Inquiry posts.</p>
@@ -914,7 +938,7 @@ License: MIT
     </section>
 
     <!-- 4. Top Main Topics -->
-    <section class="block" id="sec-topics">
+    <section class="block" id="sec-topics" data-kicker="06">
       <div class="section-kicker" style="--accent:var(--red);"><span class="num">06</span><span class="rule"></span></div>
       <h2 class="section-title">Top Main Topics</h2>
       <p class="section-desc">Top 10 topics by post volume.</p>
@@ -926,7 +950,7 @@ License: MIT
 
   <div class="grid-2">
     <!-- 5. Top Titles Mentioned -->
-    <section class="block" id="sec-titles">
+    <section class="block" id="sec-titles" data-kicker="07">
       <div class="section-kicker" style="--accent:var(--lime);"><span class="num">07</span><span class="rule"></span></div>
       <h2 class="section-title">Top Titles Mentioned</h2>
       <p class="section-desc">Top 10 named titles (excludes untagged posts).</p>
@@ -936,7 +960,7 @@ License: MIT
     </section>
 
     <!-- 6. Genre Distribution -->
-    <section class="block" id="sec-genre">
+    <section class="block" id="sec-genre" data-kicker="08">
       <div class="section-kicker" style="--accent:var(--teal);"><span class="num">08</span><span class="rule"></span></div>
       <h2 class="section-title">Genre Distribution</h2>
       <p class="section-desc">All tagged genres — top slices shown, full breakdown below.</p>
@@ -951,7 +975,7 @@ License: MIT
 
   <div class="grid-2">
     <!-- 7. Country Breakdown -->
-    <section class="block" id="sec-country">
+    <section class="block" id="sec-country" data-kicker="09">
       <div class="section-kicker" style="--accent:var(--red);"><span class="num">09</span><span class="rule"></span></div>
       <h2 class="section-title">Country Breakdown</h2>
       <p class="section-desc">Top 10 tagged countries (blanks excluded).</p>
@@ -961,7 +985,7 @@ License: MIT
     </section>
 
     <!-- 8. Competitive Mentions -->
-    <section class="block" id="sec-competitors">
+    <section class="block" id="sec-competitors" data-kicker="10">
       <div class="section-kicker" style="--accent:var(--lime);"><span class="num">10</span><span class="rule"></span></div>
       <h2 class="section-title">Competitive Mentions</h2>
       <p class="section-desc">Competitor platforms mentioned alongside Netflix.</p>
@@ -973,7 +997,7 @@ License: MIT
 
   <div class="grid-2">
     <!-- 9. Platform Split -->
-    <section class="block" id="sec-platform">
+    <section class="block" id="sec-platform" data-kicker="11">
       <div class="section-kicker" style="--accent:var(--violet);"><span class="num">11</span><span class="rule"></span></div>
       <h2 class="section-title">Platform Split</h2>
       <p class="section-desc">Normalized platform names (Twitter/X, Tiktok/TikTok merged).</p>
@@ -984,7 +1008,7 @@ License: MIT
     </section>
 
     <!-- 10. Top Subtopics -->
-    <section class="block" id="sec-subtopics">
+    <section class="block" id="sec-subtopics" data-kicker="12">
       <div class="section-kicker" style="--accent:var(--gray-chip);"><span class="num">12</span><span class="rule"></span></div>
       <h2 class="section-title">Top Subtopics</h2>
       <p class="section-desc">Top 10 subtopics by post volume.</p>
