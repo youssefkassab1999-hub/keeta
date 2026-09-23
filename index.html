@@ -59,11 +59,7 @@ License: MIT
   html{ scroll-behavior:smooth; }
   @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
   body{
-    background:
-      radial-gradient(ellipse 900px 520px at 12% -8%, rgba(229,9,20,0.16), transparent 60%),
-      radial-gradient(ellipse 800px 480px at 100% 0%, rgba(212,255,102,0.08), transparent 55%),
-      var(--bg);
-    background-attachment:fixed;
+    background:var(--bg);
     color:var(--text);
     font-family:'Lexend', system-ui, -apple-system, sans-serif;
     font-weight:400;
@@ -81,6 +77,24 @@ License: MIT
     mix-blend-mode:overlay;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   }
+  /* Slow ambient drift behind the whole page — barely-there motion so the
+     dark surface never feels totally static, even before any content loads. */
+  body::after{
+    content:"";
+    position:fixed;
+    inset:-10%;
+    pointer-events:none;
+    z-index:0;
+    background:
+      radial-gradient(ellipse 900px 520px at 12% -8%, rgba(229,9,20,0.16), transparent 60%),
+      radial-gradient(ellipse 800px 480px at 100% 0%, rgba(212,255,102,0.08), transparent 55%);
+    animation: bgDrift 26s ease-in-out infinite alternate;
+  }
+  @keyframes bgDrift{
+    0%   { transform: translate(0,0) scale(1); }
+    100% { transform: translate(-2%, 2%) scale(1.05); }
+  }
+  @media (prefers-reduced-motion: reduce){ body::after{ animation:none; } }
   .wrap{max-width:1320px;margin:0 auto;padding:28px 24px 80px; position:relative; z-index:1;}
 
   /* ---------- Header ---------- */
@@ -184,6 +198,12 @@ License: MIT
   .source-badge.live{ background:rgba(212,255,102,0.12); color:var(--lime); border:1px solid rgba(212,255,102,0.3); }
   .source-badge.embedded{ background:rgba(201,198,190,0.10); color:var(--gray-chip); border:1px solid rgba(201,198,190,0.25); }
   .dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block;}
+  .source-badge.live .dot{ animation: livePulse 1.6s ease-in-out infinite; }
+  @keyframes livePulse{
+    0%, 100% { box-shadow:0 0 0 0 rgba(212,255,102,0.55); }
+    50%      { box-shadow:0 0 0 5px rgba(212,255,102,0); }
+  }
+  @media (prefers-reduced-motion: reduce){ .source-badge.live .dot{ animation:none; } }
   #refreshBtn{
     background:transparent;
     border:1px solid var(--card-border);
@@ -526,9 +546,86 @@ License: MIT
     background:linear-gradient(90deg, var(--accent, var(--red)), transparent 85%);
   }
   .card:hover{
-    transform:translateY(-2px);
-    box-shadow:0 16px 36px rgba(0,0,0,0.36);
+    transform:translateY(-4px) scale(1.006);
+    box-shadow:0 20px 44px rgba(0,0,0,0.4), 0 0 0 1px color-mix(in srgb, var(--accent, var(--red)) 20%, transparent), 0 0 34px -6px color-mix(in srgb, var(--accent, var(--red)) 55%, transparent);
     border-color:color-mix(in srgb, var(--accent, var(--red)) 35%, var(--card-border));
+  }
+  @media (prefers-reduced-motion: reduce){ .card{ transition:none; } .card:hover{ transform:none; } }
+
+  /* ---------- Scroll-reveal: sections fade + rise into place once ---------- */
+  .reveal{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
+  }
+  .reveal.in-view{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1; transform:none; transition:none; }
+  }
+  /* Printing / exporting to PDF never scrolls the page, so nothing below
+     the fold would ever trigger the reveal — force everything visible. */
+  @media print{
+    .reveal{ opacity:1 !important; transform:none !important; }
+  }
+
+  /* ---------- KPI value count-up ---------- */
+  .kpi-value{ font-variant-numeric: tabular-nums; }
+
+  /* ---------- Now Trending ticker ---------- */
+  .trending-ticker{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin:0 0 28px;
+    padding:10px 0;
+    border-top:1px solid var(--hairline);
+    border-bottom:1px solid var(--hairline);
+    overflow:hidden;
+  }
+  .trending-ticker .tt-label{
+    flex-shrink:0;
+    display:flex; align-items:center; gap:7px;
+    font-family:'Bebas Neue', sans-serif;
+    font-size:13px;
+    letter-spacing:2px;
+    color:var(--red);
+    padding-right:14px;
+    border-right:1px solid var(--hairline);
+  }
+  .trending-ticker .tt-label .dot{
+    width:6px;height:6px;background:var(--red);
+    animation: livePulse 1.6s ease-in-out infinite;
+  }
+  .trending-ticker .tt-track-wrap{
+    flex:1;
+    overflow:hidden;
+    -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  }
+  .trending-ticker .tt-track{
+    display:flex;
+    width:max-content;
+    gap:0;
+    animation: tickerScroll 32s linear infinite;
+  }
+  .trending-ticker:hover .tt-track{ animation-play-state:paused; }
+  .trending-ticker .tt-item{
+    display:flex; align-items:center; gap:10px;
+    font-size:13px;
+    color:var(--text-secondary);
+    white-space:nowrap;
+    padding:0 22px;
+  }
+  .trending-ticker .tt-item .tt-rank{ color:var(--accent-tt, var(--lime)); font-weight:700; }
+  .trending-ticker .tt-item .tt-name{ color:var(--text); font-weight:500; }
+  .trending-ticker .tt-item .tt-count{ color:var(--text-muted); }
+  .trending-ticker .tt-sep{ color:var(--hairline); }
+  @keyframes tickerScroll{
+    0%   { transform:translateX(0); }
+    100% { transform:translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .trending-ticker .tt-track{ animation:none; }
   }
   .chart-holder{ position:relative; height:320px; }
   .chart-holder.tall{ height:380px; }
@@ -865,6 +962,11 @@ License: MIT
     <button class="filter-reset" id="resetFilters" type="button">Reset filters</button>
   </div>
   <p class="click-hint">Tip: click any bar or donut slice to filter the whole dashboard by that value. Click it again to clear.</p>
+
+  <div class="trending-ticker" id="trendingTicker" aria-label="Now trending topics">
+    <span class="tt-label"><span class="dot"></span>Now Trending</span>
+    <div class="tt-track-wrap"><div class="tt-track" id="tickerTrack"></div></div>
+  </div>
 
   <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
     <a href="#sec-exec-summary" data-target="sec-exec-summary">01 Summary</a>
@@ -1621,6 +1723,27 @@ function buildDeltaEl(curr, prior, higherIsGood){
   return el;
 }
 
+// Animates a KPI number counting up to its target instead of just
+// appearing — small touch, but it's the difference between a dashboard
+// that feels alive and a spreadsheet with charts pasted on top.
+var prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function animateCountUp(el, target, duration){
+  if(prefersReducedMotion || typeof target !== "number" || !isFinite(target)){
+    el.textContent = (typeof target === "number" ? target : target).toLocaleString();
+    return;
+  }
+  duration = duration || 900;
+  var startTime = null;
+  function step(ts){
+    if(startTime === null) startTime = ts;
+    var progress = Math.min((ts - startTime) / duration, 1);
+    var eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(target * eased).toLocaleString();
+    if(progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
 function renderKPIs(records){
   var total = records.length;
   var bySent = {};
@@ -1657,7 +1780,8 @@ function renderKPIs(records){
   var heroMain = document.createElement("div");
   heroMain.className = "kpi-hero-main";
   var heroLabel = document.createElement("div"); heroLabel.className = "kpi-label"; heroLabel.textContent = "Total Posts";
-  var heroValue = document.createElement("div"); heroValue.className = "kpi-value"; heroValue.textContent = total.toLocaleString();
+  var heroValue = document.createElement("div"); heroValue.className = "kpi-value";
+  animateCountUp(heroValue, total, 1100);
   var heroSub = document.createElement("div"); heroSub.className = "kpi-sub"; heroSub.textContent = "in selected range";
   heroMain.appendChild(heroLabel); heroMain.appendChild(heroValue); heroMain.appendChild(heroSub);
   var heroDelta = buildDeltaEl(total, priorTotal, null);
@@ -1697,7 +1821,9 @@ function renderKPIs(records){
     var card = document.createElement("div");
     card.className = "kpi-card" + (k.accent ? " accent-" + k.accent : "");
     var label = document.createElement("div"); label.className = "kpi-label"; label.textContent = k.label;
-    var value = document.createElement("div"); value.className = "kpi-value"; value.textContent = k.value;
+    var value = document.createElement("div"); value.className = "kpi-value";
+    if(typeof k.curr === "number"){ animateCountUp(value, k.curr, 900); }
+    else{ value.textContent = k.value; }
     var sub = document.createElement("div"); sub.className = "kpi-sub"; sub.textContent = k.sub;
     card.appendChild(label); card.appendChild(value); card.appendChild(sub);
     if(k.prior !== undefined){
@@ -1981,6 +2107,51 @@ function renderExecutiveSummary(records, agg){
   if(closing) addPara(closing.trim());
 }
 
+// Builds the "Now Trending" marquee from the top titles in the current
+// filter set. The track's content is duplicated once so a translateX(-50%)
+// loop is seamless without any JS-driven animation loop.
+function renderTrendingTicker(titlePairs){
+  var track = document.getElementById("tickerTrack");
+  var wrapEl = document.getElementById("trendingTicker");
+  if(!track || !wrapEl) return;
+  var top = titlePairs.slice(0, 8);
+  if(!top.length){ wrapEl.style.display = "none"; return; }
+  wrapEl.style.display = "";
+
+  var accents = ["var(--red)", "var(--lime)", "var(--teal)", "var(--violet)"];
+  function buildItems(){
+    var frag = document.createDocumentFragment();
+    top.forEach(function(pair, i){
+      var item = document.createElement("span");
+      item.className = "tt-item";
+      var rank = document.createElement("span");
+      rank.className = "tt-rank";
+      rank.style.setProperty("--accent-tt", accents[i % accents.length]);
+      rank.textContent = "#" + (i+1);
+      var name = document.createElement("span");
+      name.className = "tt-name";
+      name.textContent = pair[0];
+      var count = document.createElement("span");
+      count.className = "tt-count";
+      count.textContent = pair[1].toLocaleString() + " mentions";
+      item.appendChild(rank); item.appendChild(name); item.appendChild(count);
+      frag.appendChild(item);
+      if(i < top.length - 1){
+        var sep = document.createElement("span");
+        sep.className = "tt-sep";
+        sep.textContent = "•";
+        frag.appendChild(sep);
+      }
+    });
+    return frag;
+  }
+  track.innerHTML = "";
+  track.appendChild(buildItems());
+  var sep = document.createElement("span"); sep.className = "tt-sep"; sep.textContent = "•";
+  track.appendChild(sep);
+  track.appendChild(buildItems());
+}
+
 function renderAll(){
   var records = applyFilters();
   document.getElementById("footerCount").textContent = records.length.toLocaleString() + " of " + state.records.length.toLocaleString() + " posts shown";
@@ -1997,7 +2168,9 @@ function renderAll(){
 
   var topicPairs = countBy(records, function(r){ return r.mainTopic; }, true);
   setHBar(charts.topics, topicPairs, 10);
-  setHBar(charts.titles, countByTitleCaseInsensitive(records), 10);
+  var titlePairs = countByTitleCaseInsensitive(records);
+  setHBar(charts.titles, titlePairs, 10);
+  renderTrendingTicker(titlePairs);
 
   var genrePairs = countBy(records, function(r){ return r.genre; }, true);
   setDonut(charts.genre, genrePairs, null, [COLORS.redDim, COLORS.limeDim, COLORS.teal, COLORS.violet], null, "tableGenre", 4);
@@ -2159,6 +2332,35 @@ function showFatalError(message){
   document.getElementById("headerDateRange").textContent = "Unavailable";
 }
 
+// Fades + rises each section into place the first time it scrolls into
+// view. One-shot per section (unobserve after reveal) so re-filtering
+// the data doesn't re-trigger it and get distracting.
+function wireScrollReveal(){
+  var sections = Array.prototype.slice.call(document.querySelectorAll("section.block"));
+  sections.forEach(function(s){ s.classList.add("reveal"); });
+  if(typeof IntersectionObserver === "undefined"){
+    sections.forEach(function(s){ s.classList.add("in-view"); });
+    return;
+  }
+  var observer = new IntersectionObserver(function(entries, obs){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add("in-view");
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+  sections.forEach(function(s){ observer.observe(s); });
+
+  // Safety net: if a section never scrolls into view (a screenshot/export
+  // tool that never scrolls, a very tall monitor, a slow observer), don't
+  // leave it permanently invisible — reveal everything after a few seconds.
+  setTimeout(function(){
+    sections.forEach(function(s){ s.classList.add("in-view"); });
+    observer.disconnect();
+  }, 4000);
+}
+
 function wireSectionNav(){
   var navLinks = Array.prototype.slice.call(document.querySelectorAll("#sectionNav a"));
   var linkByTarget = {};
@@ -2201,6 +2403,7 @@ async function init(){
     buildSentimentToggles();
     wireFilterInputs();
     wireSectionNav();
+    wireScrollReveal();
     document.getElementById("shuffleSamplesBtn").addEventListener("click", function(){
       renderSamplePosts(state.lastFilteredRecords || []);
     });
