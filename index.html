@@ -863,6 +863,53 @@ License: MIT
     font-size:12px;
     color:var(--text-muted);
   }
+  .sample-post-report-link{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    margin-top:6px;
+    font-size:11.5px;
+    color:var(--red);
+    text-decoration:none;
+    font-weight:600;
+    border:1px solid rgba(229,9,20,0.35);
+    background:rgba(229,9,20,0.08);
+    padding:3px 9px;
+    border-radius:100px;
+    width:fit-content;
+  }
+  .sample-post-report-link:hover{ border-color:var(--red); background:rgba(229,9,20,0.16); }
+
+  /* ---------- Top Titles: links into the latest report ---------- */
+  .report-links{
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid var(--hairline);
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .report-links .rl-label{
+    width:100%;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.8px;
+    color:var(--text-muted);
+    margin-bottom:2px;
+  }
+  .report-links a{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:12px;
+    color:var(--lime);
+    text-decoration:none;
+    border:1px solid rgba(212,255,102,0.3);
+    background:rgba(212,255,102,0.08);
+    padding:5px 11px;
+    border-radius:100px;
+  }
+  .report-links a:hover{ border-color:var(--lime); background:rgba(212,255,102,0.16); }
 
   footer{
     margin-top:40px;
@@ -1161,6 +1208,7 @@ License: MIT
       <p class="section-desc">Top 10 named titles (excludes untagged posts).</p>
       <div class="card" style="--accent:var(--lime);">
         <div class="chart-holder tall"><canvas id="chartTitles"></canvas></div>
+        <div class="report-links" id="titleReportLinks"></div>
       </div>
     </section>
 
@@ -1493,6 +1541,45 @@ var FIELD_LABELS = {
 
 function titleMatch(recordValue, clickedValue){
   return (recordValue||"").toLowerCase() === clickedValue.toLowerCase();
+}
+
+// Maps a title string from the live sheet to its anchor inside the current
+// latest-report.html rebuild, by keyword rather than exact match — the
+// report's own naming ("GTA VI Extended Look") doesn't always match the
+// sheet's tagged title exactly ("GTA 6"), so this matches loosely and is
+// re-pointed by hand each month when latest-report.html is rebuilt for a
+// new deck (update REPORT_ANCHORS, not the calling code).
+var REPORT_ANCHORS = [
+  { anchor:"rep-7dogs",     keywords:["7 dogs","seven dogs"] },
+  { anchor:"rep-masalat",   keywords:["mas'alat","masalat","hayah aw mawt","matter of life"] },
+  { anchor:"rep-leba5",     keywords:["le'ba","leba 5","el le'ba"] },
+  { anchor:"rep-faransawy", keywords:["faransawy","frenchman"] },
+  { anchor:"rep-hofrat",    keywords:["hofrat","jahannam"] },
+  { anchor:"rep-forsan",    keywords:["forsan graih"] },
+  { anchor:"rep-akssir",    keywords:["aks sir"] },
+  { anchor:"rep-odyssey",   keywords:["odyssey"] },
+  { anchor:"rep-spiderman", keywords:["spider-man","spiderman","brand new day"] },
+  { anchor:"rep-qessa",     keywords:["qessa el kamla","gohannam","le'bet gohannam"] },
+  { anchor:"rep-bengkolli", keywords:["beng kolli"] },
+  { anchor:"rep-ahmarwala", keywords:["ahmar wala abyad","ahmar walla abyad"] },
+  { anchor:"rep-gta6",      keywords:["gta"] },
+  { anchor:"rep-mourinho",  keywords:["mourinho"] },
+  { anchor:"rep-lasthouse", keywords:["last house"] },
+  { anchor:"rep-graveyard", keywords:["graveyard"] },
+  { anchor:"rep-ewc",       keywords:["esports world cup","ewc"] },
+  { anchor:"rep-mecca",     keywords:["mecca treaty","mecca joint defense"] }
+];
+
+function findReportAnchor(title){
+  if(!title) return null;
+  var t = title.toLowerCase();
+  for(var i=0;i<REPORT_ANCHORS.length;i++){
+    var entry = REPORT_ANCHORS[i];
+    for(var j=0;j<entry.keywords.length;j++){
+      if(t.indexOf(entry.keywords[j]) !== -1) return entry.anchor;
+    }
+  }
+  return null;
 }
 
 function toggleDimFilter(field, value, matchFn){
@@ -2137,6 +2224,17 @@ function renderSamplePosts(records){
       titleEl.className = "sample-post-title";
       titleEl.textContent = "“" + r.title + "”";
       card.appendChild(titleEl);
+
+      var reportAnchor = findReportAnchor(r.title);
+      if(reportAnchor){
+        var reportLink = document.createElement("a");
+        reportLink.className = "sample-post-report-link";
+        reportLink.href = "latest-report.html#" + reportAnchor;
+        reportLink.target = "_blank";
+        reportLink.rel = "noopener";
+        reportLink.textContent = "View in report ↗";
+        card.appendChild(reportLink);
+      }
     }
 
     var metaRow = document.createElement("div");
@@ -2313,6 +2411,35 @@ function renderTrendingTicker(titlePairs){
   track.appendChild(buildItems());
 }
 
+// Below the Top Titles chart, surfaces a "View in latest report" link for
+// any of the current top 10 titles that the monthly report actually covers
+// (matched loosely via REPORT_ANCHORS) — separate from the chart's own
+// click-to-filter behavior, which is left untouched.
+function renderTitleReportLinks(titlePairs){
+  var el = document.getElementById("titleReportLinks");
+  if(!el) return;
+  el.innerHTML = "";
+  var matches = [];
+  titlePairs.slice(0, 10).forEach(function(pair){
+    var anchor = findReportAnchor(pair[0]);
+    if(anchor) matches.push({ title: pair[0], anchor: anchor });
+  });
+  if(!matches.length){ el.style.display = "none"; return; }
+  el.style.display = "";
+  var label = document.createElement("div");
+  label.className = "rl-label";
+  label.textContent = "Covered in the latest report";
+  el.appendChild(label);
+  matches.forEach(function(m){
+    var a = document.createElement("a");
+    a.href = "latest-report.html#" + m.anchor;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = m.title + " ↗";
+    el.appendChild(a);
+  });
+}
+
 function renderAll(){
   var records = applyFilters();
   document.getElementById("footerCount").textContent = records.length.toLocaleString() + " of " + state.records.length.toLocaleString() + " posts shown";
@@ -2333,6 +2460,7 @@ function renderAll(){
   var titlePairs = countByTitleCaseInsensitive(records);
   setHBar(charts.titles, titlePairs, 10);
   renderTrendingTicker(titlePairs);
+  renderTitleReportLinks(titlePairs);
 
   var genrePairs = countBy(records, function(r){ return r.genre; }, true);
   setDonut(charts.genre, genrePairs, null, [COLORS.redDim, COLORS.limeDim, COLORS.teal, COLORS.violet], null, "tableGenre", 4);
