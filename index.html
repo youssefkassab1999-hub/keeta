@@ -703,6 +703,93 @@ License: MIT
     color:var(--text-muted);
   }
 
+  /* ---------- Sentiment drivers ---------- */
+  .driver-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+  }
+  .driver-card{ padding:24px 26px; }
+  .driver-head{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:18px;
+    padding-bottom:16px;
+    border-bottom:1px solid var(--hairline);
+  }
+  .driver-icon{
+    flex-shrink:0;
+    width:38px; height:38px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:50%;
+    font-size:14px;
+    line-height:1;
+  }
+  .driver-icon.good{ background:rgba(212,255,102,0.14); color:var(--lime); border:1px solid rgba(212,255,102,0.35); }
+  .driver-icon.bad{ background:rgba(229,9,20,0.14); color:var(--red); border:1px solid rgba(229,9,20,0.35); }
+  .driver-title{
+    font-family:'Playfair Display', serif;
+    font-weight:700;
+    font-size:17px;
+    color:var(--text);
+  }
+  .driver-sub{ font-size:11.5px; color:var(--text-muted); margin-top:2px; }
+  .driver-list{ display:flex; flex-direction:column; gap:14px; }
+  .driver-row{
+    display:grid;
+    grid-template-columns:22px 1fr auto;
+    align-items:center;
+    gap:12px;
+    cursor:pointer;
+    padding:4px 6px;
+    margin:-4px -6px;
+    border-radius:8px;
+    transition:background .15s ease;
+  }
+  .driver-row:hover{ background:rgba(244,242,239,0.05); }
+  .driver-row:hover .driver-label{ color:var(--dr-accent); }
+  .driver-rank{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:15px;
+    color:var(--text-muted);
+    text-align:right;
+  }
+  .driver-main{ min-width:0; }
+  .driver-label{
+    font-size:13.5px;
+    font-weight:500;
+    color:var(--text);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    margin-bottom:6px;
+    transition:color .15s ease;
+  }
+  .driver-meter{
+    height:6px;
+    border-radius:100px;
+    background:rgba(244,242,239,0.08);
+    overflow:hidden;
+  }
+  .driver-meter-fill{
+    height:100%;
+    border-radius:100px;
+    background:var(--dr-accent);
+    width:0%;
+    transition:width .8s cubic-bezier(.2,.7,.2,1);
+  }
+  .driver-count{
+    font-variant-numeric: tabular-nums;
+    font-size:12.5px;
+    color:var(--text-secondary);
+    white-space:nowrap;
+  }
+  .driver-count .pct{ color:var(--text-muted); font-size:11px; }
+  @media (max-width: 980px){
+    .driver-grid{ grid-template-columns:1fr; }
+  }
+
   /* ---------- Sample posts ---------- */
   .sample-posts-toolbar{
     display:flex;
@@ -970,17 +1057,18 @@ License: MIT
 
   <nav class="section-nav" id="sectionNav" aria-label="Jump to section">
     <a href="#sec-exec-summary" data-target="sec-exec-summary">01 Summary</a>
-    <a href="#sec-sample-posts" data-target="sec-sample-posts">02 Samples</a>
-    <a href="#sec-overview" data-target="sec-overview">03 Overview</a>
-    <a href="#sec-volume" data-target="sec-volume">04 Volume</a>
-    <a href="#sec-sentiment" data-target="sec-sentiment">05 Sentiment</a>
-    <a href="#sec-topics" data-target="sec-topics">06 Topics</a>
-    <a href="#sec-titles" data-target="sec-titles">07 Titles</a>
-    <a href="#sec-genre" data-target="sec-genre">08 Genre</a>
-    <a href="#sec-country" data-target="sec-country">09 Country</a>
-    <a href="#sec-competitors" data-target="sec-competitors">10 Competitors</a>
-    <a href="#sec-platform" data-target="sec-platform">11 Platform</a>
-    <a href="#sec-subtopics" data-target="sec-subtopics">12 Subtopics</a>
+    <a href="#sec-sentiment-drivers" data-target="sec-sentiment-drivers">02 Drivers</a>
+    <a href="#sec-sample-posts" data-target="sec-sample-posts">03 Samples</a>
+    <a href="#sec-overview" data-target="sec-overview">04 Overview</a>
+    <a href="#sec-volume" data-target="sec-volume">05 Volume</a>
+    <a href="#sec-sentiment" data-target="sec-sentiment">06 Sentiment</a>
+    <a href="#sec-topics" data-target="sec-topics">07 Topics</a>
+    <a href="#sec-titles" data-target="sec-titles">08 Titles</a>
+    <a href="#sec-genre" data-target="sec-genre">09 Genre</a>
+    <a href="#sec-country" data-target="sec-country">10 Country</a>
+    <a href="#sec-competitors" data-target="sec-competitors">11 Competitors</a>
+    <a href="#sec-platform" data-target="sec-platform">12 Platform</a>
+    <a href="#sec-subtopics" data-target="sec-subtopics">13 Subtopics</a>
   </nav>
 
   <!-- 0. Executive Summary -->
@@ -995,9 +1083,38 @@ License: MIT
     </div>
   </section>
 
-  <!-- 0b. Sample Posts -->
-  <section class="block" id="sec-sample-posts" data-kicker="02">
+  <!-- 0a. Sentiment Drivers -->
+  <section class="block" id="sec-sentiment-drivers" data-kicker="02">
     <div class="section-kicker" style="--accent:var(--red);"><span class="num">02</span><span class="rule"></span></div>
+    <h2 class="section-title">What's Driving the Conversation</h2>
+    <p class="section-desc">The topics behind the Positive buzz, and the topics behind the Negative buzz — ranked by post volume.</p>
+    <div class="driver-grid">
+      <div class="card driver-card" style="--accent:var(--lime);">
+        <div class="driver-head">
+          <span class="driver-icon good">&#9650;</span>
+          <div>
+            <div class="driver-title">Fueling Positive Buzz</div>
+            <div class="driver-sub" id="driverPositiveMeta"></div>
+          </div>
+        </div>
+        <div class="driver-list" id="driverPositiveList"></div>
+      </div>
+      <div class="card driver-card" style="--accent:var(--red);">
+        <div class="driver-head">
+          <span class="driver-icon bad">&#9660;</span>
+          <div>
+            <div class="driver-title">Driving Negative Buzz</div>
+            <div class="driver-sub" id="driverNegativeMeta"></div>
+          </div>
+        </div>
+        <div class="driver-list" id="driverNegativeList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 0b. Sample Posts -->
+  <section class="block" id="sec-sample-posts" data-kicker="03">
+    <div class="section-kicker" style="--accent:var(--red);"><span class="num">03</span><span class="rule"></span></div>
     <h2 class="section-title">Sample Posts</h2>
     <p class="section-desc">A random sample of posts from the current filters — real examples behind the numbers.</p>
     <div class="card sample-posts-card" style="--accent:var(--red);">
@@ -1010,16 +1127,16 @@ License: MIT
   </section>
 
   <!-- 1. KPI Strip -->
-  <section class="block" id="sec-overview" data-kicker="03">
-    <div class="section-kicker" style="--accent:var(--red);"><span class="num">03</span><span class="rule"></span></div>
+  <section class="block" id="sec-overview" data-kicker="04">
+    <div class="section-kicker" style="--accent:var(--red);"><span class="num">04</span><span class="rule"></span></div>
     <h2 class="section-title">Overview</h2>
     <p class="section-desc">Headline volume and sentiment for the selected range.</p>
     <div class="kpi-grid" id="kpiGrid"></div>
   </section>
 
   <!-- 2. Volume Over Time -->
-  <section class="block" id="sec-volume" data-kicker="04">
-    <div class="section-kicker" style="--accent:var(--red);"><span class="num">04</span><span class="rule"></span></div>
+  <section class="block" id="sec-volume" data-kicker="05">
+    <div class="section-kicker" style="--accent:var(--red);"><span class="num">05</span><span class="rule"></span></div>
     <h2 class="section-title">Volume Over Time</h2>
     <p class="section-desc">Posts per day across the selected date range.</p>
     <div class="card" style="--accent:var(--red);">
@@ -1029,8 +1146,8 @@ License: MIT
 
   <div class="grid-2">
     <!-- 3. Sentiment Breakdown -->
-    <section class="block" id="sec-sentiment" data-kicker="05">
-      <div class="section-kicker" style="--accent:var(--lime);"><span class="num">05</span><span class="rule"></span></div>
+    <section class="block" id="sec-sentiment" data-kicker="06">
+      <div class="section-kicker" style="--accent:var(--lime);"><span class="num">06</span><span class="rule"></span></div>
       <h2 class="section-title">Sentiment Breakdown</h2>
       <p class="section-desc">Share of Positive, Negative, Sharing News and Inquiry posts.</p>
       <div class="card" style="--accent:var(--lime);">
@@ -1040,8 +1157,8 @@ License: MIT
     </section>
 
     <!-- 4. Top Main Topics -->
-    <section class="block" id="sec-topics" data-kicker="06">
-      <div class="section-kicker" style="--accent:var(--red);"><span class="num">06</span><span class="rule"></span></div>
+    <section class="block" id="sec-topics" data-kicker="07">
+      <div class="section-kicker" style="--accent:var(--red);"><span class="num">07</span><span class="rule"></span></div>
       <h2 class="section-title">Top Main Topics</h2>
       <p class="section-desc">Top 10 topics by post volume.</p>
       <div class="card" style="--accent:var(--red);">
@@ -1052,8 +1169,8 @@ License: MIT
 
   <div class="grid-2">
     <!-- 5. Top Titles Mentioned -->
-    <section class="block" id="sec-titles" data-kicker="07">
-      <div class="section-kicker" style="--accent:var(--lime);"><span class="num">07</span><span class="rule"></span></div>
+    <section class="block" id="sec-titles" data-kicker="08">
+      <div class="section-kicker" style="--accent:var(--lime);"><span class="num">08</span><span class="rule"></span></div>
       <h2 class="section-title">Top Titles Mentioned</h2>
       <p class="section-desc">Top 10 named titles (excludes untagged posts).</p>
       <div class="card" style="--accent:var(--lime);">
@@ -1062,8 +1179,8 @@ License: MIT
     </section>
 
     <!-- 6. Genre Distribution -->
-    <section class="block" id="sec-genre" data-kicker="08">
-      <div class="section-kicker" style="--accent:var(--teal);"><span class="num">08</span><span class="rule"></span></div>
+    <section class="block" id="sec-genre" data-kicker="09">
+      <div class="section-kicker" style="--accent:var(--teal);"><span class="num">09</span><span class="rule"></span></div>
       <h2 class="section-title">Genre Distribution</h2>
       <p class="section-desc">All tagged genres — top slices shown, full breakdown below.</p>
       <div class="card" style="--accent:var(--teal);">
@@ -1077,8 +1194,8 @@ License: MIT
 
   <div class="grid-2">
     <!-- 7. Country Breakdown -->
-    <section class="block" id="sec-country" data-kicker="09">
-      <div class="section-kicker" style="--accent:var(--red);"><span class="num">09</span><span class="rule"></span></div>
+    <section class="block" id="sec-country" data-kicker="10">
+      <div class="section-kicker" style="--accent:var(--red);"><span class="num">10</span><span class="rule"></span></div>
       <h2 class="section-title">Country Breakdown</h2>
       <p class="section-desc">Top 10 tagged countries (blanks excluded).</p>
       <div class="card" style="--accent:var(--red);">
@@ -1087,8 +1204,8 @@ License: MIT
     </section>
 
     <!-- 8. Competitive Mentions -->
-    <section class="block" id="sec-competitors" data-kicker="10">
-      <div class="section-kicker" style="--accent:var(--lime);"><span class="num">10</span><span class="rule"></span></div>
+    <section class="block" id="sec-competitors" data-kicker="11">
+      <div class="section-kicker" style="--accent:var(--lime);"><span class="num">11</span><span class="rule"></span></div>
       <h2 class="section-title">Competitive Mentions</h2>
       <p class="section-desc">Competitor platforms mentioned alongside Netflix.</p>
       <div class="card" style="--accent:var(--lime);">
@@ -1099,8 +1216,8 @@ License: MIT
 
   <div class="grid-2">
     <!-- 9. Platform Split -->
-    <section class="block" id="sec-platform" data-kicker="11">
-      <div class="section-kicker" style="--accent:var(--violet);"><span class="num">11</span><span class="rule"></span></div>
+    <section class="block" id="sec-platform" data-kicker="12">
+      <div class="section-kicker" style="--accent:var(--violet);"><span class="num">12</span><span class="rule"></span></div>
       <h2 class="section-title">Platform Split</h2>
       <p class="section-desc">Normalized platform names (Twitter/X, Tiktok/TikTok merged).</p>
       <div class="card" style="--accent:var(--violet);">
@@ -1110,8 +1227,8 @@ License: MIT
     </section>
 
     <!-- 10. Top Subtopics -->
-    <section class="block" id="sec-subtopics" data-kicker="12">
-      <div class="section-kicker" style="--accent:var(--gray-chip);"><span class="num">12</span><span class="rule"></span></div>
+    <section class="block" id="sec-subtopics" data-kicker="13">
+      <div class="section-kicker" style="--accent:var(--gray-chip);"><span class="num">13</span><span class="rule"></span></div>
       <h2 class="section-title">Top Subtopics</h2>
       <p class="section-desc">Top 10 subtopics by post volume.</p>
       <div class="card" style="--accent:var(--gray-chip);">
@@ -1467,6 +1584,64 @@ function countByTitleCaseInsensitive(records){
     pairs.push([bestForm, total]);
   });
   return pairs.sort(function(a,b){ return b[1]-a[1]; });
+}
+
+/* ============================================================
+   SENTIMENT DRIVERS (what's fueling Positive vs. Negative buzz)
+   ============================================================ */
+function buildDriverList(elId, pairs, accentVar, field, sentimentTotal){
+  var el = document.getElementById(elId);
+  el.innerHTML = "";
+  if(!pairs.length){
+    var empty = document.createElement("div");
+    empty.className = "empty-note";
+    empty.textContent = "No tagged topics in range.";
+    el.appendChild(empty);
+    return;
+  }
+  var max = pairs[0][1];
+  pairs.forEach(function(pair, i){
+    var topic = pair[0], count = pair[1];
+    var row = document.createElement("div");
+    row.className = "driver-row";
+    row.style.setProperty("--dr-accent", accentVar);
+    row.title = "Click to filter the dashboard by \"" + topic + "\"";
+
+    var rank = document.createElement("div"); rank.className = "driver-rank"; rank.textContent = String(i+1);
+
+    var main = document.createElement("div"); main.className = "driver-main";
+    var label = document.createElement("div"); label.className = "driver-label"; label.textContent = topic;
+    var meter = document.createElement("div"); meter.className = "driver-meter";
+    var fill = document.createElement("div"); fill.className = "driver-meter-fill";
+    meter.appendChild(fill);
+    main.appendChild(label); main.appendChild(meter);
+
+    var countEl = document.createElement("div"); countEl.className = "driver-count";
+    var pctOfSentiment = sentimentTotal ? Math.round(count/sentimentTotal*1000)/10 : 0;
+    countEl.textContent = count.toLocaleString() + " ";
+    var pctSpan = document.createElement("span"); pctSpan.className = "pct"; pctSpan.textContent = "(" + pctOfSentiment + "%)";
+    countEl.appendChild(pctSpan);
+
+    row.appendChild(rank); row.appendChild(main); row.appendChild(countEl);
+    row.addEventListener("click", function(){ toggleDimFilter(field, topic); });
+    el.appendChild(row);
+
+    var pctOfMax = max ? (count/max*100) : 0;
+    setTimeout(function(){ fill.style.width = pctOfMax + "%"; }, 20);
+  });
+}
+
+function renderSentimentDrivers(records){
+  var posRecords = records.filter(function(r){ return r.sentiment === "Positive"; });
+  var negRecords = records.filter(function(r){ return r.sentiment === "Negative"; });
+  var posPairs = countBy(posRecords, function(r){ return r.mainTopic; }, true).slice(0, 6);
+  var negPairs = countBy(negRecords, function(r){ return r.mainTopic; }, true).slice(0, 6);
+
+  buildDriverList("driverPositiveList", posPairs, "var(--lime)", "mainTopic", posRecords.length);
+  buildDriverList("driverNegativeList", negPairs, "var(--red)", "mainTopic", negRecords.length);
+
+  document.getElementById("driverPositiveMeta").textContent = posRecords.length.toLocaleString() + " positive posts in range";
+  document.getElementById("driverNegativeMeta").textContent = negRecords.length.toLocaleString() + " negative posts in range";
 }
 
 /* ============================================================
@@ -2158,6 +2333,7 @@ function renderAll(){
   state.lastFilteredRecords = records;
 
   renderKPIs(records);
+  renderSentimentDrivers(records);
   renderVolume(records);
   renderSamplePosts(records);
 
