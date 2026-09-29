@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Netflix MENA — Latest Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lexend:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#141414;
+    --card:#1E1E1E;
+    --card-border: rgba(244,242,239,0.08);
+    --text:#F4F2EF;
+    --text-secondary:#B9B6AC;
+    --text-muted:#7A776F;
+    --red:#E50914;
+    --red-dim:#cc3336;
+    --lime:#D4FF66;
+    --lime-dim:#77a400;
+    --teal:#008f9f;
+    --violet:#825eb9;
+    --gray-chip:#C9C6BE;
+    --hairline: rgba(244,242,239,0.10);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  html{ scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Lexend', system-ui, -apple-system, sans-serif;
+    font-weight:400;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+  body::after{
+    content:"";
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(ellipse 900px 520px at 12% -8%, rgba(229,9,20,0.16), transparent 60%),
+      radial-gradient(ellipse 800px 480px at 100% 0%, rgba(212,255,102,0.08), transparent 55%);
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:28px 24px 90px; position:relative; z-index:1;}
+
+  /* ---------- Header ---------- */
+  header.top{
+    display:flex; align-items:flex-start; justify-content:space-between;
+    gap:24px; flex-wrap:wrap; padding-bottom:22px;
+    border-bottom:1px solid var(--hairline); margin-bottom:24px;
+  }
+  .brand-row{display:flex; align-items:center; gap:14px;}
+  .logo-lockup{display:flex; align-items:center; gap:14px; flex-shrink:0;}
+  .logo-netflix{height:26px; width:auto; flex-shrink:0; display:block;}
+  .logo-kijamii{height:18px; width:auto; flex-shrink:0; display:block;}
+  .logo-sep{ font-family:'Playfair Display', serif; font-weight:600; font-size:15px; color:var(--text-muted); line-height:1; }
+  .title-block h1{
+    font-family:'Bebas Neue', 'Playfair Display', sans-serif;
+    font-weight:400; font-size:38px; line-height:1.02; letter-spacing:0.5px;
+    text-transform:uppercase; margin:0 0 6px; color:var(--text);
+  }
+  .title-block .sub{ font-size:13px; color:var(--text-secondary); }
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px; color:var(--text-secondary);
+    text-decoration:none; font-size:13px; border:1px solid var(--card-border);
+    padding:7px 14px; border-radius:100px; transition:border-color .15s, color .15s;
+    flex-shrink:0;
+  }
+  .back-link:hover{ border-color:var(--lime); color:var(--lime); }
+
+  /* ---------- Cover ---------- */
+  .cover{
+    padding:40px 0 20px;
+    margin-bottom:20px;
+    border-bottom:1px solid var(--hairline);
+  }
+  .cover-eyebrow{
+    display:flex; align-items:center; gap:10px;
+    font-size:11px; text-transform:uppercase; letter-spacing:3px;
+    color:var(--text-muted); font-weight:600; margin-bottom:14px;
+  }
+  .cover-eyebrow::before{ content:""; width:26px; height:2px; background:var(--red); display:inline-block; }
+  .cover h2{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:clamp(36px, 6vw, 64px);
+    line-height:0.98; letter-spacing:0.5px; text-transform:uppercase;
+    margin:0 0 14px; color:var(--text);
+  }
+  .cover h2 em{ font-style:normal; color:var(--lime); }
+  .cover p{ font-size:15px; color:var(--text-secondary); max-width:640px; margin:0; }
+  .edition-pill{
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(229,9,20,0.14); border:1px solid rgba(229,9,20,0.4);
+    color:var(--text); font-size:12.5px; font-weight:600;
+    padding:6px 14px; border-radius:100px; margin-bottom:18px;
+  }
+
+  /* ---------- Sticky nav ---------- */
+  .section-nav{
+    position:sticky; top:0; z-index:50;
+    display:flex; gap:6px; overflow-x:auto; scrollbar-width:none;
+    background:rgba(17,17,17,0.97); border:1px solid var(--card-border);
+    border-radius:100px; padding:6px; margin-bottom:36px;
+  }
+  .section-nav::-webkit-scrollbar{ display:none; }
+  .section-nav a{
+    flex-shrink:0; font-size:11.5px; font-weight:500; color:var(--text-muted);
+    text-decoration:none; padding:7px 13px; border-radius:100px; white-space:nowrap;
+    transition:background .15s, color .15s;
+  }
+  .section-nav a:hover{ color:var(--text); }
+  .section-nav a.active{ background:var(--red); color:#fff; }
+
+  /* ---------- Section chrome ---------- */
+  section.block{
+    --accent: var(--red);
+    position:relative;
+    margin-bottom:56px;
+    padding:30px 26px 6px;
+    border-radius:20px;
+    overflow:hidden;
+  }
+  section.block::before{
+    content:"";
+    position:absolute; inset:0; z-index:-1;
+    background:radial-gradient(ellipse 600px 300px at 0% 0%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 70%);
+  }
+  .section-kicker{
+    display:flex; align-items:center; gap:12px; margin-bottom:8px;
+  }
+  .section-kicker .num{
+    font-family:'Bebas Neue', sans-serif; font-size:14px; letter-spacing:1.5px;
+    color:var(--accent); background:color-mix(in srgb, var(--accent) 16%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    padding:3px 11px 1px; border-radius:100px;
+  }
+  .section-kicker .rule{ height:1px; flex:1; background:linear-gradient(90deg, var(--hairline), transparent); }
+  .section-title{
+    font-family:'Playfair Display', serif; font-style:italic; font-weight:800;
+    font-size:30px; letter-spacing:-0.3px; margin:0 0 6px; color:var(--text);
+  }
+  .section-desc{ font-size:13.5px; color:var(--text-secondary); margin:0 0 22px; max-width:760px; }
+
+  .card{
+    background:linear-gradient(180deg, rgba(244,242,239,0.025), transparent 40%), var(--card);
+    border:1px solid var(--card-border); border-radius:16px; padding:22px 24px;
+    box-shadow:0 10px 26px rgba(0,0,0,0.26); position:relative; overflow:hidden;
+    margin-bottom:22px;
+  }
+  .card::before{ content:""; position:absolute; top:0; left:0; right:0; height:2.5px; background:linear-gradient(90deg, var(--accent, var(--red)), transparent 85%); }
+  .card:last-child{ margin-bottom:0; }
+  .card-eyebrow{ font-size:11px; text-transform:uppercase; letter-spacing:1.2px; color:var(--text-muted); font-weight:600; margin-bottom:6px; }
+  .card h3{ font-family:'Playfair Display', serif; font-weight:700; font-size:19px; margin:0 0 10px; color:var(--text); }
+  .card p{ font-size:13.5px; color:var(--text-secondary); margin:0 0 12px; }
+  .card p:last-child{ margin-bottom:0; }
+
+  /* ---------- Chapter divider ---------- */
+  .chapter-divider{
+    display:flex; align-items:center; gap:22px;
+    margin:64px 0 40px; padding:26px 0; border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline);
+  }
+  .chapter-num{
+    font-family:'Bebas Neue', sans-serif; font-size:56px; line-height:1; color:var(--accent, var(--red)); flex-shrink:0;
+  }
+  .chapter-text .eyebrow{ font-size:11px; text-transform:uppercase; letter-spacing:2px; color:var(--text-muted); margin-bottom:4px; }
+  .chapter-text h2{ font-family:'Bebas Neue', sans-serif; font-size:clamp(26px,4vw,40px); text-transform:uppercase; margin:0; color:var(--text); letter-spacing:0.5px; }
+
+  /* ---------- Stat tiles ---------- */
+  .stat-row{ display:grid; grid-template-columns:repeat(auto-fit, minmax(130px,1fr)); gap:16px; margin-bottom:18px; }
+  .stat-tile{ text-align:left; }
+  .stat-tile .n{ font-family:'Bebas Neue', sans-serif; font-size:34px; color:var(--accent, var(--red)); line-height:1; }
+  .stat-tile .l{ font-size:11px; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-top:4px; }
+
+  /* ---------- Positive / negative two-column ---------- */
+  .pn-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .pn-col h4{ font-family:'Bebas Neue', sans-serif; letter-spacing:1px; font-size:15px; margin:0 0 12px; }
+  .pn-col.pos h4{ color:var(--lime); }
+  .pn-col.neg h4{ color:var(--red); }
+  .pn-item{ border-left:2px solid var(--hairline); padding:2px 0 14px 14px; margin-bottom:2px; }
+  .pn-col.pos .pn-item{ border-color:rgba(212,255,102,0.35); }
+  .pn-col.neg .pn-item{ border-color:rgba(229,9,20,0.35); }
+  .pn-item .t{ font-size:13px; font-weight:600; color:var(--text); margin-bottom:3px; }
+  .pn-item .d{ font-size:12.5px; color:var(--text-secondary); }
+  @media (max-width:700px){ .pn-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- Meter list ---------- */
+  .meter-list{ display:flex; flex-direction:column; gap:12px; }
+  .meter-row{ display:grid; grid-template-columns:1fr auto; align-items:center; gap:12px; }
+  .meter-main{ min-width:0; }
+  .meter-label{ font-size:13px; color:var(--text); margin-bottom:6px; display:flex; justify-content:space-between; gap:10px; }
+  .meter-label .v{ color:var(--text-muted); font-variant-numeric: tabular-nums; }
+  .meter-track{ height:6px; border-radius:100px; background:rgba(244,242,239,0.08); overflow:hidden; }
+  .meter-fill{ height:100%; border-radius:100px; background:var(--accent, var(--red)); }
+
+  /* ---------- Quote cards ---------- */
+  .quote-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:700px){ .quote-grid{ grid-template-columns:1fr; } }
+  .quote-card{ background:var(--card); border:1px solid var(--card-border); border-left:3px solid var(--accent, var(--lime)); border-radius:10px; padding:16px 18px; }
+  .quote-card p{ font-family:'Playfair Display', serif; font-style:italic; font-size:14px; color:var(--text); margin:0 0 8px; line-height:1.5; }
+  .quote-card .meta{ font-size:11px; color:var(--text-muted); display:flex; justify-content:space-between; gap:8px; }
+  .quote-tag{ display:inline-block; font-size:10px; text-transform:uppercase; letter-spacing:0.8px; font-weight:700; padding:2px 8px; border-radius:100px; margin-bottom:8px; }
+  .quote-tag.dominant{ background:rgba(212,255,102,0.14); color:var(--lime); }
+  .quote-tag.skeptical{ background:rgba(229,9,20,0.14); color:var(--red); }
+
+  /* ---------- Title cards (recap / trending) ---------- */
+  .title-card-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; margin-bottom:10px; }
+  .title-card-head h3{ margin:0; }
+  .title-meta{ font-size:11.5px; color:var(--text-muted); }
+  .rank-badge{
+    font-family:'Bebas Neue', sans-serif; font-size:13px; letter-spacing:1px;
+    color:var(--text-muted); border:1px solid var(--card-border); border-radius:100px;
+    padding:3px 10px; flex-shrink:0;
+  }
+  .detail-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px 18px; margin:14px 0; font-size:12.5px; }
+  .detail-grid div span{ display:block; color:var(--text-muted); font-size:10.5px; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:2px; }
+
+  /* ---------- Creator tables ---------- */
+  .creator-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  .creator-table th{ text-align:left; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.6px; font-size:10.5px; padding:8px 10px; border-bottom:1px solid var(--hairline); }
+  .creator-table td{ padding:10px; border-bottom:1px solid var(--hairline); color:var(--text-secondary); vertical-align:middle; }
+  .creator-table tr:last-child td{ border-bottom:none; }
+  .creator-table td:first-child{ color:var(--text); font-weight:500; }
+  .creator-table a{ color:var(--lime); text-decoration:none; font-size:12.5px; }
+  .creator-table a:hover{ text-decoration:underline; }
+  .views-badge{ font-variant-numeric: tabular-nums; color:var(--text); font-weight:600; }
+  .table-scroll{ overflow-x:auto; }
+
+  /* ---------- Verdict words ---------- */
+  .word-chip-list{ display:flex; flex-wrap:wrap; gap:8px; }
+  .word-chip{ background:rgba(244,242,239,0.06); border:1px solid var(--card-border); border-radius:100px; padding:5px 12px; font-size:12.5px; color:var(--text-secondary); }
+  .word-chip b{ color:var(--text); }
+
+  /* ---------- Glossary ---------- */
+  .glossary-toggle{
+    display:inline-flex; align-items:center; gap:8px; background:transparent;
+    border:1px solid var(--card-border); color:var(--text-secondary); font-family:inherit;
+    font-size:13px; padding:9px 18px; border-radius:100px; cursor:pointer;
+  }
+  .glossary-toggle:hover{ border-color:var(--lime); color:var(--lime); }
+  .glossary-body{ display:none; margin-top:20px; }
+  .glossary-body.visible{ display:block; }
+  .glossary-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:14px; }
+  .glossary-item{ font-size:12.5px; }
+  .glossary-item .term{ color:var(--text); font-weight:600; margin-bottom:2px; }
+  .glossary-item .def{ color:var(--text-muted); }
+  .glossary-subhead{ font-family:'Bebas Neue', sans-serif; letter-spacing:1.5px; color:var(--text-muted); font-size:13px; margin:26px 0 14px; }
+  .glossary-subhead:first-child{ margin-top:0; }
+
+  footer{
+    margin-top:50px; padding-top:20px; border-top:1px solid var(--hairline);
+    font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+
+  @media (max-width:700px){
+    .stat-row{ grid-template-columns:repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand-row">
+      <div class="logo-lockup" role="img" aria-label="Netflix × Kijamii">
+        <img class="logo-netflix" src="data:image/webp;base64,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" alt="Netflix">
+        <span class="logo-sep" aria-hidden="true">&times;</span>
+        <svg class="logo-kijamii" viewBox="0 0 757.2 233.46" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="#F4F2EF">
+            <rect x="160.97" y="63.47" width="44.89" height="125.18"/>
+            <path d="M380.41,63.3l.25,14.46h-.25c-5.49-6.32-11.43-10.8-17.83-13.47-6.4-2.66-13.51-3.99-21.32-3.99-8.98,0-17.08,1.79-24.31,5.36-7.23,3.58-13.38,8.35-18.45,14.34-5.07,5.98-9.02,12.97-11.85,20.95-2.83,7.98-4.24,16.38-4.24,25.19s1.37,17.42,4.11,25.31c2.74,7.9,6.65,14.84,11.72,20.82,5.07,5.98,11.22,10.72,18.45,14.21,7.23,3.49,15.34,5.24,24.31,5.24,7.98,0,15.04-1.58,21.2-4.74,6.15-3.16,12.22-7.73,18.2-13.72h.25l8.88,15.21h35.01v-94.6l-16.96-30.58h-27.18ZM374.55,146.96c-5.07,5.4-11.85,8.1-20.32,8.1s-15.09-2.74-19.82-8.23c-4.74-5.49-7.11-12.47-7.11-20.95s2.45-15.21,7.36-20.7c4.9-5.49,11.51-8.23,19.83-8.23s15,2.74,20.07,8.23c5.07,5.49,7.61,12.47,7.61,20.95s-2.54,15.42-7.61,20.82Z"/>
+            <rect x="160.97" y=".79" width="44.89" height="43.68"/>
+            <rect x="648.62" y="63.47" width="44.89" height="125.18"/>
+            <rect x="648.62" y=".79" width="44.89" height="43.68"/>
+            <polygon points="96.82 0 47.73 88.38 68.96 88.38 96.82 188.76 141.14 188.76 113.8 88.38 92.57 88.38 141.14 0 96.82 0"/>
+            <rect y="0" width="44.89" height="188.76"/>
+            <polygon points="712.31 188.66 732.93 188.66 757.2 144.27 757.2 63.48 712.31 63.48 712.31 188.66"/>
+            <polygon points="225.06 188.56 225.11 233.46 245.35 233.46 269.94 188.55 269.94 63.28 225.06 63.28 225.06 188.56"/>
+            <rect x="225.29" y=".79" width="44.89" height="43.68"/>
+            <rect x="712.31" y=".79" width="44.89" height="43.68"/>
+            <polygon points="443.23 62.37 443.23 92.47 443.23 92.47 443.23 188.82 486.44 188.82 486.44 92.47 486.44 92.47 469.85 62.37 443.23 62.37"/>
+            <path d="M614.01,63.95h-55.46v30.09h10.85c10.65.02,19.29,8.66,19.29,19.32v75.3h41.92v-94.61h0l-16.59-30.09Z"/>
+            <path d="M541.95,63.95h-55.46v30.09h10.85c10.65.02,19.28,8.66,19.29,19.32v75.3h41.92v-94.61h0l-16.59-30.09Z"/>
+          </g>
+        </svg>
+      </div>
+      <div class="title-block">
+        <h1>Latest Report</h1>
+        <div class="sub">Rebuilt from the monthly Streaming Services Digital Intelligence deck</div>
+      </div>
+    </div>
+    <a href="reports.html" class="back-link">&larr; Reports archive</a>
+  </header>
+
+  <div class="cover">
+    <div class="cover-eyebrow">Streaming Services · Digital Intelligence</div>
+    <h2>Culture &amp; <em>Streaming</em> Pulse</h2>
+    <span class="edition-pill">August 2026 Edition</span>
+    <p>A monthly intelligence brief on the conversations, fandoms, and streaming behaviors shaping the region's entertainment economy.</p>
+  </div>
+
+  <nav class="section-nav" id="sectionNav">
+    <a href="#sec-methodology" data-target="sec-methodology">Methodology</a>
+    <a href="#sec-recap" data-target="sec-recap">Recap</a>
+    <a href="#sec-culture" data-target="sec-culture">01 Culture Pulse</a>
+    <a href="#sec-entertainment" data-target="sec-entertainment">02 Entertainment</a>
+    <a href="#sec-trending" data-target="sec-trending">03 Trending Titles</a>
+    <a href="#sec-landscape" data-target="sec-landscape">04 Landscape</a>
+    <a href="#sec-netflix" data-target="sec-netflix">05 Netflix Deep-Dive</a>
+    <a href="#sec-creators" data-target="sec-creators">06 Creators</a>
+    <a href="#sec-glossary" data-target="sec-glossary">Glossary</a>
+  </nav>
+
+  <!-- METHODOLOGY -->
+  <section class="block" id="sec-methodology" style="--accent:var(--gray-chip);">
+    <div class="section-kicker"><span class="num">Methodology</span><span class="rule"></span></div>
+    <h2 class="section-title">How This Report Was Built</h2>
+    <p class="section-desc">Scope and metrics behind this month's intelligence brief.</p>
+    <div class="card">
+      <div class="stat-row">
+        <div class="stat-tile"><div class="n">31</div><div class="l">Days analyzed · 1&ndash;31 Aug</div></div>
+        <div class="stat-tile"><div class="n">3,255</div><div class="l">Conversations tracked</div></div>
+        <div class="stat-tile"><div class="n">6</div><div class="l">Report sections</div></div>
+      </div>
+      <p>Metrics tracked across the brief: platform analysis, topic analysis, sentiment, user country, and volume of conversations over time.</p>
+    </div>
+  </section>
+
+  <!-- RECAP -->
+  <section class="block" id="sec-recap" style="--accent:var(--red);">
+    <div class="section-kicker"><span class="num">Recap</span><span class="rule"></span></div>
+    <h2 class="section-title">May &middot; June &middot; July, Revisited</h2>
+    <p class="section-desc">The titles that gained traction over the past three months, before this month's spotlight.</p>
+
+    <div class="card">
+      <div class="title-card-head"><h3>7 Dogs</h3><span class="rank-badge">16 / 50</span></div>
+      <p class="card-eyebrow">The prestige event film — celebrity density and Saudi-backed scale drive the conversation</p>
+      <div class="stat-row">
+        <div class="stat-tile"><div class="n">43,154</div><div class="l">Total posts</div></div>
+        <div class="stat-tile"><div class="n">759,122</div><div class="l">Total engagement</div></div>
+      </div>
+      <p><b>Celebrity premiere arrivals</b> — Arrival and red-carpet content around Karim Abdel Aziz, Ahmed Ezz, Ahmed Helmy, Mona Zaki, Mohamed Sami and Mai Omar drove a social spike.</p>
+      <p><b>The Monica Bellucci factor</b> — Highly engaged Instagram posts frame the film through international glamour and celebrity curiosity, especially Ahmed Ezz's statement praising her professionalism.</p>
+      <p><b>Viral moment: cast banter clips</b> — Top-performing reels center on humorous Q&amp;A moments rather than plot specifics, especially the Karim Abdelaziz–Ahmed Ezz interview.</p>
+    </div>
+
+    <div class="card">
+      <div class="title-card-head"><h3>Mas'alat Hayah aw Mawt</h3><span class="rank-badge">18 / 58</span></div>
+      <p class="card-eyebrow">A festival film caught attention — theatre release, 300+ posts</p>
+      <p><b>Pre-launch buildup</b> — Kept building for two weeks after release, driven almost entirely by organic word-of-mouth from a Saudi Twitter audience that says it had stopped trusting local films.</p>
+      <p><b>Sarah Taibah star power</b> — Lead actress (also the writer, and co-writer of Hawjan) repeatedly cited by fans as evidence of a genuine authorial voice.</p>
+      <p><b>"Legendary" on-screen chemistry</b> — The most-repeated single compliment: the chemistry between Sarah Taibah and Yagoub Alfarhan, described as driving repeat-viewing intent.</p>
+      <p><b>Visuals + character-driven comedy</b> — Cinematography and color grading singled out unusually often for a rom-com; a long-form review praised comedy that emerges from character, read as proof of mature screenwriting.</p>
+      <p><b>"Restores faith" narrative</b> — Multiple posts frame this as the film that undid a bad experience with a previous Saudi release.</p>
+    </div>
+
+    <div class="card">
+      <div class="title-card-head"><h3>El Le'ba 5</h3><span class="rank-badge">28 / 50</span></div>
+      <p class="card-eyebrow">988 conversations &middot; released 11th April</p>
+      <p>The fierce rival childhood friends, Wassim and Mazo, return for a high-stakes rematch — this time with the tables turned entirely.</p>
+      <div class="pn-grid">
+        <div class="pn-col pos">
+          <h4>Positive</h4>
+          <div class="pn-item"><div class="t">Viewer Loyalty</div><div class="d">Multiple seasons in, the show has a dedicated fan base that continues to anticipate each new season.</div></div>
+          <div class="pn-item"><div class="t">Feel-Good Show</div><div class="d">Widely described as an easy, comforting watch that helped viewers unwind.</div></div>
+          <div class="pn-item"><div class="t">Standout Performances</div><div class="d">Hesham Maged and Michael Milad stood out as audience favorites.</div></div>
+        </div>
+        <div class="pn-col neg">
+          <h4>Negative</h4>
+          <div class="pn-item"><div class="t">Comedy Fatigue</div><div class="d">Humor felt forced and less effective than previous seasons; some challenges felt unrealistic.</div></div>
+          <div class="pn-item"><div class="t">Comparison to Previous Seasons</div><div class="d">Some viewers felt Season 5 diminished the franchise's legacy, with a weaker script and repetitive jokes.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title-card-head"><h3>El Faransawy</h3><span class="rank-badge">26 / 50</span></div>
+      <p class="card-eyebrow">1,710 conversations &middot; released 25th April</p>
+      <p>Khaled Moshir, "El Faransawy," is a brilliant, pragmatic defense attorney who believes in legal technicalities over absolute justice, working at a top firm under his mentor Suleiman.</p>
+      <div class="pn-grid">
+        <div class="pn-col pos">
+          <h4>Positive</h4>
+          <div class="pn-item"><div class="t">Writing &amp; Storyline</div><div class="d">Adam Abdelghaffar's writing earned notable praise; engaging, fast-paced narrative.</div></div>
+          <div class="pn-item"><div class="t">Production Quality</div><div class="d">Direction, cinematography and overall execution widely commended.</div></div>
+          <div class="pn-item"><div class="t">Cast &amp; Performances</div><div class="d">Amr Youssef praised as one of his best works; Jana El Ashkar, Sawsan Badr and Ahmed Foad Selim also stood out.</div></div>
+        </div>
+        <div class="pn-col neg">
+          <h4>Negative</h4>
+          <div class="pn-item"><div class="t">Acting &amp; Casting</div><div class="d">Some found Amr Youssef overly exaggerated; Gamal Solaiman drew the most criticism, mainly for his Egyptian accent.</div></div>
+          <div class="pn-item"><div class="t">Ending</div><div class="d">Described as rushed, confusing and somewhat predictable.</div></div>
+          <div class="pn-item"><div class="t">Show Events Realism</div><div class="d">Some viewers felt parts of the story lacked realism and detail.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title-card-head"><h3>Hofrat Jahannam</h3><span class="rank-badge">27 / 50</span></div>
+      <p class="card-eyebrow">258 conversations &middot; released 8th May</p>
+      <p>Set in the slum neighborhoods of Al-Ghaleel in Jeddah, a mysterious murder unearths buried secrets, sparking a war between two rival drug-trafficking gangs.</p>
+      <div class="pn-grid">
+        <div class="pn-col pos">
+          <h4>Positive</h4>
+          <div class="pn-item"><div class="t">Authenticity</div><div class="d">Strong personal connection for Jeddah viewers, thanks to accurate portrayal of life before redevelopment.</div></div>
+          <div class="pn-item"><div class="t">Storyline &amp; Social Themes</div><div class="d">Praised for exploring drug abuse, blackmail and youth crime beyond a traditional crime narrative.</div></div>
+          <div class="pn-item"><div class="t">Cast &amp; Performances</div><div class="d">Qusai Kheder singled out as talented and charismatic for a new actor.</div></div>
+        </div>
+        <div class="pn-col neg">
+          <h4>Negative</h4>
+          <div class="pn-item"><div class="t">Dialect</div><div class="d">Criticism of the Jeddah dialect portrayal as exaggerated or inconsistent.</div></div>
+          <div class="pn-item"><div class="t">Script</div><div class="d">A minority felt the script lacked sufficient depth.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title-card-head"><h3>Forsan Graih</h3><span class="rank-badge">35 / 58</span></div>
+      <p class="card-eyebrow">670 conversations &middot; released 4th June</p>
+      <p>Fahd, a wealthy businessman, sells his family enterprise to acquire and revive a struggling local football club, entrusting its eccentric chairman Abu Othman with its transformation.</p>
+      <div class="pn-grid">
+        <div class="pn-col pos">
+          <h4>Positive</h4>
+          <div class="pn-item"><div class="t">Storytelling &amp; Humor</div><div class="d">Praised for moving beyond repetitive football plots into social comedy and club politics; humor felt light and unforced.</div></div>
+          <div class="pn-item"><div class="t">Cast &amp; Performances</div><div class="d">Abdulaziz Al Shihri's charisma stood out; Abdullah Alrehaili's Hamdan considered the "salt of the show."</div></div>
+        </div>
+        <div class="pn-col neg">
+          <h4>Negative</h4>
+          <div class="pn-item"><div class="t">Comparison to Season 1</div><div class="d">General enjoyment, but some felt Season 1 remained the stronger benchmark.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="chapter-divider" style="--accent:var(--lime);">
+    <div class="chapter-num">01</div>
+    <div class="chapter-text"><div class="eyebrow">Section One of Five</div><h2>Saudi Culture Pulse</h2></div>
+  </div>
+
+  <section class="block" id="sec-culture" style="--accent:var(--lime);">
+    <div class="section-kicker"><span class="num">01</span><span class="rule"></span></div>
+    <h2 class="section-title">Saudi Culture Pulse</h2>
+    <p class="section-desc">The moments moving beyond entertainment into national and geopolitical identity.</p>
+
+    <div class="card">
+      <h3>Mecca Treaty</h3>
+      <p>The Mecca Joint Defense Agreement is a trilateral mutual defense pact signed on August 7, 2026 in Mecca, between Saudi Arabia, Turkey and Pakistan — essentially mirroring NATO's Article 5: an attack on any one signatory is treated as an attack on all three.</p>
+      <div class="pn-grid" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="pn-col pos"><h4>POV 01</h4><div class="pn-item"><div class="t">Saudi leadership &amp; pride</div><div class="d">Framed as Saudi-led: the Kingdom convening, deciding and shaping regional security rather than reacting to it.</div></div></div>
+        <div class="pn-col pos"><h4>POV 02</h4><div class="pn-item"><div class="t">Islamic unity + Mecca symbolism</div><div class="d">Mecca, Friday and the Kaaba gave the agreement religious weight — many described it explicitly as Muslim unity.</div></div></div>
+        <div class="pn-col pos"><h4>POV 03</h4><div class="pn-item"><div class="t">Deterrence &amp; shared security</div><div class="d">An attack on one becomes an attack on all; Pakistan's nuclear capability and Turkey's military strength repeatedly cited.</div></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Voices From Saudi Nationals</h3>
+      <p class="section-desc" style="margin-bottom:16px;">Analyst reads of the dominant and skeptical framings driving the conversation, ranked by engagement.</p>
+      <div class="quote-grid">
+        <div class="quote-card" style="--accent:var(--lime);"><span class="quote-tag dominant">Dominant · 5,080 eng</span><p>Frames the treaty as Saudi initiative and leadership, not simply participation in a three-country agreement.</p><div class="meta"><span>Leadership &amp; pride</span></div></div>
+        <div class="quote-card" style="--accent:var(--lime);"><span class="quote-tag dominant">Dominant · 2,183 eng</span><p>One of the strongest religious readings: the event described as Muslims uniting, placed inside an Islamic historical frame.</p><div class="meta"><span>Islamic unity</span></div></div>
+        <div class="quote-card" style="--accent:var(--lime);"><span class="quote-tag dominant">Dominant · 1,051 eng</span><p>A second-order reaction: some Saudis were not only celebrating the treaty, but watching how outsiders reacted to it.</p><div class="meta"><span>Geopolitical reaction</span></div></div>
+        <div class="quote-card" style="--accent:var(--lime);"><span class="quote-tag dominant">Dominant · 615 eng</span><p>The agreement understood as a practical security umbrella — unity is valuable because it changes the cost of aggression.</p><div class="meta"><span>Deterrence</span></div></div>
+        <div class="quote-card" style="--accent:var(--red);"><span class="quote-tag skeptical">Skeptical · 11 eng</span><p>Minority skepticism focused on partner reliability: would the allies actually enter Saudi conflicts when tested?</p><div class="meta"><span>Skeptical minority</span></div></div>
+        <div class="quote-card" style="--accent:var(--red);"><span class="quote-tag skeptical">Skeptical · 8 eng</span><p>A second skeptical angle: alliances are useful only if backed by Saudi capability. This view exists, but did not drive the trend.</p><div class="meta"><span>Self-reliance concern</span></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Esports World Cup</h3>
+      <p>An annual multi-title esports tournament run by the Esports World Cup Foundation, a nonprofit funded by Saudi Arabia's Public Investment Fund — explicitly part of Vision 2030's economic diversification agenda.</p>
+      <div class="stat-row">
+        <div class="stat-tile"><div class="n">5,900</div><div class="l">Posts</div></div>
+        <div class="stat-tile"><div class="n">44K</div><div class="l">Engagements</div></div>
+        <div class="stat-tile"><div class="n">7.5</div><div class="l">Avg. engagement / post</div></div>
+        <div class="stat-tile"><div class="n">Paris</div><div class="l">Host city, EWC26 (was Riyadh)</div></div>
+      </div>
+      <div class="meter-list" style="margin-bottom:16px;">
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Crown Prince's Paris attendance</span><span class="v">4,400 · 75%</span></div><div class="meter-track"><div class="meter-fill" style="width:75%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Team Falcons</span><span class="v">1,078 · 18%</span></div><div class="meter-track"><div class="meter-fill" style="width:18%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Game titles (all combined)</span><span class="v">147 · 2%</span></div><div class="meter-track"><div class="meter-fill" style="width:2%;"></div></div></div></div>
+      </div>
+      <p>Across 5,900 posts, esports content itself is functionally absent — every named game title combined accounts for under 2.5% of the total. The dominant Saudi frame was diplomatic: the Crown Prince appearing alongside President Macron, with EWC26 serving as the setting for a state moment.</p>
+      <p><b>Team Falcons carried the story further than any official channel</b> — appearing in 4,076 posts, 3,994 of them from fans, rival organisations and third parties rather than the club's own accounts. When Falcons finished runner-up, Saudi fans responded with pride at the team representing the kingdom, treating the club as a national side.</p>
+      <p><b>Moving from Riyadh to Paris was received as expansion, not loss</b> — of 6,912 posts mentioning Paris, only 30 registered negative sentiment. French esports organisations (Karmine Corp, Team Vitality, Gentle Mates) embraced the event as a home fixture, generating 48,366 engagements in French alone.</p>
+    </div>
+  </section>
+
+  <div class="chapter-divider" style="--accent:var(--red);">
+    <div class="chapter-num">02</div>
+    <div class="chapter-text"><div class="eyebrow">Section Two of Five</div><h2>Entertainment Pulse</h2></div>
+  </div>
+
+  <section class="block" id="sec-entertainment" style="--accent:var(--red);">
+    <div class="section-kicker"><span class="num">02</span><span class="rule"></span></div>
+    <h2 class="section-title">Entertainment Pulse</h2>
+    <p class="section-desc">What the industry's biggest conversations reveal about audience motivations and preference shifts.</p>
+
+    <div class="card">
+      <h3>Aks Sir</h3>
+      <p>A high-octane Saudi thriller fusing action and comedy as characters navigate the Eastern Province's dangerous roads in armored vehicles.</p>
+      <div class="stat-row">
+        <div class="stat-tile"><div class="n">1,085</div><div class="l">Total posts</div></div>
+        <div class="stat-tile"><div class="n">185K</div><div class="l">Tickets sold</div></div>
+        <div class="stat-tile"><div class="n">#1</div><div class="l">Weekly sales, Aug 16&ndash;22</div></div>
+      </div>
+      <div class="detail-grid">
+        <div><span>Director</span>Abdulaziz Alshlahei</div>
+        <div><span>Writer</span>Mufrej Al-Majfel</div>
+        <div><span>Lead cast</span>Abdulaziz Alshehri, Abdulmajeed Alkanani</div>
+        <div><span>Genre</span>Action / crime / comedy</div>
+        <div><span>Setting</span>Eastern Province cash-transit heist</div>
+        <div><span>Backing</span>Big Time Fund, Riyadh Season, GEA</div>
+        <div><span>Runtime</span>105 min · R15</div>
+      </div>
+      <h3 style="margin-top:20px;">Review Analysis</h3>
+      <div class="meter-list" style="margin-bottom:16px;">
+        <div class="meter-row" style="--accent:var(--lime);"><div class="meter-main"><div class="meter-label"><span>Positive</span><span class="v">79% · 109 reviews</span></div><div class="meter-track"><div class="meter-fill" style="width:79%;background:var(--lime);"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Neutral</span><span class="v">11% · 15 reviews</span></div><div class="meter-track"><div class="meter-fill" style="width:11%;background:var(--gray-chip);"></div></div></div></div>
+        <div class="meter-row" style="--accent:var(--red);"><div class="meter-main"><div class="meter-label"><span>Negative</span><span class="v">10% · 14 reviews</span></div><div class="meter-track"><div class="meter-fill" style="width:10%;"></div></div></div></div>
+      </div>
+      <p class="card-eyebrow">Most-used verdict words</p>
+      <div class="word-chip-list" style="margin-bottom:16px;">
+        <span class="word-chip"><b>رهيب</b> outstanding · 44</span>
+        <span class="word-chip"><b>مختلف</b> different · 39</span>
+        <span class="word-chip"><b>مبتذل</b> derivative · 23</span>
+        <span class="word-chip"><b>نقلة</b> a leap forward · 14</span>
+        <span class="word-chip"><b>ممل</b> boring · 10</span>
+        <span class="word-chip"><b>هواة</b> amateurish · 8</span>
+      </div>
+      <p class="card-eyebrow">What the reviews discussed (occurrences)</p>
+      <div class="meter-list">
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Direction &amp; cinematography — the 'dark blue' palette praised and criticised</span><span class="v">84</span></div><div class="meter-track"><div class="meter-fill" style="width:100%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Script &amp; story construction — clever twists vs. clichés and rushed transitions</span><span class="v">71</span></div><div class="meter-track"><div class="meter-fill" style="width:85%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Comedy execution — Alshehri's timing carried the film for most</span><span class="v">70</span></div><div class="meter-track"><div class="meter-fill" style="width:83%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Performances &amp; casting — highest-consensus dimension, 92% positive</span><span class="v">65</span></div><div class="meter-track"><div class="meter-fill" style="width:77%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Genre novelty — framed as crime/dark comedy rather than pure comedy</span><span class="v">60</span></div><div class="meter-track"><div class="meter-fill" style="width:71%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Action &amp; pacing — the most divided dimension proportionally</span><span class="v">31</span></div><div class="meter-track"><div class="meter-fill" style="width:37%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Cultural authenticity — smallest cluster, sharpest tone</span><span class="v">5</span></div><div class="meter-track"><div class="meter-fill" style="width:6%;"></div></div></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>The Odyssey</h3>
+      <p>A mythic tale sailing far beyond its ancient roots — sparking conversation around Nolan's grand vision, star-studded cast, Greek mythology and the hype around its big-screen journey.</p>
+      <div class="stat-row">
+        <div class="stat-tile"><div class="n">10,530</div><div class="l">Total posts</div></div>
+        <div class="stat-tile"><div class="n">714.9M</div><div class="l">Total reach</div></div>
+        <div class="stat-tile"><div class="n">20.3M</div><div class="l">X/Twitter impressions</div></div>
+        <div class="stat-tile"><div class="n">137.6K</div><div class="l">Total likes</div></div>
+      </div>
+      <div class="meter-list" style="margin-bottom:16px;">
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Language — English</span><span class="v">86.7%</span></div><div class="meter-track"><div class="meter-fill" style="width:86.7%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Platform — X / Twitter</span><span class="v">94.6% of volume</span></div><div class="meter-track"><div class="meter-fill" style="width:94.6%;"></div></div></div></div>
+        <div class="meter-row" style="--accent:var(--lime);"><div class="meter-main"><div class="meter-label"><span>Sentiment — Positive</span><span class="v">31.6%</span></div><div class="meter-track"><div class="meter-fill" style="width:31.6%;background:var(--lime);"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Sentiment — Negative</span><span class="v">17.2%</span></div><div class="meter-track"><div class="meter-fill" style="width:17.2%;"></div></div></div></div>
+      </div>
+      <p><b>Opening weekend:</b> Jul 16&ndash;19, peaking at 4,000 conversations.</p>
+      <p><b>"We want the full Nolan experience"</b> — the IMAX conversation took on a life of its own: audiences discussed 70mm vs. standard cinema and shared explainers on where true IMAX 70mm screens exist worldwide.</p>
+      <p><b>"Wait&hellip; that's not CGI?"</b> — behind-the-scenes coverage and cast statements around the film's realistic scenes gave viewers another reason to engage.</p>
+      <p><b>Trust the Nolan vision</b> — praise for the ambition behind the film; practical filmmaking, realism, IMAX and scale reinforced the idea that this is a film meant for the biggest screen possible. Media coverage of box-office success kept momentum going.</p>
+      <p class="card-eyebrow">Cast driving conversation</p>
+      <div class="stat-row">
+        <div class="stat-tile"><div class="n">3K</div><div class="l">Zendaya (Athena) mentions — driven by fashion/jewelry press coverage, reach not volume</div></div>
+        <div class="stat-tile"><div class="n">1.9K</div><div class="l">Tom Holland (Telemachus) mentions — Spider-Man fanbase carries into Odyssey discourse</div></div>
+        <div class="stat-tile"><div class="n">1.5K</div><div class="l">Matt Damon (Odysseus) mentions — highest raw count, centered on physical transformation</div></div>
+        <div class="stat-tile"><div class="n">740</div><div class="l">Robert Pattinson (Antinous) mentions — a Tom Holland viral quote about him drove reach</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Spider-Man: Brand New Day</h3>
+      <p>A global record breaker that became a Saudi-led cultural moment, with box-office pride and a controversy that stayed mostly outside the region.</p>
+      <div class="stat-row">
+        <div class="stat-tile"><div class="n">$2B</div><div class="l">In 17 days — 2nd fastest film ever to the mark</div></div>
+        <div class="stat-tile"><div class="n">83.6%</div><div class="l">Of the Arabic-language conversation is Saudi</div></div>
+        <div class="stat-tile"><div class="n">64%</div><div class="l">Positive sentiment in the Arabic conversation</div></div>
+      </div>
+      <p><b>The biggest day wasn't the release.</b> Peak: Aug 21 — 2,459 posts, bigger than opening day — driven by the reveal that the official art book used generative AI in NYC concept art, sparking an "AI slop" backlash. 98% of that peak day's volume was in English; only 45 posts (1.8%) were in Arabic. Negative sentiment in the Saudi subset overall: 6.9%.</p>
+      <p><b>Saudi Arabia drove 83.6%</b> of the overall Arabic-language conversation, tracking the record-breaking box office and comparing it to Titanic and Avatar as billion-dollar benchmarks.</p>
+      <p><b>Tom Holland &amp; Zendaya became the link between two blockbusters</b> — appearing across both this film and The Odyssey, giving Saudi audiences following both films a natural cross-blockbuster thread. Saudi posts naming Zendaya: 23 &middot; naming Tom Holland: 202.</p>
+      <div class="quote-card" style="--accent:var(--lime);"><p>"Tom and Zendaya saved cinema this year and whoever disagrees can argue with a wall."</p><div class="meta"><span>A representative Saudi reaction to the "$1B in two films" stat</span></div></div>
+    </div>
+  </section>
+
+  <div class="chapter-divider" style="--accent:var(--teal);">
+    <div class="chapter-num">03</div>
+    <div class="chapter-text"><div class="eyebrow">Section Three of Five</div><h2>Trending Titles</h2></div>
+  </div>
+
+  <section class="block" id="sec-trending" style="--accent:var(--teal);">
+    <div class="section-kicker"><span class="num">03</span><span class="rule"></span></div>
+    <h2 class="section-title">Trending Titles</h2>
+    <p class="section-desc">The titles that captured the most attention this month, regardless of streaming platform — selected by volume of buzz.</p>
+
+    <div class="card">
+      <div class="title-card-head"><h3>El Qessa El Kamla: Le'bet Gohannam</h3><span class="rank-badge">2.6K conversations</span></div>
+      <p class="card-eyebrow">Digital streaming series &middot; released 28th August</p>
+      <p>A dark 3-episode true-crime thriller following Salim, a tech-obsessed youth hooked on AI, and Sheikh Alaa (Mohamed Farag), a financially desperate man lured into the dark web — an online gaming dynamic spirals into a shocking, real-world crime.</p>
+      <div class="pn-grid">
+        <div class="pn-col pos">
+          <h4>Positive</h4>
+          <div class="pn-item"><div class="t">Mohamed Farag: The Master of Misery</div><div class="d">A powerhouse, convincing villain performance — some viewers had to turn off the screen.</div></div>
+          <div class="pn-item"><div class="t">Omar Rozik: Range Unlocked</div><div class="d">High marks for a dramatic shift in acting style, defying his previous roles.</div></div>
+        </div>
+        <div class="pn-col neg">
+          <h4>Negative</h4>
+          <div class="pn-item"><div class="t">Too Soon, Too Heavy</div><div class="d">Criticized for portraying a recent real-life tragedy with what some felt was a lack of empathy for victims' families.</div></div>
+          <div class="pn-item"><div class="t">An Absolute Emotional Drainer</div><div class="d">Described as psychologically draining, made more disturbing by the events being real.</div></div>
+          <div class="pn-item"><div class="t">A Characterization That Didn't Sit Right</div><div class="d">Questioned portraying the killer as religious, arguing it distorted the real-life story.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title-card-head"><h3>Beng Kolli</h3><span class="rank-badge">1.6K conversations</span></div>
+      <p class="card-eyebrow">Digital streaming series &middot; released 16th August</p>
+      <p>An Egyptian medical drama centered on anesthesiology, surgery and hospital politics, following doctors navigating ICU emergencies, rivalries and ethical dilemmas.</p>
+      <div class="pn-grid">
+        <div class="pn-col pos">
+          <h4>Positive</h4>
+          <div class="pn-item"><div class="t">Finally, Something Different</div><div class="d">Praised for breaking from the usual Egyptian series formula, welcoming a focus on female doctors.</div></div>
+          <div class="pn-item"><div class="t">It Grows on You</div><div class="d">Some admitted low initial expectations, but became gradually more invested.</div></div>
+        </div>
+        <div class="pn-col neg">
+          <h4>Negative</h4>
+          <div class="pn-item"><div class="t">Where Were the Doctors?</div><div class="d">The biggest criticism: medical inaccuracies, with one non-doctor viewer even spotting errors.</div></div>
+          <div class="pn-item"><div class="t">Not Exactly the Doctor's Office</div><div class="d">Portrayal of doctors and nurses seen as misleading and exaggerated.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title-card-head"><h3>Ahmar Wala Abyad</h3><span class="rank-badge">400 conversations</span></div>
+      <p class="card-eyebrow">Digital streaming series &middot; released 14th August</p>
+      <p>A Saudi crime drama starring Mohamed Al Rashed, Saeed Saleh and Ibrahim Al Hasawi. Nasser steps out of prison to find his family fractured by greed and grudges, pulled into a battle between past betrayals and present rivalries.</p>
+      <div class="pn-grid">
+        <div class="pn-col pos">
+          <h4>Positive</h4>
+          <div class="pn-item"><div class="t">Hooked from Frame One</div><div class="d">Praised for pace, seamless transitions and lack of filler.</div></div>
+          <div class="pn-item"><div class="t">Shoutout to the Standouts</div><div class="d">Fahad Albutairi (following Halat Nadra) and Waleed Qashran singled out.</div></div>
+        </div>
+        <div class="pn-col neg">
+          <h4>Negative</h4>
+          <div class="pn-item"><div class="t">The Story Could Use a Rewrite</div><div class="d">Scriptwriting criticized as not living up to the promising premise.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="chapter-divider" style="--accent:var(--violet);">
+    <div class="chapter-num">04</div>
+    <div class="chapter-text"><div class="eyebrow">Section Four of Five</div><h2>Streaming Landscape</h2></div>
+  </div>
+
+  <section class="block" id="sec-landscape" style="--accent:var(--violet);">
+    <div class="section-kicker"><span class="num">04</span><span class="rule"></span></div>
+    <h2 class="section-title">Streaming Landscape</h2>
+    <p class="section-desc">Who owned the streaming conversation in MENA, and how each platform earned it.</p>
+
+    <div class="card">
+      <h3>Platform Overview</h3>
+      <p>Netflix maintained its lead with <b>54.2%</b> of conversations, followed by Yango Play, while Disney+ and Shahid conversations were driven by new content and platform developments. What's new took center stage across the board.</p>
+      <div class="detail-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+        <div><span>Netflix &middot; 1,765 conversations</span>GTA 6 Extended Look sparked widespread excitement, alongside the Mourinho documentary, Graveyard S3, and Korean titles Mousetrap &amp; Our Sticky Love.</div>
+        <div><span>Yango Play</span>Driven by new/upcoming releases Asad and Habbatein.</div>
+        <div><span>Shahid</span>El Qessa El Kamla and Beng Kolli led conversation, via news sharing around new releases.</div>
+        <div><span>Disney+</span>TikTok partnership, expanding sports streaming rights, Turkish titles (The Last Scene, Pera: See Me), and Kingdom Hearts anime news.</div>
+      </div>
+      <p style="margin-top:14px;">Facebook dominated Yango Play conversations, largely via Egyptian media/entertainment pages resharing its library. Netflix and Shahid generated more diverse discussion, driven by users on X.</p>
+    </div>
+
+    <div class="card">
+      <h3>Shahid</h3>
+      <p>September's lineup is anchored by Sondos S3, but comment sentiment skews toward unmet demand — particularly for Turkish content continuations and titles like Al-Sefara 87 still missing from the schedule.</p>
+      <p class="card-eyebrow">Top titles by volume share — August 2026</p>
+      <div class="meter-list">
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>El Qessa El Kamla</span><span class="v">26.4%</span></div><div class="meter-track"><div class="meter-fill" style="width:26.4%;background:var(--violet);"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Beng Kolli</span><span class="v">13%</span></div><div class="meter-track"><div class="meter-fill" style="width:13%;background:var(--violet);"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Hob Aa Waraq</span><span class="v">6.3%</span></div><div class="meter-track"><div class="meter-fill" style="width:6.3%;background:var(--violet);"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Tale' Nazel</span><span class="v">4.7%</span></div><div class="meter-track"><div class="meter-fill" style="width:4.7%;background:var(--violet);"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Ahmar Wala Abyad</span><span class="v">4.7%</span></div><div class="meter-track"><div class="meter-fill" style="width:4.7%;background:var(--violet);"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Al-Amir</span><span class="v">4.3%</span></div><div class="meter-track"><div class="meter-fill" style="width:4.3%;background:var(--violet);"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Anbar Al-Mawt</span><span class="v">3.5%</span></div><div class="meter-track"><div class="meter-fill" style="width:3.5%;background:var(--violet);"></div></div></div></div>
+      </div>
+      <p style="margin-top:14px;">Content-library criticism was mainly driven by Saudi users pointing to limited content diversity, comparing Shahid unfavorably to other platforms, and calling for more (particularly Saudi) productions.</p>
+    </div>
+
+    <div class="card">
+      <h3>Yango Play</h3>
+      <p>Conversations were largely driven by its titles, with <b>Asad</b> emerging as the platform's biggest driver after media pages highlighted its first-ever streaming availability following its theatrical release.</p>
+      <div class="meter-list" style="margin-bottom:16px;">
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Asad</span><span class="v">45.8%</span></div><div class="meter-track"><div class="meter-fill" style="width:45.8%;background:var(--violet);"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Habbatein</span><span class="v">15.8%</span></div><div class="meter-track"><div class="meter-fill" style="width:15.8%;background:var(--violet);"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Elly Malosh Kebeer</span><span class="v">7%</span></div><div class="meter-track"><div class="meter-fill" style="width:7%;background:var(--violet);"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Darb Nar</span><span class="v">4.8%</span></div><div class="meter-track"><div class="meter-fill" style="width:4.8%;background:var(--violet);"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>W Teqabel Habib</span><span class="v">4.3%</span></div><div class="meter-track"><div class="meter-fill" style="width:4.3%;background:var(--violet);"></div></div></div></div>
+      </div>
+      <p class="card-eyebrow">Sentiment</p>
+      <div class="stat-row">
+        <div class="stat-tile"><div class="n">84.9%</div><div class="l">News sharing</div></div>
+        <div class="stat-tile"><div class="n">10%</div><div class="l">Positive</div></div>
+        <div class="stat-tile"><div class="n">4%</div><div class="l">Negative</div></div>
+        <div class="stat-tile"><div class="n">1.1%</div><div class="l">Inquiry</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Disney+</h3>
+      <div class="pn-grid">
+        <div class="pn-col pos">
+          <h4>Announcements</h4>
+          <div class="pn-item"><div class="t">Streaming Rights</div><div class="d">Formula E rights across 144 territories, plus new LaLiga rights in France.</div></div>
+          <div class="pn-item"><div class="t">Disney × TikTok</div><div class="d">A new partnership letting creators use Disney content, with selected videos on Disney+'s TikTok-style vertical feed.</div></div>
+        </div>
+        <div class="pn-col pos">
+          <h4>Featured Titles</h4>
+          <div class="pn-item"><div class="t">Turkish titles</div><div class="d">The Last Scene ("Öngörü") and Pera: See Me ("Pera: Gör Beni").</div></div>
+          <div class="pn-item"><div class="t">Anime &amp; more</div><div class="d">Kingdom Hearts anime development news; also X-Men '97, Vision Quest, Made in Korea, The Devil Wears Prada 2.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Netflix vs. the Competition</h3>
+      <p><b>Netflix takes the Saudi content crown from Shahid</b> — despite Shahid's position as a Saudi platform, Saudi content is gaining stronger traction with audiences on Netflix; the H1 2026 rankings sparked strong reactions, with audiences increasingly turning to Netflix for Saudi content while criticizing Shahid for lacking visibility and investment in local productions.</p>
+      <p><b>YouTube draws a battle line against Netflix</b> — YouTube is reportedly offering millions to top creators for exclusive content while limiting marketing/brand revenue for those who partner with Netflix. Netflix scored a counter-win by securing a six-hour exclusive first window for the GTA 6 Extended Look.</p>
+      <p class="card-eyebrow">Competitors mentioned alongside Netflix (2.6% of the total sample &middot; 46 conversations)</p>
+      <div class="meter-list">
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>YouTube</span><span class="v">40%</span></div><div class="meter-track"><div class="meter-fill" style="width:40%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Shahid</span><span class="v">20%</span></div><div class="meter-track"><div class="meter-fill" style="width:20%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Apple TV+</span><span class="v">13.3%</span></div><div class="meter-track"><div class="meter-fill" style="width:13.3%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>OSN Plus</span><span class="v">8.9%</span></div><div class="meter-track"><div class="meter-fill" style="width:8.9%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Disney Plus</span><span class="v">6.7%</span></div><div class="meter-track"><div class="meter-fill" style="width:6.7%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Prime Video</span><span class="v">6.7%</span></div><div class="meter-track"><div class="meter-fill" style="width:6.7%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>HBO Max</span><span class="v">4.4%</span></div><div class="meter-track"><div class="meter-fill" style="width:4.4%;"></div></div></div></div>
+      </div>
+      <p style="margin-top:14px;">Shahid was criticized for shallower, less diverse content — especially its Saudi titles — with many preferring Netflix's Saudi offering. Apple TV+ continued to be perceived as a benchmark for quality and distinctive productions.</p>
+    </div>
+  </section>
+
+  <div class="chapter-divider" style="--accent:var(--red);">
+    <div class="chapter-num">05</div>
+    <div class="chapter-text"><div class="eyebrow">Section Five of Five</div><h2>Netflix Deep-Dive</h2></div>
+  </div>
+
+  <section class="block" id="sec-netflix" style="--accent:var(--red);">
+    <div class="section-kicker"><span class="num">05</span><span class="rule"></span></div>
+    <h2 class="section-title">Netflix Deep-Dive</h2>
+    <p class="section-desc">An assessment of Netflix's role within the regional entertainment conversation.</p>
+
+    <div class="card">
+      <h3>Volume &times; Sentiment</h3>
+      <p>Conversations were driven by users sharing GTA 6 news, recommending content, and sharing excitement around new releases.</p>
+      <div class="meter-list" style="margin-bottom:16px;">
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>News Sharing</span><span class="v">58.7%</span></div><div class="meter-track"><div class="meter-fill" style="width:58.7%;background:var(--gray-chip);"></div></div></div></div>
+        <div class="meter-row" style="--accent:var(--lime);"><div class="meter-main"><div class="meter-label"><span>Positive</span><span class="v">23.2%</span></div><div class="meter-track"><div class="meter-fill" style="width:23.2%;background:var(--lime);"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Negative</span><span class="v">15.9%</span></div><div class="meter-track"><div class="meter-fill" style="width:15.9%;"></div></div></div></div>
+        <div class="meter-row" style="--accent:var(--violet);"><div class="meter-main"><div class="meter-label"><span>Inquiries</span><span class="v">2.2%</span></div><div class="meter-track"><div class="meter-fill" style="width:2.2%;background:var(--violet);"></div></div></div></div>
+      </div>
+      <p><b>Positive</b> centered on GTA 6 Extended Look, Netflix documentaries (especially Mourinho), the Turkish title Graveyard S3, and Korean titles Mousetrap and Our Sticky Love.</p>
+      <p><b>Negative</b> was mainly GTA 6 Extended Look — the subscription requirement, explicit trailer footage, and the service outage during release.</p>
+      <p><b>Inquiries</b> centered on whether to subscribe for GTA 6 or wait for YouTube, plus show/movie recommendation requests.</p>
+      <div class="quote-grid" style="margin-top:16px;">
+        <div class="quote-card" style="--accent:var(--lime);"><p>Since the GTA 6 Extended Look is still exclusive to Netflix, I honestly feel sorry for those who didn't subscribe&hellip; a once-in-a-century event for the gaming industry.</p></div>
+        <div class="quote-card" style="--accent:var(--lime);"><p>The José Mourinho documentary on Netflix is honestly incredible. Easily one of the best sports documentaries I've watched in a long time.</p></div>
+        <div class="quote-card" style="--accent:var(--lime);"><p>Finished Season 3 in one sitting. The only downside is that it ended! Birce is incredible — we need a Season 4!</p></div>
+        <div class="quote-card" style="--accent:var(--red);"><p>Subscribe to Netflix just to watch the GTA 6 showcase&hellip;⁉ You've got to be kidding me 😂😂 Netflix crashed because of GTA!!!</p></div>
+        <div class="quote-card" style="--accent:var(--red);"><p>I think Apple TV+ wins when it comes to the highest-quality shows. Apple TV+ focuses on quality over quantity. Bye, Netflix :)</p></div>
+        <div class="quote-card" style="--accent:var(--red);"><p>I've found several Japanese dramas on Netflix that I want to watch, only to realize they're subtitled in every language except Arabic @NetflixMENA</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Titles Mix</h3>
+      <p>Netflix's top 4 discussed titles: GTA 6 Extended Look, Mourinho Documentary, The Last House, and Graveyard S3. Among Originals, Mourinho led, followed by The Last House; Graveyard S3 was the most discussed Turkish title.</p>
+      <div class="pn-grid" style="grid-template-columns:repeat(2,1fr); gap:16px;">
+        <div class="card" style="margin-bottom:0;"><h3 style="font-size:16px;">GTA VI Extended Look <span class="rank-badge" style="margin-left:6px;">Most discussed</span></h3>
+          <div class="meter-list">
+            <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>News sharing</span><span class="v">59.7%</span></div><div class="meter-track"><div class="meter-fill" style="width:59.7%;background:var(--gray-chip);"></div></div></div></div>
+            <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Negative</span><span class="v">22.3%</span></div><div class="meter-track"><div class="meter-fill" style="width:22.3%;"></div></div></div></div>
+            <div class="meter-row" style="--accent:var(--lime);"><div class="meter-main"><div class="meter-label"><span>Positive</span><span class="v">14.7%</span></div><div class="meter-track"><div class="meter-fill" style="width:14.7%;background:var(--lime);"></div></div></div></div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:0;"><h3 style="font-size:16px;">Mourinho <span class="rank-badge" style="margin-left:6px;">Most discussed Original · 63%</span></h3>
+          <div class="meter-list">
+            <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>News sharing</span><span class="v">52.4%</span></div><div class="meter-track"><div class="meter-fill" style="width:52.4%;background:var(--gray-chip);"></div></div></div></div>
+            <div class="meter-row" style="--accent:var(--lime);"><div class="meter-main"><div class="meter-label"><span>Positive</span><span class="v">40.5%</span></div><div class="meter-track"><div class="meter-fill" style="width:40.5%;background:var(--lime);"></div></div></div></div>
+            <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Negative</span><span class="v">7.1%</span></div><div class="meter-track"><div class="meter-fill" style="width:7.1%;"></div></div></div></div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:0;"><h3 style="font-size:16px;">The Last House <span class="rank-badge" style="margin-left:6px;">2nd most discussed Original</span></h3>
+          <div class="meter-list">
+            <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>News sharing</span><span class="v">77.8%</span></div><div class="meter-track"><div class="meter-fill" style="width:77.8%;background:var(--gray-chip);"></div></div></div></div>
+            <div class="meter-row" style="--accent:var(--lime);"><div class="meter-main"><div class="meter-label"><span>Positive</span><span class="v">18.5%</span></div><div class="meter-track"><div class="meter-fill" style="width:18.5%;background:var(--lime);"></div></div></div></div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:0;"><h3 style="font-size:16px;">Graveyard S3 <span class="rank-badge" style="margin-left:6px;">Most discussed Turkish title</span></h3>
+          <div class="meter-list">
+            <div class="meter-row" style="--accent:var(--lime);"><div class="meter-main"><div class="meter-label"><span>Positive</span><span class="v">65%</span></div><div class="meter-track"><div class="meter-fill" style="width:65%;background:var(--lime);"></div></div></div></div>
+            <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>News sharing</span><span class="v">30%</span></div><div class="meter-track"><div class="meter-fill" style="width:30%;background:var(--gray-chip);"></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Countries</h3>
+      <p>Saudi Arabia dominated conversations about streaming services, followed by Egypt then Kuwait — Saudi users drove the majority of individual conversations, primarily around GTA 6 Extended Look, Netflix's content library, and new releases (Mourinho, Graveyard). Egyptian users mainly discussed the content library.</p>
+      <div class="meter-list">
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Saudi Arabia</span><span class="v">73.6%</span></div><div class="meter-track"><div class="meter-fill" style="width:73.6%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Egypt</span><span class="v">3.6%</span></div><div class="meter-track"><div class="meter-fill" style="width:3.6%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Kuwait</span><span class="v">1.1%</span></div><div class="meter-track"><div class="meter-fill" style="width:1.1%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Iraq</span><span class="v">0.64%</span></div><div class="meter-track"><div class="meter-fill" style="width:0.64%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Algeria</span><span class="v">0.4%</span></div><div class="meter-track"><div class="meter-fill" style="width:0.4%;"></div></div></div></div>
+        <div class="meter-row"><div class="meter-main"><div class="meter-label"><span>Jordan</span><span class="v">0.4%</span></div><div class="meter-track"><div class="meter-fill" style="width:0.4%;"></div></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="chapter-divider" style="--accent:var(--lime);">
+    <div class="chapter-num">06</div>
+    <div class="chapter-text"><div class="eyebrow">Section Six of Six</div><h2>YouTube Creators</h2></div>
+  </div>
+
+  <section class="block" id="sec-creators" style="--accent:var(--lime);">
+    <div class="section-kicker"><span class="num">06</span><span class="rule"></span></div>
+    <h2 class="section-title">YouTube Creators</h2>
+    <p class="section-desc">Saudi-national, creator-led channels with a qualifying upload published in August 2026, ranked by the public view count of their strongest August upload. Views are public snapshots observed 6 September 2026.</p>
+
+    <div class="card">
+      <h3>Adventures, Challenges &amp; Storytelling</h3>
+      <p class="card-eyebrow">The strongest located August upload reached 6.5M views.</p>
+      <div class="table-scroll">
+        <table class="creator-table">
+          <thead><tr><th>Creator / Channel</th><th>Views</th><th>Watch</th></tr></thead>
+          <tbody>
+            <tr><td>SHoNgxBoNg</td><td class="views-badge">6.5M</td><td><a href="https://www.youtube.com/watch?v=ovPY_Yzia7A" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>VWAR</td><td class="views-badge">5.9M</td><td><a href="https://www.youtube.com/watch?v=Q2XA9LtMwx8" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>BarryTube</td><td class="views-badge">2.1M</td><td><a href="https://www.youtube.com/watch?v=snCRBBWcSRM" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>MjrmGames</td><td class="views-badge">1.8M</td><td><a href="https://www.youtube.com/watch?v=CHFT9keBGq8" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>oCMz</td><td class="views-badge">464K</td><td><a href="https://www.youtube.com/watch?v=ukf2kgKAFj0" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>The Saudi Reporters</td><td class="views-badge">384K</td><td><a href="https://www.youtube.com/watch?v=k3Rs8vpjY8k" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>Maher Mosly</td><td class="views-badge">211K</td><td><a href="https://www.youtube.com/watch?v=BiuixEF1ceg" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>Yakathah</td><td class="views-badge">199K</td><td><a href="https://www.youtube.com/watch?v=MplxEmZL068" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>Faisal AG</td><td class="views-badge">41K</td><td><a href="https://www.youtube.com/watch?v=7A3demLCECU" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Gaming Content</h3>
+      <p class="card-eyebrow">The strongest located August upload reached 1.6M views.</p>
+      <div class="table-scroll">
+        <table class="creator-table">
+          <thead><tr><th>Creator / Channel</th><th>Views</th><th>Watch</th></tr></thead>
+          <tbody>
+            <tr><td>oPiiLz</td><td class="views-badge">1.6M</td><td><a href="https://www.youtube.com/watch?v=p-vqSjRiRmk" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>BanderitaX</td><td class="views-badge">1.4M</td><td><a href="https://www.youtube.com/watch?v=JGrktFvrysg" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>MLZLZ</td><td class="views-badge">724K</td><td><a href="https://www.youtube.com/watch?v=y2kQ-fOmeWs" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>Saud Brothers Gaming</td><td class="views-badge">560K</td><td><a href="https://www.youtube.com/watch?v=t2caNOWo-no" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>Gaming Center</td><td class="views-badge">366K</td><td><a href="https://www.youtube.com/watch?v=NbPZBaMlNM8" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>d7oomy_999</td><td class="views-badge">180K</td><td><a href="https://www.youtube.com/watch?v=vcM94v74Ux8" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Saudi Artist-Led Releases</h3>
+      <p class="card-eyebrow">Ranked by the Saudi artist; label/publisher channel disclosed rather than excluded.</p>
+      <div class="table-scroll">
+        <table class="creator-table">
+          <thead><tr><th>Creator / Artist</th><th>Views</th><th>Watch</th></tr></thead>
+          <tbody>
+            <tr><td>Meteb Alshalan <span style="color:var(--text-muted);">(via Luxury KSA)</span></td><td class="views-badge">1.4M</td><td><a href="https://www.youtube.com/watch?v=OcFjI6CRJvE" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>Ayed <span style="color:var(--text-muted);">(lyric video, Sony Music Middle East)</span></td><td class="views-badge">789K</td><td><a href="https://www.youtube.com/watch?v=z3Xy1gOOQak" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>Nader Alsharari <span style="color:var(--text-muted);">(artist channel)</span></td><td class="views-badge">594K</td><td><a href="https://www.youtube.com/watch?v=cB0xhBrutMw" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Travel Content</h3>
+      <p class="card-eyebrow">Large historical channels excluded when no qualifying August upload was located. One qualifying Saudi-national creator upload was verified in August.</p>
+      <div class="table-scroll">
+        <table class="creator-table">
+          <thead><tr><th>Creator / Channel</th><th>Views</th><th>Watch</th></tr></thead>
+          <tbody>
+            <tr><td>Badr Family</td><td class="views-badge">208K</td><td><a href="https://www.youtube.com/watch?v=dNksid025iQ" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px;">Content pattern: destination-led discovery, history and family perspective. Audience role: inspiration and cultural curiosity — a slower, higher-consideration format.</p>
+    </div>
+
+    <div class="card">
+      <h3>Saudi E-sports</h3>
+      <p class="card-eyebrow">August's EWC spike activated a creator watch-party layer, not just official event coverage.</p>
+      <div class="table-scroll">
+        <table class="creator-table">
+          <thead><tr><th>Creator / Artist</th><th>Views</th><th>Watch</th></tr></thead>
+          <tbody>
+            <tr><td>Falcon Abu Najd</td><td class="views-badge">102K</td><td><a href="https://www.youtube.com/watch?v=5RxXGyMilwc" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+            <tr><td>Esbofination <span style="color:var(--text-muted);">— Falcons vs SSG, EWC 2026 Grand Final</span></td><td class="views-badge">10K</td><td><a href="https://www.youtube.com/watch?v=gZ3ktw-uQ1U" target="_blank" rel="noopener">Watch video &rarr;</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- GLOSSARY -->
+  <section class="block" id="sec-glossary" style="--accent:var(--gray-chip);">
+    <div class="section-kicker"><span class="num">Glossary</span><span class="rule"></span></div>
+    <h2 class="section-title">Categorization Dictionary</h2>
+    <p class="section-desc">Topic = what the post is about &middot; Genre/Category = language or content format of the title &middot; Subtopic = the specific angle within that topic.</p>
+    <div class="card">
+      <button class="glossary-toggle" id="glossaryToggle" type="button">Show full glossary (44 topics &middot; 24 genres &middot; 70 subtopics)</button>
+      <div class="glossary-body" id="glossaryBody">
+        <div class="glossary-subhead">Topics</div>
+        <div class="glossary-grid" id="glossaryTopics"></div>
+        <div class="glossary-subhead">Genre / Category</div>
+        <div class="glossary-grid" id="glossaryGenres"></div>
+        <div class="glossary-subhead">Subtopics</div>
+        <div class="glossary-grid" id="glossarySubtopics"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Netflix MENA — Streaming Services Digital Intelligence &middot; Prepared by Kijamii</span>
+    <span>August 2026 Edition</span>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var topics = [
+    ["Password Sharing","Password-sharing policy discussions."],
+    ["New Releases","Titles newly added within the past month."],
+    ["Translation","Subtitle quality, accuracy, or availability."],
+    ["Cultural Values","Content framed through cultural/values lenses."],
+    ["LGBTQ+ Association","Content with LGBTQ+ themes or representation."],
+    ["Removing Content","Content taken down or removed."],
+    ["Ethnicity","Race or ethnicity in relation to content/casting."],
+    ["Competitions","Mentions of rival streaming platforms."],
+    ["App Problems","General app bugs, glitches, or UI issues."],
+    ["Boycott Netflix","Calls to cancel or boycott Netflix."],
+    ["Content Library","General catalog discussion outside past month."],
+    ["Explicit Content","Explicit, sexual, or violent content conversations."],
+    ["Gaming","Netflix in-app games."],
+    ["Release Schedule","Timing/frequency of releases, batch vs. weekly."],
+    ["Shares Value","Stock price, financials, or spending figures."],
+    ["Stretched Storyline","Criticism that a show is padded or drawn out."],
+    ["Defending The Brand","Defense of Netflix as a company/brand."],
+    ["Subscription Tier","Ad-supported vs. premium plan tiers."],
+    ["Generic","Netflix mentioned with no identifiable topic."],
+    ["Payment Issue","Billing or payment-related issues."],
+    ["Cast","Actor/casting announcements and conversations."],
+    ["Service Outage","Netflix being down or inaccessible."],
+    ["Announcement","Official news about all Netflix aspects."],
+    ["Statements","Official PR responses, executive comments, policy statements."],
+    ["Price Change","Reactions to subscription price changes."],
+    ["Episode Format","Episode count or format conversations (8/10/30-ep model)."],
+    ["Upcoming Releases","Content announced but not yet available."],
+    ["Religious Concerns","Content conformity with the region's religious values."],
+    ["Subscriptions","General subscribing/unsubscribing discussion."],
+    ["Agendas","Accusations of pushing an ideological/political agenda."],
+    ["Requested Content","Asking Netflix to add specific content."],
+    ["Customer Experience","General service or support experience feedback."],
+    ["Events In Lebanon","Netflix alongside the Israel-Lebanon conflict."],
+    ["Events","General event coverage (premieres, screenings)."],
+    ["Production","Title production company and aspects conversations."],
+    ["Collaborations","Netflix partnering with other brands or platforms."],
+    ["WWE","Posts specifically about WWE content on Netflix."],
+    ["Netflix AI","Netflix's use of AI in features and/or production."],
+    ["Ads","Netflix's ad-supported tier or in-platform advertising."],
+    ["UCL Streaming Right","Champions League streaming rights conversations."],
+    ["Palestinian-Israeli Conflict","Netflix in relation to the Palestinian-Israeli conflict."],
+    ["SPL Tweets","Netflix alongside the Saudi Pro League."],
+    ["Ban Netflix","Calls to ban Netflix outright."],
+    ["Warner Bros. Acquisition","Netflix in relation to the Warner Bros. acquisition."]
+  ];
+  var genres = [
+    ["Documentary","Non-fiction documentary content."],
+    ["Korean","Korean-language/produced title."],
+    ["Anime","Anime titles."],
+    ["Live Action","Anime/animated adaptations into non-animated content."],
+    ["Kids","Children's content."],
+    ["Indian","Indian-language/produced title."],
+    ["Japanese","Japanese-language/produced title (non-anime)."],
+    ["Regional","Arabic-language/MENA-produced title."],
+    ["Turkish","Turkish-language/produced title."],
+    ["Original","Netflix Original; usually English-language."],
+    ["Spanish","Spanish-language/produced title."],
+    ["Sports","Sports-related content."],
+    ["Stand Up","Stand-up comedy specials."],
+    ["Animation","Western-style or Netflix-original animated content."],
+    ["Reality TV","Unscripted/reality content."],
+    ["French","French-language/produced title."],
+    ["Polish","Polish-language/produced title."],
+    ["Mexican","Mexican-produced title."],
+    ["German","German-language/produced title."],
+    ["Colombian","Colombian-produced title."],
+    ["Indonesian","Indonesian-language/produced title."],
+    ["Thai","Thai-language/produced title."],
+    ["Chinese","Chinese-language/produced title."],
+    ["Live Events","Anything streamed live on the Netflix app."]
+  ];
+  var subtopics = [
+    ["Show Interest","Anticipation/interest in watching a title."],
+    ["Storyline","Discussion of plot/narrative content."],
+    ["Cast","Discussion of who is acting in a title."],
+    ["Show Relevance","Show relatability."],
+    ["Specific Scene","Reaction to one particular scene/moment."],
+    ["Script","Critique or praise of the writing/script."],
+    ["Production","Production quality discussions."],
+    ["Soundtrack","Discussion of music/score."],
+    ["Character Dynamics","Discussion of character relationships/chemistry."],
+    ["Generic","No specific subtopic identifiable."],
+    ["Recommendation","Recommending a title or asking for recs."],
+    ["Show Disinterest","Expressing lack of interest in a title."],
+    ["Show Criticism","General criticism of a show."],
+    ["Show Events","Reaction to a specific in-show event/moment."],
+    ["Memes","Memes made about the show."],
+    ["Religious Concerns","Show content not compliant with religion."],
+    ["Socially Offending","Show insulted or offended audience/social group."],
+    ["Show Praise","General praise of a show."],
+    ["Objective Content","Meaningful content & storylines in the show."],
+    ["Cinematography","Discussion of visual/camera work."],
+    ["LGBTQ+ Association","LGBTQ+ representation in a title."],
+    ["Ethnicity","Race/ethnicity regarding a title/cast."],
+    ["Stretched Storyline","Criticism that the plot is padded/drawn out."],
+    ["Show Quotes","Posts quoting dialogue/lines."],
+    ["Inaccuracy","Criticism of historical/factual inaccuracy."],
+    ["Translation","Subtitle issue specific to a title."],
+    ["Release Schedule","Episode release format (batch or weekly)."],
+    ["Regional Unavailability","Title not available in the user's region."],
+    ["Cultural Values","Title compliance to cultural/values lenses."],
+    ["Clothing","Discussion of costume/wardrobe."],
+    ["Content Library","General catalog reference at the title level."],
+    ["Palestinian-Israeli Conflict","Title discussed in relation to this conflict."],
+    ["Direction","General direction of the title."],
+    ["Unoriginal Storyline","Criticism that the plot is derivative/copied."],
+    ["Explicit Content","Praise/criticism of explicit content in a title."],
+    ["Acting","Discussion of performance quality."],
+    ["Requested Content","Asking for specific content to be added."],
+    ["Removing Content","A title being removed."],
+    ["Cancellation","A show being cancelled."],
+    ["App Features","Discussion of in-app features."],
+    ["Boycott","Calling to boycott at the title level."],
+    ["Viewing Experience","General experience watching on the platform."],
+    ["Service Outage","Platform being down."],
+    ["Defending The Brand","Defending Netflix the company."],
+    ["Insensitivity","Content seen as culturally/socially insensitive."],
+    ["Animation Quality","Critique/praise of animation quality."],
+    ["Marketing","Discussion of promotional campaigns."],
+    ["Dubbing","Dubbing quality."],
+    ["Cultural Relevance","How culturally resonant a title is."],
+    ["Story Pacing","Discussion of pacing."],
+    ["Password Sharing","Password-sharing policy at title level."],
+    ["Missing Content","Specific title or season missing from library."],
+    ["Episode Format","Episode count or format conversations."],
+    ["Agendas","Accusing a title of pushing an agenda."],
+    ["Release Date","Announcement/discussion of release date."],
+    ["Olympics","Title/content tied to the Olympics."],
+    ["Prices","Pricing discussion tied to a title/feature."],
+    ["Age Restriction","Content rating/age-appropriateness discussion."],
+    ["Leaks","Leaked information about a title."],
+    ["Competition","Comparing to competitor platforms."],
+    ["Streaming Quality","Video/audio streaming quality discussions."],
+    ["Violence","Discussion of violent content/scenes."],
+    ["Delayed Release","A title's release being delayed."],
+    ["WWE","WWE-specific subtopic detail."],
+    ["Awards","Award wins/nominations."],
+    ["ADs","In-platform advertising."],
+    ["Viewership","Viewership numbers/rankings."],
+    ["MBCNOW","MBC NOW device bundling Shahid & Netflix in KSA."],
+    ["Shares Value","Stock/financial figures."],
+    ["Theatre Releases","Cinema release discussion of Netflix content."]
+  ];
+
+  function fill(id, items){
+    var grid = document.getElementById(id);
+    var frag = document.createDocumentFragment();
+    items.forEach(function(pair){
+      var el = document.createElement("div");
+      el.className = "glossary-item";
+      var t = document.createElement("div"); t.className = "term"; t.textContent = pair[0];
+      var d = document.createElement("div"); d.className = "def"; d.textContent = pair[1];
+      el.appendChild(t); el.appendChild(d);
+      frag.appendChild(el);
+    });
+    grid.appendChild(frag);
+  }
+  fill("glossaryTopics", topics);
+  fill("glossaryGenres", genres);
+  fill("glossarySubtopics", subtopics);
+
+  document.getElementById("glossaryToggle").addEventListener("click", function(){
+    var body = document.getElementById("glossaryBody");
+    var visible = body.classList.toggle("visible");
+    this.textContent = visible ? "Hide full glossary" : "Show full glossary (44 topics · 24 genres · 70 subtopics)";
+  });
+
+  // Sticky nav scroll-spy
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll("#sectionNav a"));
+  var linkByTarget = {};
+  navLinks.forEach(function(a){ linkByTarget[a.dataset.target] = a; });
+  var sections = Array.prototype.slice.call(document.querySelectorAll("section.block[id]"));
+  function setActive(id){
+    navLinks.forEach(function(a){ a.classList.toggle("active", a.dataset.target === id); });
+  }
+  if(typeof IntersectionObserver !== "undefined"){
+    var observer = new IntersectionObserver(function(entries){
+      var visible = entries.filter(function(e){ return e.isIntersecting; });
+      if(!visible.length) return;
+      visible.sort(function(a,b){ return a.boundingClientRect.top - b.boundingClientRect.top; });
+      setActive(visible[0].target.id);
+    }, { rootMargin: "-90px 0px -65% 0px", threshold: 0 });
+    sections.forEach(function(s){ observer.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
