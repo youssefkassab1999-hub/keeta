@@ -81,6 +81,24 @@
   }
   .back-link:hover{ border-color:var(--lime); color:var(--lime); }
 
+  .list-heading{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin:0 0 14px;
+  }
+  .list-heading h2{
+    font-family:'Playfair Display', serif;
+    font-weight:700;
+    font-size:19px;
+    margin:0;
+    color:var(--text);
+  }
+  .list-heading .list-sub{
+    font-size:12px;
+    color:var(--text-muted);
+  }
+  .interactive-list{ margin-bottom:44px; }
   .report-list{
     display:flex;
     flex-direction:column;
@@ -230,6 +248,20 @@
 
   .report-card .btn.danger{ border-color:rgba(229,9,20,0.4); color:var(--red); }
   .report-card .btn.danger:hover{ background:rgba(229,9,20,0.14); border-color:var(--red); }
+  .latest-tag{
+    display:inline-block;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--red);
+    background:rgba(229,9,20,0.12);
+    border:1px solid rgba(229,9,20,0.35);
+    padding:1px 7px;
+    border-radius:100px;
+    margin-left:8px;
+    vertical-align:middle;
+    font-weight:700;
+  }
   .custom-tag{
     display:inline-block;
     font-size:10px;
@@ -293,10 +325,7 @@
         <div class="sub">Netflix MENA — Social Listening &amp; Digital Intelligence</div>
       </div>
     </div>
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-      <a class="back-link" href="latest-report.html">Latest report &rarr;</a>
-      <a class="back-link" href="index.html">&larr; Back to dashboard</a>
-    </div>
+    <a class="back-link" href="index.html">&larr; Back to dashboard</a>
   </header>
 
   <div class="admin-toggle-row">
@@ -342,6 +371,18 @@
     </details>
   </div>
 
+  <div class="interactive-list">
+    <div class="list-heading">
+      <h2>Interactive Reports</h2>
+      <span class="list-sub">Rebuilt as scrolling pages, not slide decks</span>
+    </div>
+    <div class="report-list" id="interactiveReportList"></div>
+  </div>
+
+  <div class="list-heading">
+    <h2>Full Decks</h2>
+    <span class="list-sub">Original PDF exports</span>
+  </div>
   <div class="report-list" id="reportList"></div>
 
   <div class="viewer-card" id="viewerCard">
@@ -372,13 +413,19 @@
 // of using the "+ Add a report" panel (which only saves to one browser).
 var BASE_REPORTS = [
   { title: "(Detailed Deck) Netflix - MENA Digital Intelligence Deck - August 2026", period: "August 2026", file: "reports/(Detailed Deck) Netflix - MENA Digital Intelligence Deck - August 2026.pdf" },
-  { title: "Netflix MENA — July 2026 (Interactive Report)", period: "July 2026", file: "report-july-2026.html" },
-  { title: "Netflix MENA Digital Intelligence Deck (PDF)", period: "July 2026", file: "reports/netflix-mena-july-2026.pdf" },
-  { title: "Netflix MENA — June 2026 (Interactive Report)", period: "June 2026", file: "report-june-2026.html" },
-  { title: "Netflix MENA Digital Intelligence Deck (PDF)", period: "June 2026", file: "reports/netlfix-mena-june-2026.pdf" },
+  { title: "Netflix MENA Digital Intelligence Deck", period: "July 2026", file: "reports/netflix-mena-july-2026.pdf" },
+  { title: "Netflix MENA Digital Intelligence Deck", period: "June 2026", file: "reports/netlfix-mena-june-2026.pdf" },
   { title: "Netflix - MENA Digital Intelligence Deck - May 2026 V.2", period: "May 2026", file: "reports/Netflix - MENA Digital Intelligence Deck - May 2026 V.2.pdf" },
   { title: "Streaming Services Digital Listening Report - April 2026", period: "April 2026", file: "reports/Streaming Services Digital Listening Report - April 2026.pdf" },
   { title: "Streaming Services Digital Listening Report - January 2026", period: "January 2026", file: "reports/Streaming Services Digital Listening Report - January 2026.pdf" }
+];
+
+// Rebuilt-as-a-webpage reports (see latest-report.html / report-<month>.html).
+// The most recent one is marked isLatest — always keep exactly one true.
+var INTERACTIVE_REPORTS = [
+  { title: "Netflix MENA — Culture & Streaming Pulse", period: "August 2026", file: "latest-report.html", isLatest: true },
+  { title: "Netflix MENA — Culture & Streaming Pulse", period: "July 2026", file: "report-july-2026.html" },
+  { title: "Netflix MENA — Culture & Streaming Pulse", period: "June 2026", file: "report-june-2026.html" }
 ];
 
 var CUSTOM_STORAGE_KEY = "netflixMenaCustomReports";
@@ -404,6 +451,65 @@ function getAllReports(){
   return BASE_REPORTS.concat(custom);
 }
 
+function buildReportCard(report, listEl){
+  var card = document.createElement("div");
+  card.className = "report-card";
+
+  var meta = document.createElement("div");
+  meta.className = "report-meta";
+  var title = document.createElement("div"); title.className = "report-title"; title.textContent = report.title;
+  if(report.isLatest){
+    var latestTag = document.createElement("span"); latestTag.className = "latest-tag"; latestTag.textContent = "Latest";
+    title.appendChild(latestTag);
+  }
+  if(report.custom){
+    var tag = document.createElement("span"); tag.className = "custom-tag"; tag.textContent = "Added here";
+    title.appendChild(tag);
+  }
+  var sub = document.createElement("div"); sub.className = "report-sub"; sub.textContent = report.period;
+  meta.appendChild(title); meta.appendChild(sub);
+
+  var actions = document.createElement("div");
+  actions.className = "report-actions";
+  var viewBtn = document.createElement("button");
+  viewBtn.className = "btn primary"; viewBtn.type = "button"; viewBtn.textContent = "View report";
+  var dlLink = document.createElement("a");
+  dlLink.className = "btn"; dlLink.href = report.file; dlLink.setAttribute("download", "");
+  dlLink.textContent = "Download";
+
+  actions.appendChild(viewBtn);
+  actions.appendChild(dlLink);
+
+  if(report.custom){
+    var delBtn = document.createElement("button");
+    delBtn.className = "btn danger"; delBtn.type = "button"; delBtn.textContent = "Remove";
+    delBtn.addEventListener("click", function(e){
+      e.stopPropagation();
+      removeCustomReport(report.file);
+    });
+    actions.appendChild(delBtn);
+  }
+
+  card.appendChild(meta);
+  card.appendChild(actions);
+  listEl.appendChild(card);
+
+  function open(){
+    openViewer(report, card);
+  }
+  viewBtn.addEventListener("click", open);
+  card.addEventListener("click", function(e){
+    if(e.target === dlLink) return;
+    open();
+  });
+}
+
+function renderInteractiveList(){
+  var listEl = document.getElementById("interactiveReportList");
+  listEl.innerHTML = "";
+  INTERACTIVE_REPORTS.forEach(function(report){ buildReportCard(report, listEl); });
+}
+
 function renderList(){
   var listEl = document.getElementById("reportList");
   var emptyEl = document.getElementById("emptyNote");
@@ -416,55 +522,7 @@ function renderList(){
   }
   emptyEl.style.display = "none";
 
-  all.forEach(function(report, idx){
-    var card = document.createElement("div");
-    card.className = "report-card";
-    card.dataset.idx = idx;
-
-    var meta = document.createElement("div");
-    meta.className = "report-meta";
-    var title = document.createElement("div"); title.className = "report-title"; title.textContent = report.title;
-    if(report.custom){
-      var tag = document.createElement("span"); tag.className = "custom-tag"; tag.textContent = "Added here";
-      title.appendChild(tag);
-    }
-    var sub = document.createElement("div"); sub.className = "report-sub"; sub.textContent = report.period;
-    meta.appendChild(title); meta.appendChild(sub);
-
-    var actions = document.createElement("div");
-    actions.className = "report-actions";
-    var viewBtn = document.createElement("button");
-    viewBtn.className = "btn primary"; viewBtn.type = "button"; viewBtn.textContent = "View report";
-    var dlLink = document.createElement("a");
-    dlLink.className = "btn"; dlLink.href = report.file; dlLink.setAttribute("download", "");
-    dlLink.textContent = "Download";
-
-    actions.appendChild(viewBtn);
-    actions.appendChild(dlLink);
-
-    if(report.custom){
-      var delBtn = document.createElement("button");
-      delBtn.className = "btn danger"; delBtn.type = "button"; delBtn.textContent = "Remove";
-      delBtn.addEventListener("click", function(e){
-        e.stopPropagation();
-        removeCustomReport(report.file);
-      });
-      actions.appendChild(delBtn);
-    }
-
-    card.appendChild(meta);
-    card.appendChild(actions);
-    listEl.appendChild(card);
-
-    function open(){
-      openViewer(report, card);
-    }
-    viewBtn.addEventListener("click", open);
-    card.addEventListener("click", function(e){
-      if(e.target === dlLink) return;
-      open();
-    });
-  });
+  all.forEach(function(report){ buildReportCard(report, listEl); });
 }
 
 function removeCustomReport(file){
@@ -521,7 +579,7 @@ function wireAdminPanel(){
     }
 
     var list = loadCustomReports();
-    if(list.some(function(r){ return r.file === file; }) || BASE_REPORTS.some(function(r){ return r.file === file; })){
+    if(list.some(function(r){ return r.file === file; }) || BASE_REPORTS.some(function(r){ return r.file === file; }) || INTERACTIVE_REPORTS.some(function(r){ return r.file === file; })){
       setFormMsg("A report with that filename is already in the list.", "error");
       return;
     }
@@ -576,6 +634,7 @@ function refreshExportBox(){
 }
 
 wireAdminPanel();
+renderInteractiveList();
 renderList();
 </script>
 </body>
