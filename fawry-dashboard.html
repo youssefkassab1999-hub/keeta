@@ -7,335 +7,425 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
-  /* Layout: Kijamii's dark report shell, a single reading column of chart-first
-     sections; Fawry's yellow marks what works, Kijamii rust marks where trust breaks. */
+  /* Layout: full-bleed colour bands. Fawry blue opens, Fawry yellow owns "wins",
+     a hot rust owns "trust breaks", Kijamii lime signs the ticker and the footer. */
   :root{
     color-scheme:dark;
-    --bg:#0A0D16;          /* near-black, biased toward Fawry blue */
-    --card:#121827;
-    --card-2:#171F33;
-    --border:#243049;
-    --lime:#D4FF66;        /* Kijamii */
-    --yellow:#FFD200;      /* Fawry */
-    --blue:#4B86F0;        /* Fawry blue, lifted for a dark ground */
-    --blue-deep:#0E3F8F;
-    --risk:#E2592F;        /* Kijamii risk */
-    --track:#1D2538;
-    --text:#F3F1EC;
-    --muted:#98A0B3;
-    --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --ink:#060914;
+    --ink-2:#0C1226;
+    --navy:#0A2A78;          /* Fawry blue, deep */
+    --blue:#1E5BE6;          /* Fawry blue, bright */
+    --blue-soft:#7FA6FF;
+    --yellow:#FFD200;        /* Fawry yellow */
+    --lime:#D4FF66;          /* Kijamii */
+    --risk:#FF5A36;
+    --risk-deep:#2A0C08;
+    --line:rgba(255,255,255,.12);
+    --track:rgba(255,255,255,.1);
+    --text:#F7F5EF;
+    --muted:#A7AFC4;
+    --on-color:#0A0D16;      /* text on yellow, lime and rust fills */
+    --display:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;
     --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
     --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   }
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:var(--sans);
-    font-size:15px;
-    line-height:1.55;
-    -webkit-font-smoothing:antialiased;
-  }
+  html{scroll-behavior:smooth; overflow-x:clip;}
+  body{margin:0; background:var(--ink); color:var(--text); font-family:var(--sans); font-size:15.5px; line-height:1.55; -webkit-font-smoothing:antialiased; overflow-x:hidden;}
   img{max-width:100%;}
-  h1,h2,h3{font-family:var(--serif); margin:0; text-wrap:balance;}
-  a{color:var(--lime);}
-  :focus-visible{outline:2px solid var(--lime); outline-offset:3px; border-radius:4px;}
+  h1,h2,h3{font-family:var(--display); margin:0; text-wrap:balance; font-weight:800; letter-spacing:-.02em;}
+  :focus-visible{outline:3px solid var(--lime); outline-offset:3px; border-radius:6px;}
+  .wrap{max-width:1200px; margin:0 auto; padding-left:max(24px, env(safe-area-inset-left, 0px)); padding-right:max(24px, env(safe-area-inset-right, 0px));}
 
-  .wrap{
-    max-width:1160px; margin:0 auto;
-    padding-left:max(24px, env(safe-area-inset-left, 0px));
-    padding-right:max(24px, env(safe-area-inset-right, 0px));
-  }
-
-  /* Brand strip: Kijamii lime handing over to Fawry yellow and blue */
-  .top-strip{
-    position:sticky; top:env(safe-area-inset-top, 0px); z-index:50; height:4px;
-    background:linear-gradient(90deg, var(--lime) 0 34%, var(--yellow) 34% 67%, var(--blue) 67% 100%);
-  }
-
-  /* Section nav */
-  .nav{
-    position:sticky; top:calc(env(safe-area-inset-top, 0px) + 4px); z-index:40;
-    background:rgba(10,13,22,.88); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-    border-bottom:1px solid var(--border);
-  }
-  .nav .wrap{display:flex; gap:6px; align-items:center; padding-block:10px; overflow-x:auto; scrollbar-width:none;}
+  /* ---------- NAV ---------- */
+  .nav{position:sticky; top:env(safe-area-inset-top, 0px); z-index:40; background:rgba(6,9,20,.9); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  .nav .wrap{display:flex; gap:4px; align-items:center; padding-block:10px; overflow-x:auto; scrollbar-width:none;}
   .nav .wrap::-webkit-scrollbar{display:none;}
-  .nav a{
-    flex:none; color:var(--muted); text-decoration:none; font-size:12.5px; font-weight:500;
-    padding:6px 12px; border-radius:999px; border:1px solid transparent; white-space:nowrap;
-  }
-  .nav a:hover{color:var(--text); border-color:var(--border);}
-  .nav a .n{font-family:var(--mono); font-size:11px; margin-right:6px; color:var(--lime);}
-  .nav a.wins .n{color:var(--yellow);}
-  .nav a.breaks .n{color:var(--risk);}
+  .nav .logo{height:16px; width:auto; margin-right:14px; flex:none;}
+  .nav a{flex:none; color:var(--muted); text-decoration:none; font-size:12.5px; font-weight:500; padding:6px 12px; border-radius:999px; white-space:nowrap;}
+  .nav a:hover{color:var(--text); background:rgba(255,255,255,.06);}
+  .nav a.p1{color:var(--on-color); background:var(--yellow); font-weight:600;}
+  .nav a.p2{color:var(--on-color); background:var(--risk); font-weight:600;}
 
-  .eyebrow{
-    font-size:11px; letter-spacing:3px; text-transform:uppercase;
-    color:var(--lime); font-weight:600; margin-bottom:12px;
-  }
-  h2.headline{font-size:clamp(24px, 3.2vw, 32px); font-weight:700; line-height:1.2; max-width:820px; margin-bottom:10px;}
-  .insight{color:var(--muted); font-size:15px; margin:0 0 32px; max-width:720px;}
+  /* ---------- HERO ---------- */
+  .hero{position:relative; overflow:hidden; background:var(--blue); padding-block:72px 96px;}
+  .hero::before{content:""; position:absolute; width:880px; height:880px; border-radius:50%; right:-260px; top:-300px; background:radial-gradient(circle at 40% 40%, #3D78FF 0, var(--blue) 62%); opacity:.9;}
+  .hero::after{content:""; position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,.14) 1px, transparent 1.4px); background-size:22px 22px; mask-image:linear-gradient(180deg, transparent, #000 40%, transparent); -webkit-mask-image:linear-gradient(180deg, transparent, #000 40%, transparent);}
+  .hero .wrap{position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr); gap:48px; align-items:center;}
+  .lockup{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:36px;}
+  .lockup .kj{height:26px; width:auto;}
+  .lockup .x{color:rgba(255,255,255,.6);}
+  .lockup .chip{background:#fff; border-radius:6px; padding:6px 12px; display:flex;}
+  .lockup .chip img{height:22px; width:auto;}
+  .lockup .tag{font-family:var(--mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--on-color); background:var(--lime); padding:5px 10px; border-radius:4px; font-weight:600;}
+  .hero h1{font-size:clamp(56px, 9.5vw, 128px); line-height:.86; letter-spacing:-.045em;}
+  .hero h1 .y{color:var(--yellow); display:block;}
+  .hero .lede{font-size:clamp(18px, 2.1vw, 23px); line-height:1.4; max-width:560px; margin-top:28px; font-weight:500;}
+  .hero .lede b{background:var(--yellow); color:var(--on-color); padding:0 6px; border-radius:4px; font-weight:600;}
+  .hero .sub{margin-top:18px; font-family:var(--mono); font-size:12px; letter-spacing:1px; text-transform:uppercase; color:rgba(255,255,255,.75);}
 
-  section{padding-block:72px; scroll-margin-top:56px;}
-  section + section{border-top:1px solid var(--border);}
+  /* The yellow card: the deck's headline numbers, dressed as Fawry's own card */
+  .ycard{position:relative; aspect-ratio:1.586; max-width:100%; width:100%; border-radius:22px; background:linear-gradient(135deg, #FFE14D 0%, var(--yellow) 45%, #F2B800 100%); color:var(--on-color); padding:26px 28px; box-shadow:0 40px 80px -20px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.6); transform:rotate(-6deg); display:flex; flex-direction:column; justify-content:space-between; overflow:hidden;}
+  .ycard::after{content:""; position:absolute; width:340px; height:340px; border-radius:50%; right:-120px; bottom:-170px; background:rgba(255,255,255,.22);}
+  .ycard .top{display:flex; justify-content:space-between; align-items:flex-start; position:relative; z-index:1;}
+  .ycard .lbl{font-family:var(--mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600;}
+  .ycard .emv{width:46px; height:36px; border-radius:7px; background:linear-gradient(135deg,#E9EEF5,#B7C0CC); position:relative;}
+  .ycard .emv::before{content:""; position:absolute; inset:8px 14px; border:1.5px solid rgba(0,0,0,.25); border-radius:3px;}
+  .ycard .num{font-family:var(--mono); font-size:clamp(26px, 3.4vw, 40px); font-weight:600; letter-spacing:.08em; white-space:nowrap; position:relative; z-index:1; font-variant-numeric:tabular-nums;}
+  .ycard .bottom{display:flex; justify-content:space-between; gap:12px; position:relative; z-index:1;}
+  .ycard .bottom div{font-family:var(--mono); font-size:11px; letter-spacing:1px; text-transform:uppercase;}
+  .ycard .bottom b{display:block; font-size:16px; letter-spacing:.5px;}
+  .card-stack{position:relative; padding:24px 10px;}
+  .card-stack .ghost{position:absolute; inset:24px 10px; border-radius:22px; background:var(--navy); transform:rotate(4deg); box-shadow:0 30px 60px -20px rgba(0,0,0,.5);}
+  .card-stack .ghost span{position:absolute; left:26px; bottom:22px; font-family:var(--mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--lime);}
 
-  .card{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:22px;}
+  @keyframes rise{from{transform:translateY(24px); opacity:.0;} to{transform:none; opacity:1;}}
+  @keyframes deal{from{transform:rotate(-14deg) translate(60px, 40px);} to{transform:rotate(-6deg);}}
+  .hero h1, .hero .lede{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;}
+  .hero .lede{animation-delay:.12s;}
+  .ycard{animation:deal .9s cubic-bezier(.2,.8,.2,1) both .1s;}
 
-  /* HERO */
-  .hero{padding-block:72px 64px;}
-  .brand-lockup{display:flex; align-items:center; gap:16px; margin-bottom:32px; flex-wrap:wrap;}
-  .brand-kijamii{height:24px; width:auto; display:block;}
-  .brand-x{color:var(--muted); font-size:16px;}
-  .brand-chip{background:#fff; border-radius:6px; padding:6px 12px; display:flex; align-items:center;}
-  .brand-fawry{height:22px; width:auto; display:block;}
-  .brand-tag{font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); font-weight:600;}
-  .hero h1{font-size:clamp(40px, 6.4vw, 68px); font-weight:700; letter-spacing:-1px; line-height:1.02;}
-  .hero h1 .bar{color:var(--yellow);}
-  .hero .lede{font-size:clamp(17px, 2vw, 20px); color:var(--text); max-width:640px; margin-top:18px; line-height:1.45;}
-  .hero .sub{color:var(--muted); font-size:13.5px; margin-top:14px;}
-  .stat-row{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:44px;}
-  .stat-card{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:22px 20px;}
-  .stat-card .num{font-family:var(--serif); font-size:34px; font-weight:700; color:var(--yellow); line-height:1.1; font-variant-numeric:tabular-nums;}
-  .stat-card .lbl{color:var(--muted); font-size:12.5px; margin-top:6px;}
+  /* ---------- TICKER (Kijamii lime) ---------- */
+  .ticker-clip{overflow:hidden; padding-block:14px; margin-top:-36px; position:relative; z-index:5;}
+  .ticker{background:var(--lime); color:var(--on-color); overflow:hidden; border-block:2px solid var(--on-color); transform:rotate(-1.2deg); margin-inline:-20px;}
+  .ticker .track{display:flex; width:max-content; animation:scroll 60s linear infinite;}
+  .ticker .item{font-family:var(--display); font-weight:700; font-size:20px; padding-block:14px; white-space:nowrap; display:flex; align-items:center;}
+  .ticker .item::after{content:"✳"; margin:0 26px; font-size:16px;}
+  @keyframes scroll{to{transform:translateX(-50%);}}
+  .ticker:hover .track{animation-play-state:paused;}
 
-  /* HEADLINE: two numbers + theme chart */
-  .split-thesis{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:24px;}
-  .thesis{border-radius:10px; padding:24px; border:1px solid var(--border); background:var(--card);}
-  .thesis .tag{font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600;}
-  .thesis .big{font-family:var(--serif); font-size:clamp(44px, 6vw, 60px); font-weight:700; line-height:1; margin-top:12px; font-variant-numeric:tabular-nums;}
-  .thesis p{margin:12px 0 0; color:var(--muted); font-size:14.5px; max-width:44ch;}
-  .thesis.win{border-top:3px solid var(--yellow);}
-  .thesis.win .tag,.thesis.win .big{color:var(--yellow);}
-  .thesis.break{border-top:3px solid var(--risk);}
-  .thesis.break .tag,.thesis.break .big{color:var(--risk);}
+  /* ---------- STATS STRIP ---------- */
+  .stats{padding-block:72px 24px;}
+  .stats .grid{display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line);}
+  .stats .s{padding:22px 20px 0 0;}
+  .stats .s + .s{border-left:1px solid var(--line); padding-left:20px;}
+  .stats .n{font-family:var(--display); font-size:clamp(40px, 5vw, 60px); font-weight:800; line-height:1; letter-spacing:-.03em; font-variant-numeric:tabular-nums;}
+  .stats .l{color:var(--muted); font-size:13.5px; margin-top:8px; max-width:24ch;}
 
-  .chart-card{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:24px 22px 20px;}
-  .chart-title{font-size:13px; font-weight:600; color:var(--text); margin-bottom:4px;}
-  .chart-sub{font-size:12.5px; color:var(--muted); margin-bottom:20px;}
-  .hbar{display:grid; grid-template-columns:minmax(150px, 230px) 1fr 132px; gap:16px; align-items:center;}
-  .hbar + .hbar{margin-top:12px;}
-  .hbar .name{font-size:13.5px; color:var(--text);}
-  .hbar .name small{display:block; color:var(--muted); font-size:11.5px;}
-  .hbar .track{height:14px; background:var(--track); border-radius:3px; overflow:hidden; position:relative;}
-  .hbar .fill{height:100%; border-radius:3px;}
-  .hbar .val{font-family:var(--mono); font-size:13px; font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap;}
-  .hbar .val small{color:var(--muted); font-family:var(--sans); font-size:11.5px;}
-  .axis{display:grid; grid-template-columns:minmax(150px, 230px) 1fr 132px; gap:16px; margin-top:10px;}
-  .axis .ticks{display:flex; justify-content:space-between; font-family:var(--mono); font-size:10.5px; color:var(--muted);}
-  .group-label{font-size:10.5px; letter-spacing:2px; text-transform:uppercase; font-weight:600; margin:22px 0 10px;}
-  .group-label:first-of-type{margin-top:0;}
-  .legend-row{display:flex; gap:20px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-top:18px;}
-  .legend-item{display:flex; align-items:center; gap:7px;}
-  .swatch{width:10px; height:10px; border-radius:2px; display:inline-block;}
+  /* ---------- COMMON SECTION BITS ---------- */
+  section{padding-block:96px; scroll-margin-top:52px; position:relative;}
+  section.navy{background:var(--navy);}
+  section.ink2{background:var(--ink-2);}
+  section.burn{background:linear-gradient(180deg, var(--risk-deep), var(--ink) 70%);}
+  .eyebrow{display:inline-flex; align-items:center; gap:10px; font-family:var(--mono); font-size:11.5px; letter-spacing:2.5px; text-transform:uppercase; font-weight:600; margin-bottom:18px;}
+  .eyebrow::before{content:""; width:22px; height:3px; background:currentColor; border-radius:2px;}
+  .eyebrow.y{color:var(--yellow);} .eyebrow.r{color:var(--risk);} .eyebrow.l{color:var(--lime);}
+  h2.headline{font-size:clamp(32px, 4.6vw, 58px); line-height:1.02; max-width:940px;}
+  h2.headline em{font-style:normal; color:var(--yellow);}
+  h2.headline em.r{color:var(--risk);}
+  .insight{color:var(--muted); font-size:17px; margin:18px 0 44px; max-width:640px;}
+  .source{color:var(--muted); font-size:12px; margin-top:32px; max-width:880px; font-family:var(--mono); letter-spacing:.2px; opacity:.85;}
 
-  /* Part dividers */
-  .part{padding-block:56px; background:var(--card); border-top:1px solid var(--border);}
-  .part .wrap{display:grid; grid-template-columns:auto 1fr; gap:28px; align-items:end;}
-  .part .pnum{font-family:var(--serif); font-size:clamp(72px, 11vw, 120px); font-weight:700; line-height:.8;}
-  .part.wins .pnum{color:var(--yellow);}
-  .part.breaks .pnum{color:var(--risk);}
-  .part h2{font-size:clamp(30px, 4.4vw, 46px); font-weight:700; line-height:1.05;}
-  .part p{color:var(--muted); margin:10px 0 0; font-size:16px;}
+  .panel{background:rgba(255,255,255,.04); border:1px solid var(--line); border-radius:18px; padding:26px;}
+  .kicker{font-family:var(--mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); font-weight:600;}
 
-  /* Two-column layout: evidence left, posts right */
-  .duo{display:grid; grid-template-columns:minmax(0, 5fr) minmax(0, 6fr); gap:24px; align-items:start;}
-  .stack{display:flex; flex-direction:column; gap:14px; min-width:0;}
+  .mega{font-size:clamp(72px, 10vw, 128px); font-family:var(--display); font-weight:800; line-height:.85; letter-spacing:-.05em; font-variant-numeric:tabular-nums;}
 
-  .bigstat .n{font-family:var(--serif); font-size:clamp(56px, 8vw, 84px); font-weight:700; line-height:.95; font-variant-numeric:tabular-nums;}
-  .bigstat .n.y{color:var(--yellow);}
-  .bigstat .n.r{color:var(--risk);}
-  .bigstat .l{color:var(--muted); font-size:14.5px; margin-top:10px; max-width:40ch;}
+  /* Colour tiles: solid fills */
+  .tile{border-radius:20px; padding:28px; color:var(--on-color); position:relative; overflow:hidden;}
+  .tile.y{background:var(--yellow);}
+  .tile.r{background:var(--risk);}
+  .tile.l{background:var(--lime);}
+  .tile.b{background:var(--blue); color:var(--text);}
+  .tile .kicker{color:inherit; opacity:.75;}
+  .tile p{margin:12px 0 0; font-size:15px; max-width:42ch; font-weight:500;}
 
-  .split-bar{display:flex; height:10px; border-radius:3px; overflow:hidden; background:var(--track); margin-top:16px;}
+  .split-bar{display:flex; height:12px; border-radius:6px; overflow:hidden; background:var(--track); margin-top:18px;}
   .split-bar span{display:block; height:100%;}
-  .split-legend{display:flex; justify-content:space-between; font-size:12px; margin-top:7px; color:var(--muted); gap:12px;}
+  .tile .split-bar{background:rgba(0,0,0,.15);}
+  .split-legend{display:flex; justify-content:space-between; font-family:var(--mono); font-size:11.5px; margin-top:8px; gap:12px;}
 
   .chips{display:flex; flex-wrap:wrap; gap:8px;}
-  .chip{font-size:12.5px; padding:5px 11px; border-radius:999px; border:1px solid var(--border); color:var(--text); background:var(--card-2);}
+  .chip{font-size:13.5px; font-weight:600; padding:8px 14px; border-radius:999px; background:var(--ink); color:var(--text); border:1px solid var(--line);}
+  .chip.y{background:var(--yellow); color:var(--on-color); border-color:transparent;}
 
-  .callout{border-radius:10px; padding:16px 18px; font-size:14px; line-height:1.55;}
-  .callout.lime{background:rgba(212,255,102,.06); border:1px solid rgba(212,255,102,.28);}
-  .callout.lime b{color:var(--lime);}
-  .callout.yellow{background:rgba(255,210,0,.06); border:1px solid rgba(255,210,0,.3);}
-  .callout.yellow b{color:var(--yellow);}
-  .callout.red{background:rgba(226,89,47,.07); border:1px solid rgba(226,89,47,.32);}
-  .callout.red b{color:var(--risk);}
-  .callout.blue{background:rgba(75,134,240,.07); border:1px solid rgba(75,134,240,.32);}
-  .callout.blue b{color:var(--blue);}
+  /* ---------- HEADLINE ---------- */
+  .statement{margin:0; font-family:var(--display); font-weight:800; font-size:clamp(40px, 7vw, 96px); line-height:.95; letter-spacing:-.045em; max-width:1100px;}
+  .statement .pay{background:var(--yellow); color:var(--on-color); padding:0 .14em; border-radius:.12em; display:inline-block; transform:rotate(-2deg);}
+  .statement .lend{color:var(--risk); text-decoration:line-through; text-decoration-thickness:.08em; text-decoration-color:var(--text);}
+  .statement .dim{color:var(--muted);}
+  .thesis-row{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:56px;}
+  .thesis-row .mega{font-size:clamp(76px, 11vw, 150px);}
 
-  .kicker{font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); font-weight:600;}
+  .chart{margin-top:18px; background:var(--ink-2); border:1px solid var(--line); border-radius:20px; padding:30px 28px 24px;}
+  .chart-title{font-family:var(--display); font-size:22px; font-weight:700;}
+  .chart-sub{color:var(--muted); font-size:13.5px; margin:4px 0 26px;}
+  .hbar{display:grid; grid-template-columns:minmax(160px, 250px) 1fr 140px; gap:18px; align-items:center;}
+  .hbar + .hbar{margin-top:14px;}
+  .hbar .name{font-size:14.5px; font-weight:500;}
+  .hbar .name small{display:block; color:var(--muted); font-size:12px; font-weight:400;}
+  .hbar .track{height:22px; background:var(--track); border-radius:6px; overflow:hidden;}
+  .hbar .fill{height:100%; border-radius:6px; transform-origin:left; animation:grow 1s cubic-bezier(.2,.8,.2,1) both;}
+  @keyframes grow{from{transform:scaleX(0);}}
+  .hbar .val{font-family:var(--mono); font-weight:600; font-size:15px; text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums;}
+  .hbar .val small{color:var(--muted); font-weight:500; font-size:12px;}
+  .group-label{font-family:var(--mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600; margin:26px 0 12px;}
+  .group-label:first-child{margin-top:0;}
+  .axis{display:grid; grid-template-columns:minmax(160px, 250px) 1fr 140px; gap:18px; margin-top:12px;}
+  .axis .ticks{display:flex; justify-content:space-between; font-family:var(--mono); font-size:10.5px; color:var(--muted);}
+
+  /* ---------- PART BANDS ---------- */
+  .part{position:relative; overflow:hidden; padding-block:88px 80px; color:var(--on-color); scroll-margin-top:52px;}
+  .part.p1{background:var(--yellow);}
+  .part.p2{background:var(--risk);}
+  .part .wrap{display:grid; grid-template-columns:auto 1fr; gap:36px; align-items:end; position:relative; z-index:1;}
+  .part .pnum{font-family:var(--display); font-weight:800; font-size:clamp(120px, 20vw, 260px); line-height:.72; letter-spacing:-.07em;}
+  .part h2{font-size:clamp(40px, 6.4vw, 84px); line-height:.92; letter-spacing:-.04em;}
+  .part p{margin:16px 0 0; font-size:19px; font-weight:500; max-width:520px;}
+  .part .ghost{position:absolute; right:-40px; bottom:-60px; font-family:var(--display); font-weight:800; font-size:clamp(160px, 26vw, 360px); line-height:1; letter-spacing:-.06em; color:rgba(0,0,0,.07); white-space:nowrap; pointer-events:none;}
+
+  /* ---------- LAYOUTS ---------- */
+  .duo{display:grid; grid-template-columns:minmax(0,5fr) minmax(0,6fr); gap:28px; align-items:start;}
+  .stack{display:flex; flex-direction:column; gap:18px; min-width:0;}
+  .posts-2{display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start;}
+  .posts-3{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; align-items:start;}
 
   /* Post cards: the screenshot, its meta, and Kijamii's translation */
-  .post{background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; margin:0; min-width:0;}
-  .post-shot{display:block; width:100%; padding:0; border:0; background:#000; cursor:zoom-in; line-height:0;}
-  .post-shot img{width:100%; height:auto; display:block; max-height:340px; object-fit:cover; object-position:top;}
-  .post figcaption{padding:14px 16px 16px; display:flex; flex-direction:column; gap:6px;}
-  .post .meta{font-family:var(--mono); font-size:11px; letter-spacing:.5px; color:var(--muted); text-transform:uppercase;}
-  .post blockquote{margin:0; font-family:var(--serif); font-size:16.5px; line-height:1.4; color:var(--text);}
-  .posts-2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
-  .posts-3{display:grid; grid-template-columns:repeat(3, 1fr); gap:14px;}
+  .post{margin:0; background:var(--text); color:var(--on-color); border-radius:16px; overflow:hidden; box-shadow:0 24px 50px -24px rgba(0,0,0,.7); transition:transform .3s ease; min-width:0;}
+  .post:nth-child(odd){transform:rotate(-1.2deg);}
+  .post:nth-child(even){transform:rotate(1.2deg);}
+  .post:hover{transform:rotate(0) translateY(-4px);}
+  .post-shot{display:block; width:100%; padding:0; border:0; background:#000; cursor:zoom-in; line-height:0; position:relative;}
+  .post-shot img{width:100%; height:auto; display:block; max-height:300px; object-fit:cover; object-position:top;}
+  .post-shot::after{content:"View original ↗"; position:absolute; right:10px; bottom:10px; font:600 11px/1 var(--mono); letter-spacing:.5px; background:rgba(0,0,0,.7); color:#fff; padding:6px 8px; border-radius:6px; opacity:0; transition:opacity .2s;}
+  .post-shot:hover::after, .post-shot:focus-visible::after{opacity:1;}
+  .post figcaption{padding:16px 18px 18px;}
+  .post .meta{font-family:var(--mono); font-size:10.5px; letter-spacing:1px; text-transform:uppercase; color:#5A6070; font-weight:600;}
+  .post blockquote{margin:8px 0 0; font-family:var(--display); font-weight:700; font-size:19px; line-height:1.2; letter-spacing:-.01em;}
+  .post blockquote::before{content:"“"; color:var(--blue); font-size:1.6em; line-height:0; vertical-align:-.32em; margin-right:2px;}
+  .post.r blockquote::before{color:var(--risk);}
+  .post.plain blockquote::before{content:none;}
 
-  /* Praise → backlash pair */
-  .pair{display:grid; grid-template-columns:1fr auto 1fr; gap:16px; align-items:stretch;}
-  .pair .arrow{align-self:center; display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--muted); font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600;}
-  .pair .arrow span{font-size:24px; letter-spacing:0; color:var(--text);}
-  .pair-col{display:flex; flex-direction:column; gap:14px; min-width:0;}
-  .pair-stat{display:flex; flex-direction:column; gap:4px;}
-  .pair-stat .n{font-family:var(--serif); font-size:36px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums;}
+  .callout{border-radius:16px; padding:20px 22px; font-size:15.5px; line-height:1.5; font-weight:500;}
+  .callout.l{background:var(--lime); color:var(--on-color);}
+  .callout.r{background:rgba(255,90,54,.12); border:1px solid rgba(255,90,54,.45);}
+  .callout.r b{color:var(--risk);}
+  .callout.y{background:rgba(255,210,0,.1); border:1px solid rgba(255,210,0,.45);}
+  .callout.y b{color:var(--yellow);}
 
-  /* Lending ring */
-  .ring-row{display:flex; gap:22px; align-items:center;}
-  .ring{width:132px; height:132px; flex:none;}
-  .contrast{border-left:3px solid var(--blue); padding:4px 0 4px 16px;}
-  .contrast .n{font-family:var(--serif); font-size:34px; font-weight:700; color:var(--blue); line-height:1.1;}
+  /* Donations comparison */
+  .versus{display:grid; grid-template-columns:auto 1fr; gap:22px 18px; align-items:end;}
+  .versus .col{width:96px; border-radius:12px 12px 4px 4px; display:flex; align-items:flex-start; justify-content:center; padding-top:12px; font-family:var(--display); font-weight:800; font-size:28px; color:var(--on-color);}
+  .versus-chart{display:flex; align-items:flex-end; gap:20px; height:260px; border-bottom:2px solid var(--line); padding-inline:6px;}
+  .versus-chart .bar{flex:1; max-width:140px; border-radius:14px 14px 0 0; display:flex; flex-direction:column; justify-content:flex-start; align-items:center; padding-top:14px; font-family:var(--display); font-weight:800; font-size:clamp(30px, 4vw, 44px); line-height:1; transform-origin:bottom; animation:growY 1s cubic-bezier(.2,.8,.2,1) both;}
+  @keyframes growY{from{transform:scaleY(0);}}
+  .versus-labels{display:flex; gap:20px; padding-inline:6px; margin-top:10px;}
+  .versus-labels span{flex:1; max-width:140px; font-size:13px; color:var(--muted); text-align:center;}
+
+  /* Praise pair */
+  .pair{display:grid; grid-template-columns:1fr auto 1fr; gap:22px; align-items:start;}
+  .pair .arrow{align-self:center; display:flex; flex-direction:column; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600; color:var(--lime);}
+  .pair .arrow span{width:64px; height:64px; border-radius:50%; background:var(--lime); color:var(--on-color); display:grid; place-items:center; font-size:28px; letter-spacing:0;}
+  .pair-col{display:flex; flex-direction:column; gap:20px; min-width:0;}
+  .pair .mega{font-size:clamp(56px, 7vw, 88px);}
+
+  /* Lending */
+  .ring-wrap{display:flex; gap:24px; align-items:center;}
+  .ring{width:180px; height:180px; flex:none;}
+  .ring .arc{stroke-dasharray:0 440; animation:arc 1.4s cubic-bezier(.2,.8,.2,1) forwards .2s;}
+  @keyframes arc{to{stroke-dasharray:422.2 440;}}
+  @media (prefers-reduced-motion: reduce){ .ring .arc{animation:none; stroke-dasharray:422.2 440;} }
 
   /* Failed amounts */
-  .amounts .hbar{grid-template-columns:150px 1fr 96px;}
+  .amount-row{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 16px; align-items:end;}
+  .amount-row + .amount-row{margin-top:18px;}
+  .amount-row .where{font-size:14px; font-weight:500;}
+  .amount-row .where small{color:var(--muted); font-family:var(--mono); font-size:11px; margin-left:6px;}
+  .amount-row .egp{font-family:var(--display); font-weight:800; font-size:30px; line-height:1; color:var(--risk); font-variant-numeric:tabular-nums;}
+  .amount-row .egp small{font-size:13px; color:var(--muted); font-family:var(--mono); margin-left:4px;}
+  .amount-row .track{grid-column:1 / -1; height:10px; background:var(--track); border-radius:5px; overflow:hidden;}
+  .amount-row .fill{height:100%; background:var(--risk); border-radius:5px; transform-origin:left; animation:grow 1s cubic-bezier(.2,.8,.2,1) both;}
 
-  /* Live-case timeline */
-  .timeline{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(4, 1fr); gap:0; position:relative;}
-  .timeline::before{content:""; position:absolute; left:0; right:0; top:7px; height:2px; background:var(--border);}
-  .timeline li{position:relative; padding:28px 16px 0 0;}
-  .timeline li::before{content:""; position:absolute; top:0; left:0; width:16px; height:16px; border-radius:50%; background:var(--bg); border:3px solid var(--risk);}
-  .timeline li:last-child::before{background:var(--risk);}
-  .timeline time{font-family:var(--mono); font-size:11.5px; color:var(--risk); display:block; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;}
-  .timeline p{margin:0; font-size:14px; color:var(--text);}
-  .timeline p small{color:var(--muted); display:block; margin-top:4px; font-size:12.5px;}
+  /* Live case timeline */
+  .timeline{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(4,1fr); position:relative;}
+  .timeline::before{content:""; position:absolute; left:0; right:0; top:15px; height:3px; background:linear-gradient(90deg, rgba(255,90,54,.25), var(--risk));}
+  .timeline li{position:relative; padding:48px 20px 0 0;}
+  .timeline li::before{content:attr(data-i); position:absolute; top:0; left:0; width:34px; height:34px; border-radius:50%; background:var(--ink); border:3px solid var(--risk); color:var(--risk); font:700 13px/28px var(--mono); text-align:center;}
+  .timeline li:last-child::before{background:var(--risk); color:var(--on-color);}
+  .timeline time{display:block; font-family:var(--mono); font-size:12px; font-weight:600; color:var(--risk); letter-spacing:.5px; text-transform:uppercase; margin-bottom:8px;}
+  .timeline p{margin:0; font-family:var(--display); font-weight:700; font-size:20px; line-height:1.15;}
+  .timeline p small{display:block; margin-top:6px; font-family:var(--mono); font-size:12px; color:var(--muted); font-weight:500;}
+  .live-head{display:flex; gap:28px; align-items:center; flex-wrap:wrap; margin-bottom:40px;}
+  .live-badge{display:inline-flex; align-items:center; gap:10px; background:var(--risk); color:var(--on-color); font-family:var(--mono); font-weight:600; font-size:12px; letter-spacing:2px; text-transform:uppercase; padding:8px 14px; border-radius:999px;}
+  .live-badge i{width:9px; height:9px; border-radius:50%; background:var(--on-color); animation:pulse 1.4s ease-in-out infinite;}
+  @keyframes pulse{50%{opacity:.25;}}
 
   /* Friction meters */
-  .meters{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px;}
-  .meter .n{font-family:var(--serif); font-size:42px; font-weight:700; color:var(--risk); line-height:1; font-variant-numeric:tabular-nums;}
-  .meter .l{color:var(--muted); font-size:13.5px; margin-top:8px;}
+  .meters{display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-bottom:40px;}
+  .meters .mega{font-size:clamp(72px, 10vw, 128px);}
 
-  .source{color:var(--muted); font-size:12px; margin-top:22px; font-style:italic; max-width:880px;}
-
-  /* Footer */
-  footer{padding-block:56px 0; border-top:1px solid var(--border);}
-  .notes{display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-top:20px;}
-  .note .k{font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--lime); font-weight:600;}
-  .note p{margin:6px 0 0; font-size:13px; color:var(--muted);}
-  .sign{display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-top:48px; padding-top:24px; border-top:1px solid var(--border);}
-  .sign img{height:20px; width:auto;}
-  .sign .t{color:var(--muted); font-size:12.5px;}
-  .footer-strip{height:4px; margin-top:32px; background:linear-gradient(90deg, var(--lime) 0 34%, var(--yellow) 34% 67%, var(--blue) 67% 100%);}
+  /* ---------- FOOTER (Kijamii lime) ---------- */
+  footer{background:var(--lime); color:var(--on-color); padding-block:80px 40px;}
+  footer h2{font-size:clamp(32px, 4.4vw, 54px); line-height:1;}
+  footer .eyebrow{color:var(--on-color);}
+  .notes{display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-top:40px; border-top:2px solid var(--on-color);}
+  .note{padding:20px 22px 22px 0; border-bottom:1px solid rgba(0,0,0,.18);}
+  .note .k{font-family:var(--mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:600;}
+  .note p{margin:8px 0 0; font-size:14px; max-width:36ch;}
+  .sign{display:flex; align-items:end; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-top:64px;}
+  .sign img{height:56px; width:auto; filter:brightness(0);}
+  .sign .t{font-family:var(--mono); font-size:12px; letter-spacing:1px; text-transform:uppercase; font-weight:600;}
 
   /* Lightbox */
-  dialog.lb{border:0; padding:0; background:transparent; max-width:min(920px, 94vw); max-height:92vh;}
-  dialog.lb::backdrop{background:rgba(4,6,12,.86);}
-  dialog.lb img{display:block; max-width:100%; max-height:84vh; height:auto; border-radius:8px;}
-  dialog.lb .cap{color:var(--text); font-size:14px; margin-top:12px; font-family:var(--serif);}
-  dialog.lb button{position:absolute; top:8px; right:8px; background:rgba(10,13,22,.85); color:var(--text); border:1px solid var(--border); border-radius:999px; width:34px; height:34px; font-size:18px; cursor:pointer;}
+  dialog.lb{border:0; padding:0; background:transparent; max-width:min(920px, 94vw); max-height:92vh; overflow:visible;}
+  dialog.lb::backdrop{background:rgba(4,6,12,.9);}
+  dialog.lb img{display:block; max-width:100%; max-height:80vh; height:auto; border-radius:10px;}
+  dialog.lb .cap{color:var(--text); font-family:var(--display); font-weight:700; font-size:20px; margin-top:14px;}
+  dialog.lb button{position:absolute; top:-14px; right:-14px; background:var(--lime); color:var(--on-color); border:0; border-radius:999px; width:38px; height:38px; font-size:20px; font-weight:700; cursor:pointer;}
 
-  @media (max-width: 960px){
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition:none !important;}
+    html{scroll-behavior:auto;}
+    .ticker .track{animation:none;}
+  }
+
+  @media (max-width: 980px){
+    .hero .wrap{grid-template-columns:1fr; gap:56px;}
+    .card-stack{max-width:460px;}
     .duo{grid-template-columns:1fr;}
     .posts-3{grid-template-columns:1fr 1fr;}
     .notes{grid-template-columns:1fr 1fr;}
   }
   @media (max-width: 760px){
-    .stat-row{grid-template-columns:1fr 1fr;}
-    .split-thesis{grid-template-columns:1fr;}
+    section{padding-block:72px;}
+    .stats .grid{grid-template-columns:1fr 1fr;}
+    .stats .s:nth-child(3){border-left:0; padding-left:0;}
+    .thesis-row{grid-template-columns:1fr;}
     .pair{grid-template-columns:1fr;}
     .pair .arrow{flex-direction:row;}
     .pair .arrow span{transform:rotate(90deg);}
-    .timeline{grid-template-columns:1fr; gap:22px;}
-    .timeline::before{left:7px; right:auto; top:0; bottom:0; width:2px; height:auto;}
-    .timeline li{padding:0 0 0 32px;}
-    .hbar, .axis{grid-template-columns:1fr 92px; gap:6px 12px;}
+    .timeline{grid-template-columns:1fr; gap:28px;}
+    .timeline::before{left:15px; right:auto; top:0; bottom:0; width:3px; height:auto; background:linear-gradient(180deg, rgba(255,90,54,.25), var(--risk));}
+    .timeline li{padding:4px 0 0 52px;}
+    .hbar, .axis{grid-template-columns:1fr 104px; gap:6px 12px;}
     .hbar .name{grid-column:1 / -1;}
-    .axis > :first-child{display:none;}
-    .axis > :last-child{display:none;}
-    .amounts .hbar{grid-template-columns:1fr 92px;}
+    .axis > span{display:none;}
+    .part .wrap{grid-template-columns:1fr; gap:8px;}
+    .meters{grid-template-columns:1fr;}
   }
   @media (max-width: 560px){
     .posts-2, .posts-3{grid-template-columns:1fr;}
-    .meters{grid-template-columns:1fr;}
     .notes{grid-template-columns:1fr;}
-    .part .wrap{grid-template-columns:1fr; gap:12px;}
-    .ring-row{flex-direction:column; align-items:flex-start;}
+    .ring-wrap{flex-direction:column; align-items:flex-start;}
+    .ycard{padding:18px 20px; border-radius:16px;}
+    .ycard .num{font-size:22px;}
+    .ycard .bottom div{font-size:9px;}
+    .ycard .bottom b{font-size:12px;}
   }
 </style>
 </head>
 <body>
 
-<div class="top-strip"></div>
-
 <nav class="nav" aria-label="Sections">
   <div class="wrap">
-    <a href="#headline"><span class="n">00</span>The headline</a>
-    <a class="wins" href="#wins"><span class="n">01</span>Where Fawry wins</a>
-    <a class="wins" href="#utility">Everyday utility</a>
-    <a class="wins" href="#donations">Donations</a>
-    <a class="wins" href="#praise">A moment of praise</a>
-    <a class="breaks" href="#breaks"><span class="n">02</span>Where trust breaks</a>
-    <a class="breaks" href="#lending">Lending</a>
-    <a class="breaks" href="#branch">Branch practices</a>
-    <a class="breaks" href="#failed">Failed transactions</a>
-    <a class="breaks" href="#live">Live case</a>
-    <a class="breaks" href="#friction">Everyday friction</a>
+    <img class="logo" src="assets/kijamii-logo.svg" alt="Kijamii">
+    <a href="#headline">The headline</a>
+    <a class="p1" href="#wins">01 Wins</a>
+    <a href="#utility">Utility</a>
+    <a href="#donations">Donations</a>
+    <a href="#praise">Praise</a>
+    <a class="p2" href="#breaks">02 Trust breaks</a>
+    <a href="#lending">Lending</a>
+    <a href="#branch">Branches</a>
+    <a href="#failed">Failed transactions</a>
+    <a href="#live">Live case</a>
+    <a href="#friction">Friction</a>
   </div>
 </nav>
 
 <!-- HERO -->
-<header class="wrap hero">
-  <div class="brand-lockup">
-    <img src="assets/kijamii-logo.svg" alt="Kijamii" class="brand-kijamii">
-    <span class="brand-x">×</span>
-    <div class="brand-chip" id="fawryChip"><img src="assets/fawry-logo.png" alt="Fawry" class="brand-fawry" onerror="var c=this.closest('.brand-chip'); c.style.display='none'; c.previousElementSibling.style.display='none';"></div>
-    <span class="brand-tag">Consumer Insights</span>
-  </div>
-  <h1>Fawry <span class="bar">|</span> Audience Pulse</h1>
-  <p class="lede">What 1,720 real conversations say about how Egyptians pay, borrow and save with Fawry.</p>
-  <div class="sub">Social, news and community conversation&nbsp;&nbsp;·&nbsp;&nbsp;June – October 2026</div>
-  <div class="stat-row">
-    <div class="stat-card"><div class="num">1,720</div><div class="lbl">Egyptian conversations about Fawry</div></div>
-    <div class="stat-card"><div class="num">3</div><div class="lbl">Sources: social, news and a customer community</div></div>
-    <div class="stat-card"><div class="num">206K</div><div class="lbl">Members in the community group we follow</div></div>
-    <div class="stat-card"><div class="num">5</div><div class="lbl">Months monitored, June to October 2026</div></div>
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <div class="lockup">
+        <img src="assets/kijamii-logo.svg" alt="Kijamii" class="kj">
+        <span class="x">×</span>
+        <div class="chip"><img src="assets/fawry-logo.png" alt="Fawry" onerror="var c=this.closest('.chip'); c.style.display='none'; c.previousElementSibling.style.display='none';"></div>
+        <span class="tag">Consumer insights</span>
+      </div>
+      <h1>Fawry<span class="y">Audience Pulse</span></h1>
+      <p class="lede">What <b>1,720 real conversations</b> say about how Egyptians pay, borrow and save with Fawry.</p>
+      <div class="sub">Social · News · Community &nbsp;/&nbsp; June – October 2026</div>
+    </div>
+    <div class="card-stack" aria-label="Headline numbers">
+      <div class="ghost"><span>Kijamii × Fawry</span></div>
+      <div class="ycard">
+        <div class="top"><div class="lbl">Audience Pulse</div><div class="emv"></div></div>
+        <div class="num">1720 0136 0084</div>
+        <div class="bottom">
+          <div>Paying<b>4 / 136 neg.</b></div>
+          <div>Lending<b>96% neg.</b></div>
+          <div>Valid<b>06–10/26</b></div>
+        </div>
+      </div>
+    </div>
   </div>
 </header>
+
+<!-- QUOTE TICKER -->
+<div class="ticker-clip"><div class="ticker" aria-label="What people are saying">
+  <div class="track">
+    <span class="item">“You can pay with Fawry, you don't need a Visa.”</span>
+    <span class="item">“Fawry: donate with code 998”</span>
+    <span class="item">“I never took a loan, how do I owe 60,000 pounds?”</span>
+    <span class="item">“Any direct-payment app in Egypt has to go through Fawry.”</span>
+    <span class="item">“They cancelled Fawry Pay from the yellow card.”</span>
+    <span class="item">“Beware Fawry loans: 3.04% a month = 36.48% a year.”</span>
+    <span class="item" aria-hidden="true">“You can pay with Fawry, you don't need a Visa.”</span>
+    <span class="item" aria-hidden="true">“Fawry: donate with code 998”</span>
+    <span class="item" aria-hidden="true">“I never took a loan, how do I owe 60,000 pounds?”</span>
+    <span class="item" aria-hidden="true">“Any direct-payment app in Egypt has to go through Fawry.”</span>
+    <span class="item" aria-hidden="true">“They cancelled Fawry Pay from the yellow card.”</span>
+    <span class="item" aria-hidden="true">“Beware Fawry loans: 3.04% a month = 36.48% a year.”</span>
+  </div>
+</div></div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="wrap">
+    <div class="grid">
+      <div class="s"><div class="n" style="color:var(--yellow)">1,720</div><div class="l">Egyptian conversations about Fawry</div></div>
+      <div class="s"><div class="n" style="color:var(--blue-soft)">3</div><div class="l">Sources: social, news and a customer community</div></div>
+      <div class="s"><div class="n" style="color:var(--lime)">206K</div><div class="l">Members in the community group we follow</div></div>
+      <div class="s"><div class="n">5</div><div class="l">Months monitored, June to October 2026</div></div>
+    </div>
+  </div>
+</div>
 
 <!-- THE HEADLINE -->
 <section id="headline">
   <div class="wrap">
-    <div class="eyebrow">The headline</div>
-    <h2 class="headline">Egyptians trust Fawry to pay. They don't yet trust it to lend.</h2>
-    <p class="insight">Payments are an asset. Lending is where the brand is being tested. Sentiment splits cleanly by what people are using Fawry for.</p>
+    <div class="eyebrow l">The headline</div>
+    <p class="statement">Egyptians trust Fawry to <span class="pay">pay.</span><br><span class="dim">They don't yet trust it to</span> <span class="lend">lend.</span></p>
 
-    <div class="split-thesis">
-      <div class="thesis win">
-        <div class="tag">Paying</div>
-        <div class="big">4 / 136</div>
-        <p>payment and how-to mentions were negative. As a way to pay, Fawry is close to unquestioned.</p>
+    <div class="thesis-row">
+      <div class="tile y">
+        <div class="kicker">Paying · negative mentions</div>
+        <div class="mega">4<span style="opacity:.4">/136</span></div>
+        <p>As a way to pay, Fawry is close to unquestioned.</p>
       </div>
-      <div class="thesis break">
-        <div class="tag">Borrowing</div>
-        <div class="big">96%</div>
-        <p>of lending, fraud and mis-selling mentions were negative (81 of 84). Nearly all trust damage sits here.</p>
+      <div class="tile r">
+        <div class="kicker">Borrowing · negative mentions</div>
+        <div class="mega">96%</div>
+        <p>81 of 84 lending, fraud and mis-selling mentions. Nearly all trust damage sits here.</p>
       </div>
     </div>
 
-    <div class="chart-card">
-      <div class="chart-title">Share of mentions that were negative, by theme</div>
-      <div class="chart-sub">Bar length is the negative share. Mentions in each theme shown on the right.</div>
+    <div class="chart">
+      <div class="chart-title">How negative is each theme?</div>
+      <div class="chart-sub">Share of mentions that were negative. Mentions in each theme on the right.</div>
       <div id="themeChart"></div>
       <div class="axis" aria-hidden="true"><span></span><div class="ticks"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div><span></span></div>
-      <div class="legend-row">
-        <div class="legend-item"><span class="swatch" style="background:var(--yellow)"></span>Where Fawry wins</div>
-        <div class="legend-item"><span class="swatch" style="background:var(--risk)"></span>Where trust breaks</div>
-      </div>
     </div>
     <p class="source">Source: 1,720 Egyptian conversations about Fawry across social, news and community groups, Jun–Oct 2026. Most themes have under 50 mentions, so shares are directional.</p>
   </div>
 </section>
 
 <!-- PART 01 -->
-<div class="part wins" id="wins">
+<div class="part p1" id="wins">
+  <div class="ghost" aria-hidden="true">pay pay pay</div>
   <div class="wrap">
     <div class="pnum">01</div>
     <div>
@@ -346,36 +436,36 @@
 </div>
 
 <!-- Everyday utility -->
-<section id="utility">
+<section id="utility" class="navy">
   <div class="wrap">
-    <div class="eyebrow">Everyday utility</div>
-    <h2 class="headline">Fawry is Egypt's default answer to “how do I pay?”</h2>
+    <div class="eyebrow y">Everyday utility</div>
+    <h2 class="headline">Fawry is Egypt's default answer to <em>“how do I pay?”</em></h2>
     <p class="insight">When people tell each other how to pay for Spotify, Udemy, Shahid, hosting or courses, the answer is Fawry.</p>
     <div class="duo">
       <div class="stack">
-        <div class="card bigstat">
-          <div class="n y">136</div>
-          <div class="l">mentions recommend Fawry as the way to pay, or ask how. Only 4 were negative.</div>
-          <div class="split-bar" role="img" aria-label="132 of 136 not negative, 4 negative">
-            <span style="width:97.1%; background:var(--yellow)"></span>
+        <div class="tile y">
+          <div class="kicker">Mentions recommending Fawry, or asking how</div>
+          <div class="mega" style="font-size:clamp(96px, 13vw, 168px)">136</div>
+          <div class="split-bar" role="img" aria-label="132 not negative, 4 negative">
+            <span style="width:97.1%; background:var(--on-color)"></span>
             <span style="width:2.9%; background:var(--risk)"></span>
           </div>
-          <div class="split-legend"><span style="color:var(--yellow)">132 not negative</span><span style="color:var(--risk)">4 negative</span></div>
+          <div class="split-legend"><span>132 not negative</span><span>only 4 negative</span></div>
         </div>
-        <div class="card">
-          <div class="kicker" style="margin-bottom:12px">What people pay for with Fawry</div>
-          <div class="chips"><span class="chip">Spotify</span><span class="chip">Udemy</span><span class="chip">Shahid</span><span class="chip">Web hosting</span><span class="chip">Online courses</span></div>
+        <div class="panel">
+          <div class="kicker" style="margin-bottom:14px">What people pay for with Fawry</div>
+          <div class="chips"><span class="chip y">Spotify</span><span class="chip y">Udemy</span><span class="chip y">Shahid</span><span class="chip">Web hosting</span><span class="chip">Online courses</span></div>
         </div>
-        <div class="callout yellow"><b>Demand pull.</b> Gamers and creators publicly ask Steam, Google and Apple to add Fawry for Egypt.</div>
+        <div class="callout l"><b>Demand pull.</b> Gamers and creators publicly ask Steam, Google and Apple to add Fawry for Egypt.</div>
       </div>
-      <div class="stack">
+      <div class="posts-2">
         <figure class="post">
           <button class="post-shot" type="button"><img src="assets/fawry/pay-via-fawry.png" alt="Post on X recommending paying through Fawry"></button>
-          <figcaption><span class="meta">X · 5 Jul 2026</span><blockquote>“Pay through Fawry… any direct-payment app in Egypt has to go through Fawry.”</blockquote></figcaption>
+          <figcaption><span class="meta">X · 5 Jul 2026</span><blockquote>Pay through Fawry… any direct-payment app in Egypt has to go through Fawry.”</blockquote></figcaption>
         </figure>
         <figure class="post">
           <button class="post-shot" type="button"><img src="assets/fawry/pay-no-visa.png" alt="Post on X saying you can pay with Fawry without a Visa card"></button>
-          <figcaption><span class="meta">X · 15 Jun 2026</span><blockquote>“You can pay with Fawry, you don't need a Visa.”</blockquote></figcaption>
+          <figcaption><span class="meta">X · 15 Jun 2026</span><blockquote>You can pay with Fawry, you don't need a Visa.”</blockquote></figcaption>
         </figure>
       </div>
     </div>
@@ -386,36 +476,30 @@
 <!-- Donations -->
 <section id="donations">
   <div class="wrap">
-    <div class="eyebrow">Donations</div>
-    <h2 class="headline">Fawry is the rails of Egyptian giving</h2>
-    <p class="insight">Charity appeals carrying a Fawry code are the largest theme in Fawry's social conversation, and they carry zero negative sentiment.</p>
+    <div class="eyebrow y">Donations</div>
+    <h2 class="headline">Fawry is the <em>rails</em> of Egyptian giving</h2>
+    <p class="insight">Charity appeals carrying a Fawry code are the largest theme in Fawry's social conversation, with zero negative sentiment.</p>
     <div class="duo">
       <div class="stack">
-        <div class="chart-card amounts">
-          <div class="chart-title">Mentions, Jun–Oct 2026</div>
-          <div class="chart-sub">Other people's appeals versus Fawry's own posts</div>
-          <div class="hbar">
-            <div class="name">Charity appeals with a Fawry code</div>
-            <div class="track"><div class="fill" style="width:100%; background:var(--yellow)"></div></div>
-            <div class="val">236</div>
+        <div class="panel">
+          <div class="kicker" style="margin-bottom:18px">Mentions, Jun–Oct 2026</div>
+          <div class="versus-chart" role="img" aria-label="236 charity appeal mentions versus 33 Fawry brand post mentions">
+            <div class="bar" style="height:100%; background:var(--yellow); color:var(--on-color)">236</div>
+            <div class="bar" style="height:14%; background:var(--blue); color:var(--text); min-height:58px">33</div>
           </div>
-          <div class="hbar">
-            <div class="name">Fawry's own brand posts</div>
-            <div class="track"><div class="fill" style="width:14%; background:var(--blue)"></div></div>
-            <div class="val">33</div>
-          </div>
+          <div class="versus-labels"><span>Charity appeals with a Fawry code</span><span>Fawry's own brand posts</span></div>
         </div>
-        <div class="card">
-          <div class="kicker" style="margin-bottom:12px">Appeals that point to Fawry codes</div>
-          <div class="chips"><span class="chip">Magdi Yacoub Foundation</span><span class="chip">Abu El Reesh</span><span class="chip">25 January Hospital</span><span class="chip">Bedaya</span></div>
-        </div>
-        <div class="callout lime"><b>Kijamii read:</b> donations are an owned-emotion territory. People already route their giving through Fawry seven times more often than Fawry talks about itself.</div>
+        <div class="callout l"><b>7× more.</b> People route their giving through Fawry seven times more often than Fawry talks about itself. Donations are an owned-emotion territory Fawry could claim.</div>
       </div>
       <div class="stack">
-        <figure class="post">
+        <figure class="post plain">
           <button class="post-shot" type="button"><img src="assets/fawry/donation-abu-el-reesh.png" alt="Post on X listing donation methods for Abu El Reesh hospital, including a Fawry code"></button>
           <figcaption><span class="meta">X · 27 Aug 2026 · 16.9K views</span><blockquote>An Abu El Reesh children's hospital appeal listing “Fawry: donate with code 998”.</blockquote></figcaption>
         </figure>
+        <div class="panel">
+          <div class="kicker" style="margin-bottom:14px">Appeals that point to Fawry codes</div>
+          <div class="chips"><span class="chip y">Magdi Yacoub Foundation</span><span class="chip y">Abu El Reesh</span><span class="chip y">25 January Hospital</span><span class="chip y">Bedaya</span></div>
+        </div>
       </div>
     </div>
     <p class="source">Source: social conversation about Fawry, Jun–Oct 2026. Private users' names blurred.</p>
@@ -423,35 +507,33 @@
 </section>
 
 <!-- A moment of praise -->
-<section id="praise">
+<section id="praise" class="ink2">
   <div class="wrap">
-    <div class="eyebrow">A moment of praise</div>
-    <h2 class="headline">Fawry's most-shared praise came from a branch ID check, and the replies turned to who owns Fawry</h2>
+    <div class="eyebrow y">A moment of praise</div>
+    <h2 class="headline">The most-shared praise came from a <em>branch ID check</em>, and the replies turned to <em class="r">who owns Fawry</em></h2>
     <p class="insight">Rigorous identity checks are a trust asset. The ownership narrative follows big moments.</p>
     <div class="pair">
       <div class="pair-col">
-        <div class="card pair-stat">
+        <div class="tile y">
           <div class="kicker">7 Aug · 85.5K views · 1.2K likes</div>
-          <div class="n" style="color:var(--yellow)">77 of 86</div>
-          <div class="l" style="color:var(--muted); font-size:13.5px">mentions positive: praise for Fawry's in-branch photo check, set against the telcos.</div>
-          <div class="split-bar" role="img" aria-label="77 of 86 positive"><span style="width:89.5%; background:var(--yellow)"></span></div>
+          <div class="mega">77<span style="opacity:.4">/86</span></div>
+          <p>mentions positive: praise for Fawry's in-branch photo check, set against the telcos.</p>
         </div>
         <figure class="post">
           <button class="post-shot" type="button"><img src="assets/fawry/branch-photo-check.png" alt="Post on X praising Fawry's in-branch photo verification"></button>
-          <figcaption><span class="meta">X · 7 Aug 2026</span><blockquote>“To issue a card, Fawry photographs you with a camera inside the branch to prove it's really you… imagine telecom companies making billions.”</blockquote></figcaption>
+          <figcaption><span class="meta">X · 7 Aug 2026</span><blockquote>To issue a card, Fawry photographs you with a camera inside the branch to prove it's really you… imagine telecom companies making billions.”</blockquote></figcaption>
         </figure>
       </div>
       <div class="arrow" aria-hidden="true"><span>→</span>Next day</div>
       <div class="pair-col">
-        <div class="card pair-stat">
+        <div class="tile r">
           <div class="kicker">8 Aug · Quote post</div>
-          <div class="n" style="color:var(--risk)">16 of 16</div>
-          <div class="l" style="color:var(--muted); font-size:13.5px">ownership and data mentions negative. Claims as posted.</div>
-          <div class="split-bar" role="img" aria-label="16 of 16 negative"><span style="width:100%; background:var(--risk)"></span></div>
+          <div class="mega">16<span style="opacity:.4">/16</span></div>
+          <p>ownership and data mentions negative. Claims as posted.</p>
         </div>
-        <figure class="post">
+        <figure class="post r">
           <button class="post-shot" type="button"><img src="assets/fawry/ownership-quote-post.png" alt="Quote post on X claiming Fawry is owned by the UAE"></button>
-          <figcaption><span class="meta">X · 8 Aug 2026 · 948 views</span><blockquote>“Fawry is now owned by the UAE… our data, the whole nation's data, is with them.”</blockquote></figcaption>
+          <figcaption><span class="meta">X · 8 Aug 2026 · 948 views</span><blockquote>Fawry is now owned by the UAE… our data, the whole nation's data, is with them.”</blockquote></figcaption>
         </figure>
       </div>
     </div>
@@ -460,7 +542,8 @@
 </section>
 
 <!-- PART 02 -->
-<div class="part breaks" id="breaks">
+<div class="part p2" id="breaks">
+  <div class="ghost" aria-hidden="true">trust trust</div>
   <div class="wrap">
     <div class="pnum">02</div>
     <div>
@@ -471,43 +554,46 @@
 </div>
 
 <!-- Lending -->
-<section id="lending">
+<section id="lending" class="burn">
   <div class="wrap">
-    <div class="eyebrow">Consumer lending</div>
-    <h2 class="headline">Lending is where Fawry's trust is being spent</h2>
+    <div class="eyebrow r">Consumer lending</div>
+    <h2 class="headline">Lending is where Fawry's trust is <em class="r">being spent</em></h2>
     <p class="insight">Payments built the trust. Lending is drawing it down.</p>
     <div class="duo">
       <div class="stack">
-        <div class="card">
-          <div class="ring-row">
-            <svg class="ring" viewBox="0 0 132 132" role="img" aria-label="96% negative">
-              <circle cx="66" cy="66" r="54" fill="none" stroke="var(--track)" stroke-width="14"/>
-              <circle cx="66" cy="66" r="54" fill="none" stroke="var(--risk)" stroke-width="14" stroke-dasharray="325.7 339.3" transform="rotate(-90 66 66)"/>
-              <text x="66" y="74" text-anchor="middle" fill="var(--risk)" font-family="Source Serif 4, Georgia, serif" font-weight="700" font-size="30">96%</text>
+        <div class="panel">
+          <div class="ring-wrap">
+            <svg class="ring" viewBox="0 0 180 180" role="img" aria-label="96% negative">
+              <circle cx="90" cy="90" r="70" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="22"/>
+              <circle class="arc" cx="90" cy="90" r="70" fill="none" stroke="#FF5A36" stroke-width="22" stroke-linecap="round" transform="rotate(-90 90 90)"/>
+              <text x="90" y="104" text-anchor="middle" fill="#FF5A36" font-family="Bricolage Grotesque, Arial Narrow, sans-serif" font-weight="800" font-size="44">96%</text>
             </svg>
-            <div class="bigstat"><div class="l" style="margin-top:0">of 84 lending, fraud and mis-selling mentions were negative. <b style="color:var(--text)">81 of 84.</b></div></div>
+            <div>
+              <div class="kicker" style="color:var(--risk)">Negative</div>
+              <p style="margin:8px 0 0; font-size:17px; font-weight:500">81 of 84 lending, fraud and mis-selling mentions.</p>
+            </div>
           </div>
         </div>
-        <div class="card contrast">
+        <div class="tile b">
           <div class="kicker">Meanwhile, in the press</div>
-          <div class="n">+82.6%</div>
-          <div style="color:var(--muted); font-size:13.5px">growth in Fawry's consumer-finance portfolio, to EGP 3.2bn in H1 2026, as reported by news coverage.</div>
+          <div class="mega" style="font-size:clamp(64px, 8vw, 96px)">+82.6%</div>
+          <p>growth in Fawry's consumer-finance portfolio, to EGP 3.2bn in H1 2026, as reported by news coverage.</p>
         </div>
-        <div class="callout red"><b>Watch the overlap.</b> The lending book is growing in the same months complaints about it are peaking. The timing overlaps; cause is not proven.</div>
+        <div class="callout r"><b>Watch the overlap.</b> The lending book is growing in the same months complaints about it peak. The timing overlaps; cause is not proven.</div>
       </div>
       <div class="stack">
-        <figure class="post">
+        <figure class="post r">
           <button class="post-shot" type="button"><img src="assets/fawry/loan-60k-news.png" alt="Egypt Telegraph post about a customer asked to repay a loan she never took"></button>
-          <figcaption><span class="meta">News outlet on X · 27 Aug 2026</span><blockquote>“I never took a loan, how do I owe 60,000 pounds?”</blockquote></figcaption>
+          <figcaption><span class="meta">News outlet on X · 27 Aug 2026</span><blockquote>I never took a loan, how do I owe 60,000 pounds?”</blockquote></figcaption>
         </figure>
         <div class="posts-2">
-          <figure class="post">
+          <figure class="post r">
             <button class="post-shot" type="button"><img src="assets/fawry/loan-debt-post.png" alt="Post on X headed 'Fawry scandals'"></button>
-            <figcaption><span class="meta">X · 9 Sep 2026</span><blockquote>“Fawry scandals: how to keep you in debt as long as possible.”</blockquote></figcaption>
+            <figcaption><span class="meta">X · 9 Sep 2026</span><blockquote>Fawry scandals: how to keep you in debt as long as possible.”</blockquote></figcaption>
           </figure>
-          <figure class="post">
+          <figure class="post r">
             <button class="post-shot" type="button"><img src="assets/fawry/loan-rate-warning.png" alt="Community group post warning about Fawry loan interest rates"></button>
-            <figcaption><span class="meta">Community group · 4 Jul · 51 reactions</span><blockquote>“Beware Fawry loans: 3.04% a month = 36.48% a year.”</blockquote></figcaption>
+            <figcaption><span class="meta">Community · 4 Jul · 51 reactions</span><blockquote>Beware Fawry loans: 3.04% a month = 36.48% a year.”</blockquote></figcaption>
           </figure>
         </div>
       </div>
@@ -517,22 +603,22 @@
 </section>
 
 <!-- Branch practices -->
-<section id="branch">
+<section id="branch" class="ink2">
   <div class="wrap">
-    <div class="eyebrow">Branch practices</div>
-    <h2 class="headline">Customers say branch staff take their codes and sign them up for things they didn't ask for</h2>
+    <div class="eyebrow r">Branch practices</div>
+    <h2 class="headline">Customers say branch staff <em class="r">take their codes</em> and sign them up for things they didn't ask for</h2>
     <p class="insight">One staff habit, taking OTPs, can turn into the “loan in my name” stories.</p>
     <div class="posts-2">
-      <figure class="post">
+      <figure class="post r plain">
         <button class="post-shot" type="button"><img src="assets/fawry/branch-assiut.png" alt="Long community group post about a branch employee setting up a card on her own phone"></button>
         <figcaption><span class="meta">Community group · 3 Feb · 220 reactions · 116 comments</span><blockquote>A father went to a Fawry branch in Assiut. The employee set up the yellow card and app on her own phone, using the codes sent to him.</blockquote></figcaption>
       </figure>
-      <figure class="post">
+      <figure class="post r">
         <button class="post-shot" type="button"><img src="assets/fawry/branch-otp.png" alt="Community group post asking why staff request the OTP when issuing the yellow card"></button>
-        <figcaption><span class="meta">Community group · 19 Sep</span><blockquote>“Why, when issuing the yellow card, is an OTP sent to the mobile and the employee asks for it… and a password too?”</blockquote></figcaption>
+        <figcaption><span class="meta">Community group · 19 Sep</span><blockquote>Why, when issuing the yellow card, is an OTP sent to the mobile and the employee asks for it… and a password too?”</blockquote></figcaption>
       </figure>
     </div>
-    <div class="callout red" style="margin-top:16px">
+    <div class="callout r" style="margin-top:36px">
       <b>Also reported:</b> a third “contract” naming a stranger as first party, and staff pushing an “investment Visa” “because of the target”. The base is low, 8 posts, but the most-reacted post in the community is about exactly this.
     </div>
     <p class="source">Source: Fawry customer community group “جروب فوري والكارت الاصفر” and conversation on X, 2026. Members' names blurred.</p>
@@ -542,29 +628,29 @@
 <!-- Failed transactions -->
 <section id="failed">
   <div class="wrap">
-    <div class="eyebrow">Failed transactions</div>
-    <h2 class="headline">Money leaves the card, but the cash never arrives</h2>
+    <div class="eyebrow r">Failed transactions</div>
+    <h2 class="headline">Money leaves the card, but the cash <em class="r">never arrives</em></h2>
     <p class="insight">The debit is instant. The reversal is slow and opaque.</p>
     <div class="duo">
       <div class="stack">
-        <div class="chart-card amounts">
-          <div class="chart-title">Amounts customers say went missing</div>
-          <div class="chart-sub">EGP, as stated by posters</div>
+        <div class="panel">
+          <div class="kicker" style="margin-bottom:22px">Amounts customers say went missing</div>
           <div id="amountChart"></div>
         </div>
-        <div class="card bigstat">
-          <div class="n r" style="font-size:56px">21 of 23</div>
-          <div class="l">failed-transaction posts in the community were negative. Banque Misr ATMs come up in 4 separate posts.</div>
+        <div class="tile r">
+          <div class="kicker">Failed-transaction posts in the community</div>
+          <div class="mega">21<span style="opacity:.4">/23</span></div>
+          <p>were negative. Banque Misr ATMs come up in 4 separate posts.</p>
         </div>
       </div>
       <div class="stack">
-        <figure class="post">
+        <figure class="post r plain">
           <button class="post-shot" type="button"><img src="assets/fawry/failed-atm-banque-misr.png" alt="Anonymous community post about money deducted at a Banque Misr ATM and not returned"></button>
           <figcaption><span class="meta">Community group · Oct 2026 · Anonymous</span><blockquote>Money deducted at a Banque Misr ATM. Told to wait 3 days, then 15. Still nothing.</blockquote></figcaption>
         </figure>
-        <figure class="post">
+        <figure class="post r">
           <button class="post-shot" type="button"><img src="assets/fawry/failed-yawmy-withdrawal.png" alt="Community post about a rejected withdrawal from Fawry Yawmy to the yellow card"></button>
-          <figcaption><span class="meta">Community group · 3 Oct 2026</span><blockquote>“Withdrew from Fawry Yawmy to the yellow card, it was deducted and the transaction rejected.”</blockquote></figcaption>
+          <figcaption><span class="meta">Community group · 3 Oct 2026</span><blockquote>Withdrew from Fawry Yawmy to the yellow card, it was deducted and the transaction rejected.”</blockquote></figcaption>
         </figure>
       </div>
     </div>
@@ -573,32 +659,32 @@
 </section>
 
 <!-- Live case -->
-<section id="live">
+<section id="live" class="burn">
   <div class="wrap">
-    <div class="eyebrow">Live case · 7–8 October</div>
-    <h2 class="headline">The yellow card vanished from MyFawry, and customers were confused</h2>
-    <p class="insight">A 206K-member group noticed, diagnosed and worked around a product change in hours. Public social never showed it.</p>
-    <div class="card" style="padding:28px 24px">
-      <ol class="timeline">
-        <li><time>7 Oct · 2:29 PM</time><p>Card missing at checkout, only valU shows</p></li>
-        <li><time>7 Oct · 7:00 PM</time><p>A member posts a workaround: clear the app's cache</p></li>
-        <li><time>8 Oct · 2:13 AM</time><p>Card gone from Fawry Yawmy top-ups too</p></li>
-        <li><time>8 Oct · 12:30 PM</time><p>“They cancelled Fawry Pay from the yellow card”<small>39 comments</small></p></li>
-      </ol>
+    <div class="live-head">
+      <span class="live-badge"><i></i>Live case · 7–8 October</span>
     </div>
-    <div class="callout red" style="margin-top:16px"><b>11 posts in about 48 hours.</b> It stayed inside the community, and no official explanation appears in the posts.</div>
-    <div class="posts-3" style="margin-top:16px">
-      <figure class="post">
+    <h2 class="headline">The yellow card <em class="r">vanished</em> from MyFawry, and customers were confused</h2>
+    <p class="insight">A 206K-member group noticed, diagnosed and worked around a product change in hours. Public social never showed it.</p>
+    <ol class="timeline">
+      <li data-i="1"><time>7 Oct · 2:29 PM</time><p>Card missing at checkout, only valU shows</p></li>
+      <li data-i="2"><time>7 Oct · 7:00 PM</time><p>A member posts a workaround: clear the app's cache</p></li>
+      <li data-i="3"><time>8 Oct · 2:13 AM</time><p>Card gone from Fawry Yawmy top-ups too</p></li>
+      <li data-i="4"><time>8 Oct · 12:30 PM</time><p>“They cancelled Fawry Pay from the yellow card”<small>39 comments</small></p></li>
+    </ol>
+    <div class="callout r" style="margin-top:48px"><b>11 posts in about 48 hours.</b> It stayed inside the community, and no official explanation appears in the posts.</div>
+    <div class="posts-3" style="margin-top:40px">
+      <figure class="post r">
         <button class="post-shot" type="button"><img src="assets/fawry/card-missing-checkout.png" alt="Community post: couldn't find the yellow card at checkout, only valU"></button>
-        <figcaption><span class="meta">Community group · 7 Oct</span><blockquote>“Came to pay today, couldn't find the yellow card, only valU, which I'm not even subscribed to.”</blockquote></figcaption>
+        <figcaption><span class="meta">Community group · 7 Oct</span><blockquote>Came to pay today, couldn't find the yellow card, only valU, which I'm not even subscribed to.”</blockquote></figcaption>
       </figure>
-      <figure class="post">
+      <figure class="post r">
         <button class="post-shot" type="button"><img src="assets/fawry/card-fawry-pay-cancelled.png" alt="Community post graphic: they cancelled Fawry Pay from the yellow card"></button>
-        <figcaption><span class="meta">Community group · 8 Oct · 39 comments</span><blockquote>“They cancelled Fawry Pay from the yellow card.”</blockquote></figcaption>
+        <figcaption><span class="meta">Community group · 8 Oct · 39 comments</span><blockquote>They cancelled Fawry Pay from the yellow card.”</blockquote></figcaption>
       </figure>
-      <figure class="post">
+      <figure class="post r">
         <button class="post-shot" type="button"><img src="assets/fawry/card-valu-fee.png" alt="Community post with a screenshot of the Fawry app offering only valU as payment method"></button>
-        <figcaption><span class="meta">Community group · Oct 2026</span><blockquote>“The Fawry app now takes a fee to renew home internet… refuses the yellow card balance and puts valU instead.”</blockquote></figcaption>
+        <figcaption><span class="meta">Community group · Oct 2026</span><blockquote>The Fawry app now takes a fee to renew home internet… refuses the yellow card balance and puts valU instead.”</blockquote></figcaption>
       </figure>
     </div>
     <p class="source">Source: Fawry customer community group “جروب فوري والكارت الاصفر” (206K members), October 2026. Members' names blurred.</p>
@@ -606,31 +692,33 @@
 </section>
 
 <!-- Everyday friction -->
-<section id="friction">
+<section id="friction" class="ink2">
   <div class="wrap">
-    <div class="eyebrow">Everyday friction</div>
-    <h2 class="headline">Utility cards and small fees chip away at the “digital” promise</h2>
+    <div class="eyebrow r">Everyday friction</div>
+    <h2 class="headline">Utility cards and small fees chip away at the <em class="r">“digital” promise</em></h2>
     <p class="insight">Much of the blame belongs to utilities and kiosks, but Fawry's name is on the machine.</p>
     <div class="meters">
-      <div class="card meter">
-        <div class="n">59%</div>
-        <div class="l">negative across 44 electricity and water card mentions</div>
-        <div class="split-bar"><span style="width:59%; background:var(--risk)"></span></div>
+      <div class="tile r">
+        <div class="kicker">Electricity and water cards · 44 mentions</div>
+        <div class="mega">59%</div>
+        <p>negative</p>
+        <div class="split-bar"><span style="width:59%; background:var(--on-color)"></span></div>
       </div>
-      <div class="card meter">
-        <div class="n">15 of 17</div>
-        <div class="l">fee mentions were negative</div>
-        <div class="split-bar"><span style="width:88.2%; background:var(--risk)"></span></div>
+      <div class="tile r">
+        <div class="kicker">Fees · 17 mentions</div>
+        <div class="mega">15<span style="opacity:.4">/17</span></div>
+        <p>negative</p>
+        <div class="split-bar"><span style="width:88.2%; background:var(--on-color)"></span></div>
       </div>
     </div>
     <div class="posts-2">
-      <figure class="post">
+      <figure class="post r">
         <button class="post-shot" type="button"><img src="assets/fawry/friction-electricity.png" alt="Post on X advising not to charge electricity cards through Fawry"></button>
-        <figcaption><span class="meta">X · 10 Jun 2026</span><blockquote>“Another tip: don't charge from Fawry… they kept deducting from me until I made a scene.”</blockquote></figcaption>
+        <figcaption><span class="meta">X · 10 Jun 2026</span><blockquote>Another tip: don't charge from Fawry… they kept deducting from me until I made a scene.”</blockquote></figcaption>
       </figure>
-      <figure class="post">
+      <figure class="post r">
         <button class="post-shot" type="button"><img src="assets/fawry/friction-kiosk-fee.png" alt="Post on X about kiosks charging a 2% fee for the Fawry machine"></button>
-        <figcaption><span class="meta">X · 9 Sep 2026</span><blockquote>“The shabby kiosks ask for the 2% for the Fawry machine, with embarrassment.”</blockquote></figcaption>
+        <figcaption><span class="meta">X · 9 Sep 2026</span><blockquote>The shabby kiosks ask for the 2% for the Fawry machine, with embarrassment.”</blockquote></figcaption>
       </figure>
     </div>
     <p class="source">Source: social conversation, Jun–Oct 2026. Private users' names blurred. Low base, directional.</p>
@@ -641,7 +729,7 @@
 <footer>
   <div class="wrap">
     <div class="eyebrow">Reading these numbers</div>
-    <h2 class="headline" style="font-size:24px">What the numbers can and can't say</h2>
+    <h2>What the numbers can and can't say</h2>
     <div class="notes">
       <div class="note"><div class="k">Scope</div><p>1,720 Egyptian conversations about Fawry across social, news and a 206K-member customer community, Jun–Oct 2026.</p></div>
       <div class="note"><div class="k">Base size</div><p>Most themes have under 50 mentions, so shares are directional.</p></div>
@@ -652,10 +740,9 @@
     </div>
     <div class="sign">
       <img src="assets/kijamii-logo.svg" alt="Kijamii">
-      <span class="t">Kijamii Consumer Insights · October 2026</span>
+      <span class="t">Consumer Insights · October 2026</span>
     </div>
   </div>
-  <div class="footer-strip"></div>
 </footer>
 
 <dialog class="lb" id="lightbox" aria-label="Original post">
@@ -665,9 +752,9 @@
 </dialog>
 
 <script>
-/* ---------- Negative share by theme (headline chart) ---------- */
+/* ---------- Negative share by theme ---------- */
 const themes = [
-  { group:'wins',   name:'Charity appeals with a Fawry code', neg:0,  n:236, label:'0 negative' },
+  { group:'wins',   name:'Charity appeals with a Fawry code', neg:0,  n:236 },
   { group:'wins',   name:'Paying with Fawry, or asking how',  neg:4,  n:136 },
   { group:'breaks', name:'Electricity and water cards',       pct:59, n:44 },
   { group:'breaks', name:'Fees',                              neg:15, n:17 },
@@ -681,7 +768,7 @@ const groupMeta = {
 };
 const themeChart = document.getElementById('themeChart');
 let lastGroup = null;
-themes.forEach(t => {
+themes.forEach((t, i) => {
   const pct = t.pct != null ? t.pct : (t.neg / t.n * 100);
   if (t.group !== lastGroup) {
     lastGroup = t.group;
@@ -693,7 +780,7 @@ themes.forEach(t => {
   themeChart.insertAdjacentHTML('beforeend', `
     <div class="hbar">
       <div class="name">${t.name}${t.sub ? `<small>${t.sub}</small>` : ''}</div>
-      <div class="track"><div class="fill" style="width:${Math.max(pct, 0.6)}%;background:${groupMeta[t.group].color}"></div></div>
+      <div class="track"><div class="fill" style="width:${Math.max(pct, 0.8)}%;background:${groupMeta[t.group].color};animation-delay:${i * 80}ms"></div></div>
       <div class="val" style="color:${groupMeta[t.group].color}">${shown} <small>${count}</small></div>
     </div>`);
 });
@@ -707,12 +794,12 @@ const amounts = [
 ];
 const maxEgp = Math.max(...amounts.map(a => a.egp));
 const amountChart = document.getElementById('amountChart');
-amounts.forEach(a => {
+amounts.forEach((a, i) => {
   amountChart.insertAdjacentHTML('beforeend', `
-    <div class="hbar">
-      <div class="name">${a.where}<small>${a.date}</small></div>
-      <div class="track"><div class="fill" style="width:${a.egp / maxEgp * 100}%;background:var(--risk)"></div></div>
-      <div class="val">${a.egp.toLocaleString('en-US')}</div>
+    <div class="amount-row">
+      <div class="where">${a.where}<small>${a.date}</small></div>
+      <div class="egp">${a.egp.toLocaleString('en-US')}<small>EGP</small></div>
+      <div class="track"><div class="fill" style="width:${a.egp / maxEgp * 100}%;animation-delay:${i * 90}ms"></div></div>
     </div>`);
 });
 
