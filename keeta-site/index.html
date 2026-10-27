@@ -240,6 +240,7 @@ nav button[aria-selected=true]{color:#111}
 .line{stroke-dasharray:1;stroke-dashoffset:1}
 .in .line{stroke-dashoffset:0;animation:draw 2s var(--ease) calc(.2s + var(--i,0)*.14s) backwards}
 .dot,.lbl,.area{opacity:0}
+.area,.line,.lbl{pointer-events:none}
 .dot{transform-box:fill-box;transform-origin:center;transition:r .2s}
 .dot:hover{r:6}
 .lc-smooth .dot{transition:r .2s,fill .2s}
@@ -510,6 +511,8 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
 #drawer.open .dpost{animation:rise .6s var(--ease) calc(.2s + var(--i)*.06s) backwards}
 .wmeta{font:500 10px "IBM Plex Mono";letter-spacing:.08em;text-transform:uppercase;color:var(--mute);line-height:1.8}
 .wmeta a{color:var(--mute)}
+.dpost .tr,.wcard .tr{color:var(--green);border-top:1px dashed var(--line-2);padding-top:9px;margin-top:0}
+.wcard p.tr{display:block;-webkit-line-clamp:unset}
 @media(max-width:600px){.dkpis{grid-template-columns:repeat(2,1fr)}}
 
 /* ── topic sentiment shift ── */
@@ -569,6 +572,20 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
 .wempty{grid-column:1/-1;text-align:center;color:var(--mute);padding:60px 0}
 @media(max-width:600px){.wall-bar{position:relative;padding:14px 66px 14px 16px}.wall-x{position:absolute;top:14px;right:14px}.wall-cols{padding:12px 16px 0}}
 @media(prefers-reduced-motion:reduce){.wall-cols{overflow:auto}.wcol{overflow:visible}}
+
+/* ── reports page sections ── */
+.rsec{margin-bottom:64px}
+.rhead{display:flex;align-items:baseline;gap:14px;margin:0 0 20px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.rhead h2{font-size:clamp(26px,3.4vw,40px);line-height:1}
+.rcount{font:500 11px "IBM Plex Mono";letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.months.weekly{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.months.weekly .thumb{aspect-ratio:16/10}
+.months.weekly .thumb h3{font-size:clamp(26px,2.6vw,34px)}
+.months .btn.deck{white-space:nowrap}
+.months.weekly .body .mono{display:none}
+.months.weekly .body{justify-content:flex-end}
+.month .thumb:has(.mlatest) .mk{padding-right:72px}
+.months.special .thumb h3{font-size:clamp(28px,3vw,40px)}
 
 /* ── month thumbnails ── */
 .mthumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
@@ -655,7 +672,7 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
   <span id="navpill" aria-hidden="true"></span>
   <button role="tab" aria-selected="true" data-view="week" data-i18n="nav_week">This week</button>
   <button role="tab" aria-selected="false" data-view="weeks" data-i18n="nav_weeks">Previous weeks</button>
-  <button role="tab" aria-selected="false" data-view="months" data-i18n="nav_months">Monthly reports</button>
+  <button role="tab" aria-selected="false" data-view="months" data-i18n="nav_months">Reports</button>
   <button role="tab" aria-selected="false" data-view="data" data-i18n="nav_data">Data source</button>
  </nav>
  <div class="hbtns">
@@ -750,9 +767,14 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
 <section id="v-months" class="view hidden"><div class="wrap">
  <div class="phero">
   <div class="eyebrow" data-i18n="eb_slides">Google Slides</div>
-  <h1 class="page-title" data-i18n="nav_months">Monthly reports</h1>
+  <h1 class="page-title" data-i18n="nav_months">Reports</h1>
  </div>
- <div class="months" id="months" data-reveal></div>
+ <div class="rsec"><div class="rhead"><h2 data-i18n="rep_monthly">Monthly</h2><span class="rcount" id="monthsCount"></span></div>
+  <div class="months" id="months" data-reveal></div></div>
+ <div class="rsec"><div class="rhead"><h2 data-i18n="rep_weekly">Weekly</h2><span class="rcount" id="weeklyDecksCount"></span></div>
+  <div class="months weekly" id="weeklyDecks" data-reveal></div></div>
+ <div class="rsec"><div class="rhead"><h2 data-i18n="rep_special">Special reports</h2><span class="rcount" id="specialDecksCount"></span></div>
+  <div class="months special" id="specialDecks" data-reveal></div></div>
 </div></section>
 
 <section id="v-data" class="view hidden"><div class="wrap">
@@ -847,7 +869,7 @@ const CONFIG={
 /* ═════ I18N ═════ */
 let LANG=CONFIG.DEFAULT_LANG==="zh"?"zh":"en";
 const I18N={
- en:{nav_week:"This week",nav_weeks:"Previous weeks",nav_months:"Monthly reports",
+ en:{nav_week:"This week",nav_weeks:"Previous weeks",nav_months:"Reports",
   nav_data:"Data source",exec:"Executive summary",copy:"Copy text",copied:"Copied",
   cpb:"Conversations per brand — click to filter",ss:"Sentiment share",
   vot:"Volume over time",txs:"Topic × sentiment",qual:"Qualitative deep dive — verbatims",
@@ -873,6 +895,7 @@ const I18N={
   wall_open:"Open the verbatim wall ↗",wall_title:"The verbatim wall",all:"All",wall_empty:"Nothing matches these filters.",
   live:"Live",live_new_1:"+{n} new mention since you opened this",live_new_n:"+{n} new mentions since you opened this",
   theme_light:"Switch to light theme",theme_dark:"Switch to dark theme",latest_deck:"Latest",
+  rep_monthly:"Monthly",rep_weekly:"Weekly",rep_special:"Special reports",weekly_listening:"WEEKLY LISTENING",decks_n:"{n} decks",
   /* dynamic UI */
   reportingweek:"Reporting week",weekonrecord:"week on record",weeksonrecord:"weeks on record",
   reportingmonth:"Reporting month",monthonrecord:"month on record",monthsonrecord:"months on record",
@@ -900,7 +923,7 @@ const I18N={
   footer_pre:"Kijamii Consumer Insights · Data Studio — refreshed ",
   /* source labels */
   src_demo:"demo data",src_live:"the live sheet",src_published:"the published sheet",src_pasted:"pasted data"},
- zh:{nav_week:"本周",nav_weeks:"往期周报",nav_months:"月度报告",
+ zh:{nav_week:"本周",nav_weeks:"往期周报",nav_months:"报告",
   nav_data:"数据源",exec:"执行摘要",copy:"复制文本",copied:"已复制",
   cpb:"各品牌讨论量 — 点击筛选",ss:"情感占比",
   vot:"讨论量趋势",txs:"话题 × 情感",qual:"定性深度分析 — 原声引用",
@@ -926,6 +949,7 @@ const I18N={
   wall_open:"打开原声墙 ↗",wall_title:"原声墙",all:"全部",wall_empty:"没有符合筛选条件的内容。",
   live:"实时",live_new_1:"自您打开以来新增 {n} 条提及",live_new_n:"自您打开以来新增 {n} 条提及",
   theme_light:"切换到浅色主题",theme_dark:"切换到深色主题",latest_deck:"最新",
+  rep_monthly:"月度报告",rep_weekly:"周报",rep_special:"专题报告",weekly_listening:"周度聆听",decks_n:"{n} 份报告",
   /* dynamic UI */
   reportingweek:"报告周",weekonrecord:"周记录",weeksonrecord:"周记录",
   reportingmonth:"报告月",monthonrecord:"月记录",monthsonrecord:"月记录",
@@ -1092,6 +1116,27 @@ const MONTHS=[
  {label:"MAR 2026", color:"#1FA86E", deck:"https://docs.google.com/presentation/d/1JifmFbOxjj1WiOaL24YDKCUfBkrwfGCGVsiFHHFcZ8Y/edit"},
  {label:"APR 2026", color:"#22D389", deck:"https://docs.google.com/presentation/d/1G-tHg2d2h0fbdy2zzZ2JFEVbscTeR7gkK0GMfAYnNHY/edit"},
  {label:"MAY 2026", color:"#19B978", deck:"https://docs.google.com/presentation/d/1yo2U71J6XyuXE_mcw43i0cpL9siZgfKWzI6MO-LWmek/edit"}
+];
+/* Weekly reports — label is the week it covers, shown big on the card. */
+const WEEKLY=[
+ {label:"18–24 JAN", year:"2026", deck:"https://docs.google.com/presentation/d/1D-SW9Otc-RWBZtbkj4elug8bpJ80oZuAumvmbEh4Pdc/edit"},
+ {label:"8–14 FEB",  year:"2026", deck:"https://docs.google.com/presentation/d/1w_b_Te7VyiGbVVXIg2bSdxFkt1LoV1Wz7DZwiTyV6Tw/edit"},
+ {label:"15–21 FEB", year:"2026", deck:"https://docs.google.com/presentation/d/1cQtyWV92hzQ9C5EWTIwjSPOOUCafDQD1r5OtIBHte5k/edit"},
+ {label:"22–28 FEB", year:"2026", deck:"https://docs.google.com/presentation/d/1W_DvVj_PiX2PdLPNIW8CjhwGpqosFCzknsbt9HQfPwA/edit"},
+ {label:"1–7 MAR",   year:"2026", deck:"https://docs.google.com/presentation/d/1K6s7A9WQT5WSUMv0vmALlGf2LTVX0ZgjIHqDzBQ4Ce0/edit"},
+ {label:"8–14 MAR",  year:"2026", deck:"https://docs.google.com/presentation/d/1spxgN2mxHMHeUXCeXueeoGEHqku_r1XR1njMedHMf88/edit"},
+ {label:"15–21 MAR", year:"2026", deck:"https://docs.google.com/presentation/d/1niZ9GOcipMP5fx9vz8vlorwY5LA4u5bGTtY-aBElWDg/edit"},
+ {label:"30 APR–6 MAY", year:"2026", deck:"https://docs.google.com/presentation/d/14jU3onZE0hJQz6opRKv-3MKQT-hz9tidSDbWU9U54TU/edit"},
+ {label:"7–13 MAY",  year:"2026", deck:"https://docs.google.com/presentation/d/10psu7PZ4S-jZwhkegb0cjoMfS9A1WyhK23sIjMMCMAU/edit"},
+ {label:"25 JUN–1 JUL", year:"2026", deck:"https://docs.google.com/presentation/d/16ZX3N5okXuFq6y43XqDaxw2WRCxUW2L1Jyyg7nBQng4/edit"},
+ {label:"2–8 JUL",   year:"2026", deck:"https://docs.google.com/presentation/d/1Pny6b97ksMq_-Q--U89PmXP_sKXSPkHQvf-IQvZ-3jU/edit"}
+];
+/* Special reports — one-offs: incidents, launches, multi-month reviews. */
+const SPECIAL=[
+ {label:"QATAR LAUNCH",   sub:"Launch report overview",          date:"AUG 2025", color:"#A06BFF", deck:"https://docs.google.com/presentation/d/1w04Cx9DpvuVPvqPyFS85U8QTqsC5zLCEE38lekVqCtQ/edit"},
+ {label:"CRISIS",         sub:"Crisis digital listening report", date:"MAY 2026", color:"#FF7A00", deck:"https://docs.google.com/presentation/d/15xiq2uYEmTB2hgoXFw5_DCV5_QoPbukb3Z55ArTRq2E/edit"},
+ {label:"TALKING BURGER", sub:"Incident report",                 date:"MAY 2026", color:"#FF6B4A", deck:"https://docs.google.com/presentation/d/1pJ6BnaiD3L_zdWR5DJWUhFqQJ-Se_3w3DrcJJjNoP40/edit"},
+ {label:"JAN–APR",        sub:"Four-month review",               date:"2026",     color:"#4E7FE8", deck:"https://docs.google.com/presentation/d/1RnFcQbNC96dd7n3vz_LYwjMR399TFNzRvEAcHiLpmfg/edit"}
 ];
 
 /* ═════ WEEK DERIVATION ═════
@@ -1474,15 +1519,19 @@ function lineChart(cats,series,opts){
  ticks.forEach(v=>{svg+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--line)" stroke-dasharray="2 5"/>
   <text x="${L-9}" y="${y(v)+4}" style="fill:var(--mute)" font-size="11" font-family="IBM Plex Mono" text-anchor="end">${v}</text>`});
  svg+=`<line x1="${L}" x2="${W-R}" y1="${H-B}" y2="${H-B}" style="stroke:var(--line-2)"/>`;
+ /* layer order: every fill, then every line, then every point on top —
+    so no brand's fill can cover (or block clicks on) another brand's points */
+ let areas="",lines="",dots="";
  series.forEach((s,si)=>{
   const pts=s.vals.map((v,i)=>[x(i),y(v)]);
   const d=sm?smoothD(pts):"M"+pts.map(p=>p.join(",")).join(" L");
-  if(withArea)svg+=`<path class="area" fill="url(#${id}g${si})" d="${d} L${pts[pts.length-1][0]},${H-B} L${pts[0][0]},${H-B} Z"/>`;
-  if(sm)svg+=`<path class="line glow" style="--i:${si}" pathLength="1" fill="none" stroke="${s.color}" stroke-width="7" opacity=".32" filter="url(#${id}blur)" stroke-linecap="round" d="${d}"/>`;
-  svg+=`<path class="line" style="--i:${si}" pathLength="1" fill="none" stroke="${s.color}" stroke-width="${sm?3:2.6}" stroke-linejoin="round" stroke-linecap="round"
+  if(withArea)areas+=`<path class="area" fill="url(#${id}g${si})" d="${d} L${pts[pts.length-1][0]},${H-B} L${pts[0][0]},${H-B} Z"/>`;
+  if(sm)lines+=`<path class="line glow" style="--i:${si}" pathLength="1" fill="none" stroke="${s.color}" stroke-width="7" opacity=".32" filter="url(#${id}blur)" stroke-linecap="round" d="${d}"/>`;
+  lines+=`<path class="line" style="--i:${si}" pathLength="1" fill="none" stroke="${s.color}" stroke-width="${sm?3:2.6}" stroke-linejoin="round" stroke-linecap="round"
     d="${d}"/>`;
-  svg+=s.vals.map((v,i)=>`<circle class="dot" data-x="${i}" style="--i:${i};${sm?`stroke:${s.color};fill:var(--card);--dc:${s.color}`:"stroke:var(--card)"}" cx="${x(i)}" cy="${y(v)}" r="${sm?3.4:3.6}" fill="${s.color}" stroke-width="2"><title>${esc(s.name)} — ${esc(cats[i])}: ${v}</title></circle>`).join("");
+  dots+=s.vals.map((v,i)=>`<circle class="dot" data-x="${i}" style="--i:${i};${sm?`stroke:${s.color};fill:var(--card);--dc:${s.color}`:"stroke:var(--card)"}" cx="${x(i)}" cy="${y(v)}" r="${sm?3.4:3.6}" fill="${s.color}" stroke-width="2"><title>${esc(s.name)} — ${esc(cats[i])}: ${v}</title></circle>`).join("");
  });
+ svg+=areas+lines+dots;
  if(opts.labels){
   /* nudge labels apart where series nearly overlap at the same x */
   cats.forEach((_,i)=>{
@@ -1740,21 +1789,6 @@ function render(){
   const open=f.classList.contains("hidden");
   s.classList.toggle("hidden",open); f.classList.toggle("hidden",!open);
   b.textContent=open?t("showless"):t("showfull")});
- $("#quotes").querySelectorAll(".trbtn").forEach(b=>b.onclick=async()=>{
-  const box=b.closest(".quote"), tr=box.querySelector(".tr"), full=box.dataset.full;
-  const btns=box.querySelectorAll(".trbtn"), label=b.textContent;
-  /* clicking the already-active language hides the translation (back to original) */
-  if(b.classList.contains("on")){tr.classList.add("hidden");b.classList.remove("on");return}
-  btns.forEach(x=>x.disabled=true); b.textContent="…";
-  const out=await translateText(full,b.dataset.lang);
-  btns.forEach(x=>x.disabled=false); b.textContent=label;
-  if(out){
-   tr.textContent=out; tr.setAttribute("dir","auto"); tr.classList.remove("hidden");
-   btns.forEach(x=>x.classList.remove("on")); b.classList.add("on");
-  }else{
-   b.textContent="—"; setTimeout(()=>b.textContent=label,1500);
-  }
- });
 
  /* ── PREVIOUS WEEKS: built from the same records, oldest → newest ── */
  const ALLWEEKS=weeksOf(RECORDS);
@@ -1765,7 +1799,7 @@ function render(){
  const cats=order.map(k=>weekLabel(k).split("–")[0]);
  $("#trend").innerHTML=lineChart(cats,names.map((n,i)=>({name:n,color:brandColor(n,i),
    vals:order.map(k=>(byWeek[k].brands.find(b=>b.n===n)||{v:0}).v)})),
-  {xLabel:t("axis_week"),yLabel:t("axis_mentions"),labels:true,aria:"Weekly volume by brand"});
+  {xLabel:t("axis_week"),yLabel:t("axis_mentions"),labels:true,aria:"Weekly volume by brand",smooth:true});
  $("#trendLegend").innerHTML=names.map((n,i)=>`<span><i style="background:${brandColor(n,i)}"></i>${esc(n)}</span>`).join("");
 
  const LATEST=t("latest"), POSSH=t("possh");
@@ -1783,18 +1817,24 @@ function render(){
   const go=()=>{GRAN="week";WEEK=el.dataset.w;FILTER=null;render();document.querySelector('[data-view=week]').click()};
   el.onclick=go; el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}}});
 
- const mOrder=[...MONTHS].reverse(), latestDeck=mOrder.find(m=>m.deck);
- $("#months").innerHTML=mOrder.map((m,i)=>{
-  const live=!!m.deck, [mon,yr]=m.label.split(" "), deckId=(m.deck.match(/\/d\/([\w-]+)/)||[])[1];
+ /* ── REPORTS: monthly, weekly and special decks, newest first ── */
+ const deckCard=(m,i,latest,big,small,mk)=>{
+  const live=!!m.deck, deckId=(m.deck.match(/\/d\/([\w-]+)/)||[])[1];
   const cover=deckId?`<img class="mthumb" alt="" loading="lazy" referrerpolicy="no-referrer" src="https://drive.google.com/thumbnail?id=${deckId}&sz=w1000" onerror="this.remove()">`:"";
   const cta=live
    ? `<a class="btn deck mag" href="${esc(m.deck)}" target="_blank" rel="noopener noreferrer">${t("opendeck")} ↗</a>`
    : `<span class="btn deck disabled" aria-disabled="true">${t("comingsoon")}</span>`;
-  return `<div class="month${live?"":" pending"}" style="--c:${m.color};--i:${i}"><div class="inner">
-   <div class="thumb">${cover}<span class="mk">${t("digital_listening")}</span>${m===latestDeck?`<span class="mlatest">${t("latest_deck")}</span>`:""}
-    <h3>${esc(mon)}<small>${esc(yr||"")}</small></h3><span class="shine"></span></div>
-   <div class="body"><span class="mono" style="font-size:11px;color:var(--mute)">${t("gslides")}</span>${cta}</div></div></div>`}).join("");
- if(!REDUCED)$("#months").querySelectorAll(".month").forEach(el=>{
+  return `<div class="month${live?"":" pending"}" style="--c:${m.color};--i:${Math.min(i,12)}"><div class="inner">
+   <div class="thumb">${cover}<span class="mk">${esc(mk)}</span>${latest?`<span class="mlatest">${t("latest_deck")}</span>`:""}
+    <h3>${esc(big)}<small>${esc(small)}</small></h3><span class="shine"></span></div>
+   <div class="body"><span class="mono" style="font-size:11px;color:var(--mute)">${t("gslides")}</span>${cta}</div></div></div>`};
+ const fillDecks=(sel,list,fn)=>{const o=[...list].reverse(),first=o.find(m=>m.deck);
+  $(sel).innerHTML=o.map((m,i)=>fn(m,i,m===first)).join("");
+  $(sel+"Count").textContent=t("decks_n").replace("{n}",list.filter(m=>m.deck).length)};
+ fillDecks("#months",MONTHS,(m,i,l)=>{const [mon,yr]=m.label.split(" ");return deckCard(m,i,l,mon,yr||"",t("digital_listening"))});
+ fillDecks("#weeklyDecks",WEEKLY,(m,i,l)=>deckCard({color:"#FFDD2D",...m},i,l,m.label,m.year,t("weekly_listening")));
+ fillDecks("#specialDecks",SPECIAL,(m,i,l)=>deckCard(m,i,l,m.label,m.date,m.sub));
+ if(!REDUCED)$("#v-months").querySelectorAll(".month").forEach(el=>{
   const inner=el.querySelector(".inner");
   el.onpointermove=e=>{const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
    inner.style.transform=`rotateY(${x*10}deg) rotateX(${-y*10}deg) translateY(-6px)`};
@@ -2059,6 +2099,22 @@ function dayLabel(iso){
  if(LANG==="zh")return `${d.getUTCFullYear()}年${d.getUTCMonth()+1}月${d.getUTCDate()}日 周${"日一二三四五六"[d.getUTCDay()]}`;
  return d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric",timeZone:"UTC"});
 }
+const trButtons=()=>`<button class="trbtn" data-lang="en" type="button">English</button><button class="trbtn" data-lang="zh" type="button">中文</button>`;
+/* translate buttons on any post card (verbatims, day drawer, wall): the card
+   carries the full text in data-full and an empty .tr paragraph for the result */
+document.addEventListener("click",async e=>{
+ const b=e.target.closest(".trbtn");if(!b)return;
+ const box=b.closest("[data-full]"),tr=box&&box.querySelector(".tr");if(!tr)return;
+ const btns=box.querySelectorAll(".trbtn"),label=b.textContent;
+ /* clicking the already-active language hides the translation (back to original) */
+ if(b.classList.contains("on")){tr.classList.add("hidden");b.classList.remove("on");return}
+ btns.forEach(x=>x.disabled=true);b.textContent="…";
+ const out=await translateText(box.dataset.full,b.dataset.lang);
+ btns.forEach(x=>x.disabled=false);b.textContent=label;
+ if(out){tr.textContent=out;tr.setAttribute("dir","auto");tr.classList.remove("hidden");
+  btns.forEach(x=>x.classList.remove("on"));b.classList.add("on")}
+ else{b.textContent="—";setTimeout(()=>b.textContent=label,1500)}
+});
 const sentCls=s=>s==="Positive"?"s-p":s==="Negative"?"s-n":"s-u";
 function postLink(id){return /^https?:\/\//.test(id||"")?` · <a href="${esc(id)}" target="_blank" rel="noopener noreferrer">${t("viewpost")}</a>`:""}
 function uniqPosts(recs){
@@ -2083,8 +2139,8 @@ function openDay(date){
   <div class="dsplit">${a.brands.map(b=>`<span style="flex:${b.v};background:${col(b.n)}" title="${esc(b.n)}: ${b.v}"></span>`).join("")}</div>
   <div class="legend" style="margin-top:0">${a.brands.map(b=>`<span><i style="background:${col(b.n)}"></i>${esc(b.n)} · ${b.v}</span>`).join("")}</div>
   <div class="dh">${t("top_posts")}</div>
-  ${posts.length?posts.map((r,i)=>`<article class="dpost ${sentCls(r.sentiment)}" style="--i:${i}"><p dir="auto">${esc(r.content)}</p>
-   <div class="wmeta"><b style="color:${col(r.brand)}">${esc(r.brand)}</b> · ${esc(r.topic)} · ${esc(r.channel||"Social")} · ♥ ${(r.engagement||0).toLocaleString()}${postLink(r.id)}</div></article>`).join("")
+  ${posts.length?posts.map((r,i)=>`<article class="dpost ${sentCls(r.sentiment)}" style="--i:${i}" data-full="${esc(r.content)}"><p dir="auto">${esc(r.content)}</p><p dir="auto" class="tr hidden"></p>
+   <div class="wmeta"><b style="color:${col(r.brand)}">${esc(r.brand)}</b> · ${esc(r.topic)} · ${esc(r.channel||"Social")} · ♥ ${(r.engagement||0).toLocaleString()}${postLink(r.id)} ${trButtons()}</div></article>`).join("")
    :`<p class="emptynote">${t("no_posts")}</p>`}`;
  openLayer($("#drawer"));
 }
@@ -2105,8 +2161,8 @@ function buildWall(){
  const n=innerWidth>1100?4:innerWidth>760?3:innerWidth>520?2:1, box=$("#wallCols");
  box.style.setProperty("--cols",n);
  if(!posts.length){box.innerHTML=`<p class="wempty">${t("wall_empty")}</p>`;return}
- const card=(r,i,hide)=>`<article class="wcard ${sentCls(r.sentiment)}" style="--i:${Math.min(i,24)}"${hide?' aria-hidden="true"':""}><p dir="auto">${esc(r.content)}</p>
-  <div class="wmeta"><b style="color:${col(r.brand)}">${esc(r.brand)}</b> · ${esc(r.topic)} · ${esc(r.channel||"Social")} · ${esc(r.date)}${hide?"":postLink(r.id)}</div></article>`;
+ const card=(r,i,hide)=>`<article class="wcard ${sentCls(r.sentiment)}" style="--i:${Math.min(i,24)}"${hide?' aria-hidden="true"':` data-full="${esc(r.content)}"`}><p dir="auto">${esc(r.content)}</p>${hide?"":'<p dir="auto" class="tr hidden"></p>'}
+  <div class="wmeta"><b style="color:${col(r.brand)}">${esc(r.brand)}</b> · ${esc(r.topic)} · ${esc(r.channel||"Social")} · ${esc(r.date)}${hide?"":postLink(r.id)+" "+trButtons()}</div></article>`;
  const cols=Array.from({length:n},()=>[]);posts.forEach((p,i)=>cols[i%n].push(p));
  box.innerHTML=cols.map((c,ci)=>{
   if(!c.length)return `<div class="wcol"></div>`;
