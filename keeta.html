@@ -1,0 +1,1527 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Keeta — Digital Listening Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+ --bg:#060E0A;--bg-2:#0B1611;--card:#0E1914;--card-2:#111F18;
+ --line:#1C2F25;--line-2:#2A4537;
+ --green:#22D389;--yellow:#FFDD2D;--paper:#F2F5F2;--mute:#8CA79A;--dim:#5C7268;
+ --neg:#FF6B4A;--pos:#22D389;--neu:#7E8C92;
+ --ease:cubic-bezier(.16,1,.3,1);--r:20px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--paper);font-family:Archivo,system-ui,sans-serif;
+ -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.05;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+body.loading{overflow:hidden}
+main,header,footer{position:relative;z-index:1}
+h1,h2,h3{font-family:"Archivo Black",Archivo,sans-serif;letter-spacing:-.025em;margin:0;font-weight:400}
+em,.serif{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-weight:400;letter-spacing:-.01em}
+.mono{font-family:"IBM Plex Mono",monospace}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+@media(max-width:600px){.wrap{padding:0 16px}}
+::selection{background:var(--yellow);color:#111}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+
+/* ── loader ── */
+#loader{position:fixed;inset:0;z-index:200;background:var(--bg);display:grid;place-items:center;
+ transition:clip-path 1s var(--ease);clip-path:inset(0 0 0 0)}
+#loader.done{clip-path:inset(0 0 100% 0)}
+#loader .lw{display:flex;flex-direction:column;align-items:center;gap:22px}
+#loader .lt{font:400 clamp(44px,9vw,96px)/.9 "Archivo Black";letter-spacing:-.04em;overflow:hidden}
+#loader .lt span{display:inline-block;animation:wordUp 1s var(--ease) both}
+#loader .lt em{color:var(--yellow);font-size:1.05em}
+#loader .lbar{width:180px;height:2px;background:var(--line);overflow:hidden;border-radius:2px}
+#loader .lbar i{display:block;height:100%;width:40%;background:var(--yellow);animation:load 1.1s ease-in-out infinite}
+#loader .lc{font:500 10px "IBM Plex Mono";letter-spacing:.24em;text-transform:uppercase;color:var(--mute)}
+@keyframes load{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
+
+/* ── progress + header ── */
+#progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:120;transform-origin:left;transform:scaleX(0);
+ background:linear-gradient(90deg,var(--green),var(--yellow))}
+header{position:sticky;top:0;z-index:100;transition:background .4s,border-color .4s,backdrop-filter .4s;
+ border-bottom:1px solid transparent}
+header.scrolled{background:rgba(6,14,10,.78);backdrop-filter:blur(14px) saturate(1.3);border-color:var(--line)}
+.hbar{display:flex;align-items:center;gap:20px;height:72px;transition:height .4s var(--ease)}
+header.scrolled .hbar{height:60px}
+.logo{display:flex;align-items:center;gap:10px;flex:none}
+.klogo{height:19px;width:auto;color:var(--paper);display:block}
+.logo .lx{color:var(--green);font:700 15px Archivo;line-height:1}
+.logo .lc{font-family:"Archivo Black";font-size:15px;letter-spacing:-.01em;color:var(--yellow)}
+.logo .lsub{font:500 10px "IBM Plex Mono";letter-spacing:.14em;text-transform:uppercase;color:var(--mute);
+ padding-left:10px;margin-left:2px;border-left:1px solid var(--line)}
+nav{position:relative;display:flex;gap:2px;margin-left:auto;padding:4px;border:1px solid var(--line);
+ border-radius:99px;background:rgba(11,22,17,.6)}
+nav button{position:relative;z-index:1;background:none;border:0;color:var(--mute);font:600 13px Archivo;
+ padding:8px 15px;border-radius:99px;cursor:pointer;transition:color .3s;white-space:nowrap}
+nav button:hover{color:var(--paper)}
+nav button[aria-selected=true]{color:#111}
+#navpill{position:absolute;top:4px;left:0;height:calc(100% - 8px);background:var(--yellow);border-radius:99px;
+ transition:transform .5s var(--ease),width .5s var(--ease);z-index:0;box-shadow:0 6px 24px rgba(255,221,45,.25)}
+.lang{background:none;border:1px solid var(--line);color:var(--paper);border-radius:99px;padding:8px 15px;
+ font:600 12px Archivo;cursor:pointer;flex:none;transition:.25s}
+.lang:hover{border-color:var(--green);color:var(--green)}
+@media(max-width:860px){.logo .lsub{display:none}}
+@media(max-width:760px){
+ .hbar{flex-wrap:wrap;height:auto;padding:12px 0;gap:12px}
+ header.scrolled .hbar{height:auto}
+ .lang{margin-left:auto}
+ nav{order:3;width:100%;margin:0;overflow-x:auto;scrollbar-width:none}
+ nav::-webkit-scrollbar{display:none}}
+.banner{background:#3A2418;border-bottom:1px solid #6B3A22;color:#FFC9A8;font:500 12px "IBM Plex Mono";
+ padding:10px 24px;text-align:center;position:relative;z-index:1}
+
+/* ── reveal system ── */
+[data-reveal]{opacity:0;transform:translateY(48px);
+ transition:opacity 1s var(--ease),transform 1.1s var(--ease),clip-path 1.2s var(--ease);transition-delay:var(--d,0s)}
+[data-reveal=left]{transform:translateX(-48px)}
+[data-reveal=scale]{transform:scale(.94)}
+[data-reveal=head]{opacity:1;transform:none}
+[data-reveal].in{opacity:1;transform:none}
+.sechead h2{clip-path:inset(0 0 100% 0);transform:translateY(40px);transition:clip-path 1.2s var(--ease),transform 1.2s var(--ease)}
+.sechead .idx,.sechead .act{opacity:0;transform:translateX(-24px);transition:opacity .8s var(--ease) .15s,transform .8s var(--ease) .15s}
+.sechead.in h2{clip-path:inset(-20% -5% -20% -5%);transform:none}
+.sechead.in .idx,.sechead.in .act{opacity:1;transform:none}
+.view{animation:viewIn .7s var(--ease) backwards}
+.view.hidden{display:none}
+.hidden{display:none}
+
+/* ── split headline words ── */
+.w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.1em;margin-bottom:-.1em}
+.w>span{display:inline-block;animation:wordUp 1.05s var(--ease) calc(.05s + var(--i)*.055s) backwards}
+
+/* ── hero ── */
+.hero{position:relative;min-height:calc(100svh - 72px);display:flex;flex-direction:column;justify-content:center;
+ overflow:hidden;padding:48px 0 96px}
+.hero-bg{position:absolute;inset:-10% 0 0;pointer-events:none;will-change:transform}
+.grid-lines{position:absolute;inset:0;
+ background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+ background-size:72px 72px;opacity:.45;
+ -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,#000 20%,transparent 75%);
+ mask-image:radial-gradient(ellipse 70% 60% at 50% 40%,#000 20%,transparent 75%)}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;animation:float 16s ease-in-out infinite}
+.o1{width:44vw;height:44vw;max-width:620px;max-height:620px;background:radial-gradient(circle,#FFDD2D 0,transparent 65%);top:-8%;right:-8%;opacity:.28}
+.o2{width:38vw;height:38vw;max-width:540px;max-height:540px;background:radial-gradient(circle,#22D389 0,transparent 65%);bottom:0;left:-10%;opacity:.22;animation-delay:-6s}
+.o3{width:24vw;height:24vw;max-width:340px;max-height:340px;background:radial-gradient(circle,#4E7FE8 0,transparent 65%);top:40%;left:45%;opacity:.16;animation-delay:-11s}
+.hero-inner{position:relative;will-change:transform,opacity}
+.hero-word{position:absolute;bottom:-.18em;left:0;white-space:nowrap;pointer-events:none;
+ font:400 clamp(140px,26vw,380px)/1 "Archivo Black";letter-spacing:-.05em;color:transparent;
+ -webkit-text-stroke:1px rgba(255,221,45,.13);will-change:transform}
+.eyebrow{font:500 11px "IBM Plex Mono";letter-spacing:.18em;text-transform:uppercase;color:var(--green);
+ display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:2.2}
+#weekPick{background:var(--bg-2);color:var(--yellow);border:1px solid var(--line-2);border-radius:99px;
+ padding:6px 12px;font:600 11px "IBM Plex Mono";letter-spacing:.06em;cursor:pointer}
+.granwrap{display:inline-flex;gap:2px;background:var(--bg-2);border:1px solid var(--line-2);border-radius:99px;padding:3px}
+.granbtn{background:none;border:0;color:var(--mute);font:600 11px Archivo;padding:4px 13px;border-radius:99px;cursor:pointer;transition:.25s;letter-spacing:0;text-transform:none}
+.granbtn:hover{color:var(--paper)}
+.granbtn.on{background:var(--yellow);color:#111}
+.hero h1{font-size:clamp(42px,8.2vw,112px);line-height:.92;margin:26px 0 26px;max-width:15ch}
+.hero h1 em{color:var(--yellow);font-size:1.08em;line-height:.8}
+.filterbar{display:flex;align-items:center;gap:12px;min-height:34px;flex-wrap:wrap;margin-bottom:34px}
+.chip{background:var(--yellow);color:#111;border-radius:99px;padding:7px 8px 7px 15px;font:700 12px Archivo;display:inline-flex;align-items:center;gap:9px;animation:pop .5s var(--ease)}
+.chip button{background:#111;color:var(--yellow);border:0;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:12px;line-height:1;display:grid;place-items:center}
+.filterhint{font:500 11px "IBM Plex Mono";color:var(--mute);display:inline-flex;align-items:center;gap:8px}
+.filterhint::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(34,211,137,.6);animation:ping 2s infinite}
+.tickerrow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:900px){.tickerrow{grid-template-columns:repeat(2,1fr)}}
+.tick{position:relative;overflow:hidden;padding:20px 20px 18px;border:1px solid var(--line);border-radius:18px;
+ background:linear-gradient(160deg,rgba(17,31,24,.75),rgba(9,18,14,.6));backdrop-filter:blur(10px)}
+.tick::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;transform-origin:left;
+ background:linear-gradient(90deg,var(--yellow),transparent)}
+.tick .n{font-family:"Archivo Black";font-size:clamp(28px,3.6vw,44px);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.tick .l{font:500 10px "IBM Plex Mono";letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap}
+.delta{font:600 10px "IBM Plex Mono";letter-spacing:.02em;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.delta.up{color:var(--green);background:rgba(34,211,137,.12)}
+.delta.down{color:var(--neg);background:rgba(255,107,74,.12)}
+.hero.intro .eyebrow{animation:rise .9s var(--ease) .1s backwards}
+.hero.intro .filterbar{animation:fade 1s ease .9s backwards}
+.hero.intro .tick{animation:rise 1s var(--ease) calc(.7s + var(--i)*.09s) backwards}
+.hero.intro .tick::before{animation:grow 1.4s var(--ease) calc(1s + var(--i)*.09s) backwards}
+.scrollcue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;
+ font:500 9px "IBM Plex Mono";letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
+.scrollcue span{width:1px;height:42px;background:var(--line-2);overflow:hidden;position:relative}
+.scrollcue span::after{content:"";position:absolute;left:0;top:0;width:1px;height:50%;background:var(--yellow);animation:cue 2s var(--ease) infinite}
+@media(max-height:700px){.scrollcue{display:none}}
+
+/* ── marquee ── */
+.marquee{border-block:1px solid var(--line);overflow:hidden;padding:20px 0;background:var(--bg-2);
+ transform:skewY(calc(var(--skew,0deg)*.15))}
+.mtrack{display:flex;width:max-content;animation:marquee 38s linear infinite}
+.mtrack span{font:400 clamp(26px,4vw,46px)/1 "Archivo Black";letter-spacing:-.03em;padding:0 28px;display:flex;align-items:center;gap:56px;
+ white-space:nowrap;transform:skewX(var(--skew,0deg));transition:transform .2s}
+.mtrack span::after{content:"✦";color:var(--yellow);font-size:.5em}
+.mtrack .o{color:transparent;-webkit-text-stroke:1px var(--mute)}
+.marquee:hover .mtrack{animation-play-state:paused}
+
+/* ── section blocks ── */
+.block{padding:clamp(72px,11vw,140px) 0 0}
+.sechead{display:flex;align-items:flex-end;gap:18px 24px;margin-bottom:30px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.sechead .idx{font:500 12px "IBM Plex Mono";color:var(--yellow);letter-spacing:.2em;padding-bottom:10px}
+.sechead h2{font-size:clamp(34px,6vw,76px);line-height:.92}
+.sechead h2 em{color:var(--yellow)}
+.sechead .act{margin-left:auto;padding-bottom:6px}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:1fr 1fr}
+.g75{grid-template-columns:7fr 5fr}
+@media(max-width:900px){.g2,.g75{grid-template-columns:1fr}}
+.card{position:relative;overflow:hidden;background:linear-gradient(170deg,var(--card-2),var(--card));
+ border:1px solid var(--line);border-radius:var(--r);padding:26px;transition:border-color .4s}
+.card::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .5s;
+ background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(255,221,45,.07),transparent 60%)}
+.card:hover{border-color:var(--line-2)}
+.card:hover::before{opacity:1}
+.card h3{font:500 11px "IBM Plex Mono";letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin-bottom:22px;
+ display:flex;align-items:center;gap:10px}
+.card h3::before{content:"";width:18px;height:1px;background:var(--yellow)}
+@media(max-width:600px){.card{padding:20px}}
+
+/* ── summary ── */
+.summary{padding:clamp(24px,4vw,44px)}
+.summary p{font-size:16px;line-height:1.75;margin:0 0 16px;max-width:80ch;color:#C9D6CE}
+.summary p:first-child{font-size:clamp(18px,2vw,22px);line-height:1.55;color:var(--paper)}
+.summary p b{color:var(--paper);font-weight:700}
+#summary p{opacity:0}
+.in #summary p{opacity:1;animation:rise .9s var(--ease) backwards}
+.in #summary p:nth-child(2){animation-delay:.1s}.in #summary p:nth-child(3){animation-delay:.2s}
+.in #summary p:nth-child(4){animation-delay:.3s}.in #summary p:nth-child(5){animation-delay:.4s}
+.in #summary p:nth-child(n+6){animation-delay:.5s}
+.summary .caveat{font-size:13px!important;line-height:1.6!important;color:#FFC9A8!important;background:rgba(255,122,0,.08);
+ border:1px solid rgba(255,122,0,.28);border-radius:12px;padding:12px 15px;margin:6px 0 0}
+.summary .genline{font:500 11px "IBM Plex Mono"!important;color:var(--mute)!important;line-height:1.6!important;
+ margin:22px 0 0!important;padding-top:14px;border-top:1px solid var(--line)}
+
+/* ── brands ── */
+.brandrow{display:grid;grid-template-columns:26px 118px 1fr 70px;align-items:center;gap:12px;padding:12px 10px;
+ border-radius:12px;cursor:pointer;transition:background .3s,opacity .4s;border-bottom:1px solid rgba(28,47,37,.7)}
+.brandrow:hover{background:rgba(255,221,45,.05)}
+.brandrow[data-on=false]{opacity:.3}
+.brandrow .rk{font:500 11px "IBM Plex Mono";color:var(--dim)}
+.brandrow .nm{font-weight:700;font-size:15px}
+.brandrow .track{height:26px;border-radius:6px;background:rgba(255,255,255,.025);overflow:hidden}
+.bar,.stack{transform:scaleX(0);transform-origin:left}
+.bar{display:block;height:100%;border-radius:6px;position:relative;overflow:hidden}
+.bar::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transform:translateX(-100%)}
+.in .bar{transform:none;animation:grow 1.2s var(--ease) calc(.25s + var(--i,0)*.09s) backwards}
+.in .bar::after{animation:shine 1.6s ease calc(1.1s + var(--i,0)*.09s) 1}
+.brandrow .v{font-family:"IBM Plex Mono";font-size:14px;text-align:right}
+.brandrow .v small{display:block;color:var(--dim);font-size:10px}
+@media(max-width:600px){.brandrow{grid-template-columns:20px 92px 1fr 56px;gap:8px}}
+.legend{display:flex;flex-wrap:wrap;gap:9px 16px;margin-top:18px;font-size:12px;color:var(--mute)}
+.legend i{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:6px}
+
+/* ── donut ── */
+.donutwrap{position:relative;width:230px;max-width:100%;margin:6px auto 0}
+.seg{opacity:0}
+.in .seg{opacity:1;animation:sweep 1.4s var(--ease) calc(.25s + var(--i)*.2s) backwards}
+.dc{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}
+.dc .n{font:400 40px/1 "Archivo Black";letter-spacing:-.03em;color:var(--pos)}
+.dc .l{font:500 9px "IBM Plex Mono";letter-spacing:.2em;text-transform:uppercase;color:var(--mute);margin-top:6px}
+.in .dc{animation:pop .7s var(--ease) .9s backwards}
+.sentbars{display:grid;gap:12px;margin-top:22px}
+.sentbar{display:grid;grid-template-columns:76px 1fr 48px;align-items:center;gap:10px;font-size:12px;color:var(--mute)}
+.sentbar .tr{height:6px;border-radius:6px;background:rgba(255,255,255,.04);overflow:hidden}
+.sentbar .tr .bar{border-radius:6px}
+.sentbar .pc{font-family:"IBM Plex Mono";text-align:right;color:var(--paper)}
+
+/* ── line charts ── */
+.line{stroke-dasharray:1;stroke-dashoffset:1}
+.in .line{stroke-dashoffset:0;animation:draw 2s var(--ease) calc(.2s + var(--i,0)*.14s) backwards}
+.dot,.lbl,.area{opacity:0}
+.dot{transform-box:fill-box;transform-origin:center;transition:r .2s}
+.dot:hover{r:6}
+.in .dot{opacity:1;animation:pop .5s var(--ease) calc(1s + var(--i,0)*.02s) backwards}
+.in .area{opacity:1;animation:fade 1.6s ease .9s backwards}
+.in .lbl{opacity:1;animation:fade .7s ease 1.6s backwards}
+
+/* ── topics ── */
+.topicrow{display:flex;align-items:center;gap:12px;margin-bottom:11px;font-size:13px;opacity:0}
+.in .topicrow{opacity:1;animation:rise .7s var(--ease) calc(.1s + var(--i)*.05s) backwards}
+.topicrow .lab{width:150px;flex:none;color:#C9D6CE}
+.topicrow .sw{flex:1;min-width:0}
+.stack{height:14px;display:flex;border-radius:4px;overflow:hidden;gap:2px}
+.in .stack{transform:none;animation:grow 1.1s var(--ease) calc(.3s + var(--i)*.06s) backwards}
+.topicrow .tot{width:34px;text-align:right;font:500 12px "IBM Plex Mono";color:var(--mute)}
+@media(max-width:600px){.topicrow .lab{width:100px}}
+
+/* ── quotes ── */
+.quote{position:relative;border:1px solid var(--line);border-radius:14px;padding:16px 16px 12px 20px;margin-bottom:12px;
+ background:rgba(6,14,10,.45);opacity:0;transition:border-color .3s,transform .4s var(--ease)}
+.quote::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:var(--neu)}
+.quote.p::before{background:var(--pos)}.quote.n::before{background:var(--neg)}
+.quote:hover{border-color:var(--line-2);transform:translateX(4px)}
+.in .quote{opacity:1;animation:rise .8s var(--ease) calc(.15s + var(--i)*.1s) backwards}
+.quote p{margin:0 0 8px;font-size:14.5px;line-height:1.65;unicode-bidi:plaintext}
+.quote .qt:not(.tr)::before{content:"“";font-family:"Instrument Serif";color:var(--yellow);font-size:1.6em;line-height:0;vertical-align:-.3em;margin-right:3px}
+.quote .more{background:none;border:0;color:var(--green);font:600 11px "IBM Plex Mono";cursor:pointer;padding:0 0 8px;text-decoration:underline;text-underline-offset:3px}
+.quote .src{color:var(--mute);text-decoration:none;border-bottom:1px solid var(--line-2);margin-left:4px}
+.quote .src:hover{color:var(--green)}
+.quote .meta{font:500 10px "IBM Plex Mono";letter-spacing:.1em;text-transform:uppercase;color:var(--mute);line-height:2}
+.quote .tr{color:var(--green);border-top:1px dashed var(--line-2);padding-top:9px;margin-top:9px}
+.trbtn{background:none;border:1px solid var(--line-2);color:var(--mute);border-radius:99px;padding:2px 10px;font:600 10px "IBM Plex Mono";cursor:pointer;margin-left:6px;vertical-align:middle;transition:.2s}
+.trbtn:hover{border-color:var(--green);color:var(--green)}
+.trbtn.on{border-color:var(--green);color:var(--green);background:rgba(34,211,137,.12)}
+.trbtn[disabled]{opacity:.5;cursor:default}
+.emptynote{color:var(--mute);font-size:13px;padding:14px 0;line-height:1.6}
+
+/* ── page heroes (archive / months / data) ── */
+.phero{padding:clamp(56px,9vw,110px) 0 36px;position:relative}
+.phero h1{font-size:clamp(46px,9vw,120px);line-height:.9;margin:16px 0 18px}
+.hint{color:var(--mute);font-size:14px;line-height:1.7;margin:0 0 6px;max-width:66ch}
+
+/* ── week list ── */
+.weeklist{display:grid;gap:10px;margin-top:22px}
+.weekitem{display:grid;grid-template-columns:170px 1fr auto;gap:18px;align-items:center;background:linear-gradient(170deg,var(--card-2),var(--card));
+ border:1px solid var(--line);border-radius:16px;padding:16px 20px;cursor:pointer;opacity:0;transition:border-color .3s,transform .4s var(--ease)}
+.in .weekitem{opacity:1;animation:rise .8s var(--ease) calc(.05s + var(--i)*.06s) backwards}
+.weekitem:hover{border-color:var(--green);transform:translateX(6px)}
+.weekitem.cur{border-color:var(--yellow);box-shadow:inset 3px 0 0 var(--yellow)}
+.weekitem .dt{font:500 12px "IBM Plex Mono";color:var(--green)}
+.wbar{display:flex;height:24px;border-radius:6px;overflow:hidden;font:600 10px "IBM Plex Mono";gap:2px}
+@media(max-width:760px){.weekitem{grid-template-columns:1fr;gap:10px}}
+
+/* ── months ── */
+.months{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}
+.month{opacity:0;perspective:900px}
+.in .month{opacity:1;animation:rise .9s var(--ease) calc(.05s + var(--i)*.09s) backwards}
+.month .inner{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
+ transition:transform .5s var(--ease),border-color .3s,box-shadow .5s;transform-style:preserve-3d}
+.month:hover .inner{border-color:var(--line-2);box-shadow:0 30px 60px -30px rgba(0,0,0,.7)}
+.month .thumb{position:relative;overflow:hidden;aspect-ratio:4/3;display:flex;flex-direction:column;justify-content:space-between;padding:20px;
+ background:linear-gradient(140deg,var(--c),color-mix(in srgb,var(--c) 45%,#06110C));color:#06110C}
+.month .mk{font:500 10px "IBM Plex Mono";letter-spacing:.2em;text-transform:uppercase;opacity:.75}
+.month .thumb h3{font-size:clamp(40px,5vw,58px);line-height:.88;letter-spacing:-.04em}
+.month .thumb h3 small{display:block;font-family:"Instrument Serif";font-style:italic;font-size:.5em;letter-spacing:0;opacity:.8}
+.month .shine{position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);transform:translateX(-110%);transition:transform .9s var(--ease)}
+.month:hover .shine{transform:translateX(110%)}
+.month .body{padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
+.month.pending .thumb{filter:saturate(.25) brightness(.6)}
+.btn{background:var(--yellow);color:#111;border:0;border-radius:99px;padding:10px 18px;font:700 12px Archivo;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:transform .3s var(--ease),box-shadow .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px -8px rgba(255,221,45,.5)}
+.btn.ghost{background:none;border:1px solid var(--line-2);color:var(--paper)}
+.btn.ghost:hover{border-color:var(--yellow);box-shadow:none}
+.btn.sm{padding:7px 14px;font-size:11px}
+.btn.deck.disabled{background:none;border:1px solid var(--line);color:var(--mute);cursor:default;transform:none;box-shadow:none}
+
+/* ── data panels ── */
+.datapanel{border:1px dashed var(--line-2);border-radius:var(--r);padding:26px;margin:18px 0;background:rgba(11,22,17,.5)}
+.datapanel h3{font-size:18px;margin-bottom:10px}
+.datapanel input[type=text],.datapanel textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:12px 14px;border-radius:12px;font:400 13px "IBM Plex Mono";margin:10px 0 14px}
+.datapanel textarea{min-height:120px;resize:vertical}
+.status{font:500 12px "IBM Plex Mono";color:var(--mute);margin-top:14px;line-height:1.6}
+.status.ok{color:var(--green)}.status.err{color:var(--neg)}
+
+/* ── footer ── */
+footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overflow:hidden}
+.fbig{font:400 clamp(34px,9.5vw,150px)/.85 "Archivo Black";letter-spacing:-.05em;padding:46px 0 10px;white-space:nowrap}
+.fbig em{color:var(--yellow)}
+.fbig .o{color:transparent;-webkit-text-stroke:1px var(--line-2)}
+.frow{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:22px 0 28px;color:var(--mute);font-size:12px;border-top:1px solid var(--line)}
+.totop{background:none;border:1px solid var(--line-2);color:var(--paper);border-radius:99px;padding:8px 16px;font:600 12px Archivo;cursor:pointer;transition:.25s}
+.totop:hover{border-color:var(--yellow);color:var(--yellow)}
+
+:lang(zh){font-family:Archivo,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif}
+
+/* ── keyframes ── */
+@keyframes rise{from{opacity:0;transform:translateY(28px)}}
+@keyframes fade{from{opacity:0}}
+@keyframes grow{from{transform:scaleX(0)}}
+@keyframes draw{from{stroke-dashoffset:1}}
+@keyframes pop{from{opacity:0;transform:scale(.4)}}
+@keyframes sweep{from{stroke-dasharray:0 340}}
+@keyframes shine{to{transform:translateX(100%)}}
+@keyframes wordUp{from{transform:translateY(110%) rotate(5deg)}}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-50px) scale(1.1)}}
+@keyframes marquee{to{transform:translateX(-50%)}}
+@keyframes cue{from{transform:translateY(-100%)}to{transform:translateY(200%)}}
+@keyframes ping{70%{box-shadow:0 0 0 8px rgba(34,211,137,0)}100%{box-shadow:0 0 0 0 rgba(34,211,137,0)}}
+@keyframes viewIn{from{opacity:0;transform:translateY(16px)}}
+
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ *,*::before,*::after{animation:none!important;transition:none!important}
+ [data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important}}
+</style>
+</head>
+<body class="loading">
+
+<div id="loader" aria-hidden="true"><div class="lw">
+ <div class="lt"><span>Keeta</span> <span style="animation-delay:.08s"><em>listens.</em></span></div>
+ <div class="lbar"><i></i></div>
+ <div class="lc" data-i18n="loading">Pulling the latest conversation</div>
+</div></div>
+<div id="progress" aria-hidden="true"></div>
+
+<header id="top"><div class="wrap hbar">
+ <div class="logo"><svg class="klogo" viewBox="0 0 757.2 233.46" role="img" aria-label="Kijamii"><g> <rect fill="currentColor" x="160.97" y="63.47" width="44.89" height="125.18"/> <path fill="currentColor" d="M380.41,63.3l.25,14.46h-.25c-5.49-6.32-11.43-10.8-17.83-13.47-6.4-2.66-13.51-3.99-21.32-3.99-8.98,0-17.08,1.79-24.31,5.36-7.23,3.58-13.38,8.35-18.45,14.34-5.07,5.98-9.02,12.97-11.85,20.95-2.83,7.98-4.24,16.38-4.24,25.19s1.37,17.42,4.11,25.31c2.74,7.9,6.65,14.84,11.72,20.82,5.07,5.98,11.22,10.72,18.45,14.21,7.23,3.49,15.34,5.24,24.31,5.24,7.98,0,15.04-1.58,21.2-4.74,6.15-3.16,12.22-7.73,18.2-13.72h.25l8.88,15.21h35.01v-94.6l-16.96-30.58h-27.18ZM374.55,146.96c-5.07,5.4-11.85,8.1-20.32,8.1s-15.09-2.74-19.82-8.23c-4.74-5.49-7.11-12.47-7.11-20.95s2.45-15.21,7.36-20.7c4.9-5.49,11.51-8.23,19.83-8.23s15,2.74,20.07,8.23c5.07,5.49,7.61,12.47,7.61,20.95s-2.54,15.42-7.61,20.82Z"/> <rect fill="currentColor" x="160.97" y=".79" width="44.89" height="43.68"/> <rect fill="currentColor" x="648.62" y="63.47" width="44.89" height="125.18"/> <rect fill="currentColor" x="648.62" y=".79" width="44.89" height="43.68"/> <polygon fill="currentColor" points="96.82 0 47.73 88.38 68.96 88.38 96.82 188.76 141.14 188.76 113.8 88.38 92.57 88.38 141.14 0 96.82 0"/> <rect fill="currentColor" y="0" width="44.89" height="188.76"/> <polygon fill="currentColor" points="712.31 188.66 732.93 188.66 757.2 144.27 757.2 63.48 712.31 63.48 712.31 188.66"/> <polygon fill="currentColor" points="225.06 188.56 225.11 233.46 245.35 233.46 269.94 188.55 269.94 63.28 225.06 63.28 225.06 188.56"/> <rect fill="currentColor" x="225.29" y=".79" width="44.89" height="43.68"/> <rect fill="currentColor" x="712.31" y=".79" width="44.89" height="43.68"/> <polygon fill="currentColor" points="443.23 62.37 443.23 92.47 443.23 92.47 443.23 188.82 486.44 188.82 486.44 92.47 486.44 92.47 469.85 62.37 443.23 62.37"/> <path fill="currentColor" d="M614.01,63.95h-55.46v30.09h10.85c10.65.02,19.29,8.66,19.29,19.32v75.3h41.92v-94.61h0l-16.59-30.09Z"/> <path fill="currentColor" d="M541.95,63.95h-55.46v30.09h10.85c10.65.02,19.28,8.66,19.29,19.32v75.3h41.92v-94.61h0l-16.59-30.09Z"/> </g></svg><span class="lx">&times;</span><span class="lc">Keeta</span><span class="lsub">Insights Hub</span></div>
+ <nav role="tablist">
+  <span id="navpill" aria-hidden="true"></span>
+  <button role="tab" aria-selected="true" data-view="week" data-i18n="nav_week">This week</button>
+  <button role="tab" aria-selected="false" data-view="weeks" data-i18n="nav_weeks">Previous weeks</button>
+  <button role="tab" aria-selected="false" data-view="months" data-i18n="nav_months">Monthly reports</button>
+  <button role="tab" aria-selected="false" data-view="data" data-i18n="nav_data">Data source</button>
+ </nav>
+ <button id="langToggle" class="lang" aria-label="Switch language">中文</button>
+</div></header>
+
+<main>
+<section id="v-week" class="view">
+ <div class="hero" id="hero">
+  <div class="hero-bg" id="heroBg" aria-hidden="true"><div class="grid-lines"></div><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+  <div class="hero-word" id="heroWord" aria-hidden="true">KEETA · KSA</div>
+  <div class="wrap hero-inner" id="heroInner">
+   <div class="eyebrow" id="periodLabel">—</div>
+   <h1 id="headline">Ninja owns the volume. <em>Keeta owns the sentiment.</em></h1>
+   <div class="filterbar" id="filterbar"></div>
+   <div class="tickerrow" id="tickers"></div>
+  </div>
+  <div class="scrollcue" aria-hidden="true"><span></span><b data-i18n="scroll" style="font-weight:500">Scroll</b></div>
+ </div>
+
+ <div class="marquee" aria-hidden="true"><div class="mtrack" id="mtrack"></div></div>
+
+ <div class="block"><div class="wrap">
+  <div class="sechead" data-reveal="head">
+   <span class="idx">01</span>
+   <h2 data-i18n="exec">Executive summary</h2>
+   <div class="act"><button class="btn sm ghost" id="copySum" data-i18n="copy">Copy text</button></div>
+  </div>
+  <div class="card summary" data-reveal><div id="summary"></div></div>
+ </div></div>
+
+ <div class="block"><div class="wrap">
+  <div class="sechead" data-reveal="head">
+   <span class="idx">02</span>
+   <h2 data-i18n="sec_sov">Share of voice</h2>
+  </div>
+  <div class="grid g75">
+   <div class="card" data-reveal><h3 data-i18n="cpb">Conversations per brand — click to filter</h3><div id="brands"></div><div class="legend" id="sovLegend"></div></div>
+   <div class="card" data-reveal style="--d:.12s"><h3 data-i18n="ss">Sentiment share</h3><div id="sentiment"></div></div>
+  </div>
+ </div></div>
+
+ <div class="block"><div class="wrap">
+  <div class="sechead" data-reveal="head">
+   <span class="idx">03</span>
+   <h2 data-i18n="sec_trend">Momentum</h2>
+  </div>
+  <div class="card" data-reveal="scale"><h3 data-i18n="vot">Volume over time</h3><div id="vot"></div></div>
+ </div></div>
+
+ <div class="block"><div class="wrap">
+  <div class="sechead" data-reveal="head">
+   <span class="idx">04</span>
+   <h2 data-i18n="sec_topics">What people talk about</h2>
+  </div>
+  <div class="grid g2">
+   <div class="card" data-reveal><h3 data-i18n="txs">Topic × sentiment</h3><div id="topics"></div></div>
+   <div class="card" data-reveal style="--d:.12s"><h3 data-i18n="qual">Qualitative deep dive — verbatims</h3><div id="quotes"></div></div>
+  </div>
+ </div></div>
+</section>
+
+<section id="v-weeks" class="view hidden"><div class="wrap">
+ <div class="phero">
+  <div class="eyebrow" data-i18n="eb_archive">Archive</div>
+  <h1 class="page-title" data-i18n="nav_weeks">Previous weeks</h1>
+  <p class="hint" data-reveal data-i18n="weeks_hint">Every week is derived from the Date column in your sheet — nothing is archived by hand.
+  Append the new week's rows to the bottom of the same sheet and it appears here automatically. Click any week to open it.</p>
+ </div>
+ <div class="card" data-reveal="scale"><h3 data-i18n="vol_wow_title">Volume by brand, week over week</h3><div id="trend"></div><div class="legend" id="trendLegend"></div></div>
+ <div class="weeklist" id="weeklist" data-reveal></div>
+</div></section>
+
+<section id="v-months" class="view hidden"><div class="wrap">
+ <div class="phero">
+  <div class="eyebrow" data-i18n="eb_slides">Google Slides</div>
+  <h1 class="page-title" data-i18n="nav_months">Monthly reports</h1>
+ </div>
+ <div class="months" id="months" data-reveal></div>
+</div></section>
+
+<section id="v-data" class="view hidden"><div class="wrap">
+ <div class="phero">
+  <div class="eyebrow" data-i18n="eb_backend">Backend</div>
+  <h1 class="page-title" data-i18n="nav_data">Data source</h1>
+ </div>
+
+ <div class="datapanel" data-reveal>
+  <h3 data-i18n="ds_optA_title">Option A — Published Google Sheet</h3>
+  <p class="hint" data-i18n-html="ds_optA_hint">In your sheet: <strong>File → Share → Publish to web → choose the tab → CSV → Publish</strong>.
+  Copy the link it gives you (it ends in <span class="mono">output=csv</span>) and paste it here.
+  Sharing the normal edit link won't work — it has to be the published one.</p>
+  <input type="text" id="sheetUrl" data-i18n-ph="ds_optA_ph" placeholder="https://docs.google.com/spreadsheets/d/e/2PACX-…/pub?gid=0&single=true&output=csv">
+  <button class="btn" id="loadSheet" data-i18n="connect_sheet">Connect sheet</button>
+  <button class="btn ghost" id="useDemo" data-i18n="reset_demo">Reset to demo data</button>
+  <div class="status" id="status">Showing demo data.</div>
+ </div>
+
+ <div class="datapanel" data-reveal>
+  <h3 data-i18n="ds_optB_title">Option B — Upload a TalkWalker CSV</h3>
+  <p class="hint" data-i18n-html="ds_optB_hint">One row per mention. Needs: <span class="mono">date, brand, topic, sentiment, engagement</span>.
+  Optional: <span class="mono">content, channel, url</span>. Order doesn't matter.</p>
+  <input type="file" id="csvFile" accept=".csv,.tsv,.txt" style="margin-top:8px">
+ </div>
+
+ <div class="datapanel" data-reveal>
+  <h3 data-i18n="ds_optC_title">Option C — Paste the data</h3>
+  <p class="hint" data-i18n-html="ds_optC_hint">Copy the cells straight out of Sheets (including the header row) and paste here. Always works, no permissions needed.
+  Your sheet's column order — <span class="mono">Post ID · Date · Platform · Post Text · Sentiment · Topic · Brand · Engagement</span> — is read as-is.
+  Empty trailing columns are ignored.</p>
+  <textarea id="pasteBox" placeholder="Post ID&#9;Date&#9;Platform&#9;Post Text&#9;Sentiment&#9;Topic&#9;Brand&#9;Engagement"></textarea>
+  <button class="btn" id="loadPaste" data-i18n="load_pasted">Load pasted data</button>
+ </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+ <div class="fbig" data-reveal>Keeta <em>×</em> <span class="o">Kijamii</span></div>
+ <div class="frow">
+  <span><span data-i18n="footer_pre">Kijamii Consumer Insights · Data Studio — refreshed </span><span id="stamp" class="mono"></span></span>
+  <button class="totop" id="toTop" data-i18n="backtop">Back to top ↑</button>
+ </div>
+</div></footer>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   CONFIG — the only part you edit after deploying.
+   1. In your Google Sheet: File → Share → Publish to web
+      → pick the data tab → CSV → Publish
+   2. Paste the link it gives you between the quotes below.
+   3. Save the file and redeploy.
+   Leave it empty ("") to keep the site on demo data.
+   ══════════════════════════════════════════════════════════════ */
+const CONFIG={
+ SHEET_CSV_URL:"https://docs.google.com/spreadsheets/d/e/2PACX-1vQoxBGZPro8Ia-Gz1zDqUjPFQ15czfu-IyOCtgOwnIGGMGd8BwT4fc_7zgeMzAlCUDrA-tNNRoBbqJW/pub?gid=80502092&single=true&output=csv",
+ CLIENT:"Keeta",
+ MARKET:"KSA",
+ REFRESH_MINUTES:30,               /* re-pull the sheet in the background; 0 = off */
+ SHOW_DATA_TAB:true,               /* set false before sharing with the client */
+ DEFAULT_LANG:"en",                /* "en" or "zh" */
+ TRANSLATE_ENDPOINT:""             /* Cloudflare Worker URL; empty = verbatim translation off */
+};
+
+/* ═════ I18N ═════ */
+let LANG=CONFIG.DEFAULT_LANG==="zh"?"zh":"en";
+const I18N={
+ en:{nav_week:"This week",nav_weeks:"Previous weeks",nav_months:"Monthly reports",
+  nav_data:"Data source",exec:"Executive summary",copy:"Copy text",copied:"Copied",
+  cpb:"Conversations per brand — click to filter",ss:"Sentiment share",
+  vot:"Volume over time",txs:"Topic × sentiment",qual:"Qualitative deep dive — verbatims",
+  eb_archive:"Archive",eb_slides:"Google Slides",eb_backend:"Backend",
+  mentions:"Mentions",engagement:"Engagement",pos_share:"Positive share",neg_share:"Negative share",
+  negative:"Negative",positive:"Positive",neutral:"Neutral",latest:"latest",
+  clickbrand:"Click any brand below to filter the whole page.",
+  filtered:"Filtered to",showonly:"All charts below show",only:"only.",
+  showfull:"Show full post",showless:"Show less",viewpost:"view post ↗",
+  translateto:"中文",showoriginal:"Original",noverb:"No verbatims in this selection.",
+  opendeck:"Open deck",total:"total",possh:"pos",
+  /* overhaul additions */
+  sec_sov:"Share of voice",sec_trend:"Momentum",sec_topics:"What people talk about",
+  scroll:"Scroll",backtop:"Back to top ↑",loading:"Pulling the latest conversation",
+  share:"share",
+  /* dynamic UI */
+  reportingweek:"Reporting week",weekonrecord:"week on record",weeksonrecord:"weeks on record",
+  reportingmonth:"Reporting month",monthonrecord:"month on record",monthsonrecord:"months on record",
+  gran_week:"Week",gran_month:"Month",mom:"MoM",
+  wow:"WoW",axis_date:"DATE",axis_mentions:"MENTIONS",axis_week:"WEEK COMMENCING",
+  leadsvolume:"leads on volume.",posthisweek:"positive this week.",
+  nodatedrows:"No dated rows found",norecordsweek:"No records for this week.",
+  /* previous weeks */
+  weeks_hint:"Every week is derived from the Date column in your sheet — nothing is archived by hand. Append the new week's rows to the bottom of the same sheet and it appears here automatically. Click any week to open it.",
+  vol_wow_title:"Volume by brand, week over week",
+  /* monthly */
+  digital_listening:"DIGITAL LISTENING",gslides:"Google Slides",comingsoon:"Coming soon",
+  /* data source */
+  ds_optA_title:"Option A — Published Google Sheet",
+  ds_optA_hint:'In your sheet: <strong>File → Share → Publish to web → choose the tab → CSV → Publish</strong>. Copy the link it gives you (it ends in <span class="mono">output=csv</span>) and paste it here. Sharing the normal edit link won\'t work — it has to be the published one.',
+  ds_optA_ph:"https://docs.google.com/spreadsheets/d/e/2PACX-…/pub?gid=0&single=true&output=csv",
+  connect_sheet:"Connect sheet",reset_demo:"Reset to demo data",
+  ds_optB_title:"Option B — Upload a TalkWalker CSV",
+  ds_optB_hint:'One row per mention. Needs: <span class="mono">date, brand, topic, sentiment, engagement</span>. Optional: <span class="mono">content, channel, url</span>. Order doesn\'t matter.',
+  ds_optC_title:"Option C — Paste the data",
+  ds_optC_hint:'Copy the cells straight out of Sheets (including the header row) and paste here. Always works, no permissions needed. Your sheet\'s column order — <span class="mono">Post ID · Date · Platform · Post Text · Sentiment · Topic · Brand · Engagement</span> — is read as-is. Empty trailing columns are ignored.',
+  load_pasted:"Load pasted data",
+  status_demo:"Showing demo data.",status_demo5:"Showing demo data — 5 weeks.",
+  /* footer */
+  footer_pre:"Kijamii Consumer Insights · Data Studio — refreshed ",
+  /* source labels */
+  src_demo:"demo data",src_live:"the live sheet",src_published:"the published sheet",src_pasted:"pasted data"},
+ zh:{nav_week:"本周",nav_weeks:"往期周报",nav_months:"月度报告",
+  nav_data:"数据源",exec:"执行摘要",copy:"复制文本",copied:"已复制",
+  cpb:"各品牌讨论量 — 点击筛选",ss:"情感占比",
+  vot:"讨论量趋势",txs:"话题 × 情感",qual:"定性深度分析 — 原声引用",
+  eb_archive:"存档",eb_slides:"Google 幻灯片",eb_backend:"后台",
+  mentions:"提及量",engagement:"互动量",pos_share:"正面占比",neg_share:"负面占比",
+  negative:"负面",positive:"正面",neutral:"中性",latest:"最新",
+  clickbrand:"点击下方任一品牌以筛选整个页面。",
+  filtered:"已筛选：",showonly:"以下图表仅显示",only:"。",
+  showfull:"查看全文",showless:"收起",viewpost:"查看原帖 ↗",
+  translateto:"EN",showoriginal:"原文",noverb:"当前筛选下暂无原声引用。",
+  opendeck:"打开报告",total:"总计",possh:"正面",
+  /* overhaul additions */
+  sec_sov:"声量份额",sec_trend:"趋势走势",sec_topics:"讨论焦点",
+  scroll:"向下滚动",backtop:"返回顶部 ↑",loading:"正在获取最新讨论数据",
+  share:"占比",
+  /* dynamic UI */
+  reportingweek:"报告周",weekonrecord:"周记录",weeksonrecord:"周记录",
+  reportingmonth:"报告月",monthonrecord:"月记录",monthsonrecord:"月记录",
+  gran_week:"周",gran_month:"月",mom:"环比",
+  wow:"环比",axis_date:"日期",axis_mentions:"提及量",axis_week:"周起始",
+  leadsvolume:"讨论量领先。",posthisweek:"本周正面。",
+  nodatedrows:"未找到含日期的数据行",norecordsweek:"本周暂无数据。",
+  /* previous weeks */
+  weeks_hint:"每一周都根据表格中的“日期”列自动划分 — 无需手动存档。将新一周的数据追加到同一表格底部，它会自动显示在这里。点击任意一周即可打开。",
+  vol_wow_title:"各品牌讨论量（逐周对比）",
+  /* monthly */
+  digital_listening:"数字聆听",gslides:"Google 幻灯片",comingsoon:"即将推出",
+  /* data source */
+  ds_optA_title:"方式 A — 已发布的 Google 表格",
+  ds_optA_hint:'在表格中：<strong>文件 → 共享 → 发布到网络 → 选择工作表 → CSV → 发布</strong>。复制它给出的链接（以 <span class="mono">output=csv</span> 结尾）并粘贴到这里。普通的编辑链接无效 — 必须是发布后的链接。',
+  ds_optA_ph:"https://docs.google.com/spreadsheets/d/e/2PACX-…/pub?gid=0&single=true&output=csv",
+  connect_sheet:"连接表格",reset_demo:"重置为演示数据",
+  ds_optB_title:"方式 B — 上传 TalkWalker CSV 文件",
+  ds_optB_hint:'每条提及占一行。需要：<span class="mono">date, brand, topic, sentiment, engagement</span>。可选：<span class="mono">content, channel, url</span>。顺序无关紧要。',
+  ds_optC_title:"方式 C — 粘贴数据",
+  ds_optC_hint:'直接从 Sheets 复制单元格（包括表头行）并粘贴到这里。始终有效，无需任何权限。系统会按原样读取表格的列顺序 — <span class="mono">Post ID · Date · Platform · Post Text · Sentiment · Topic · Brand · Engagement</span>。结尾的空列会被忽略。',
+  load_pasted:"载入粘贴的数据",
+  status_demo:"正在显示演示数据。",status_demo5:"正在显示演示数据 — 共 5 周。",
+  /* footer */
+  footer_pre:"Kijamii 消费者洞察 · 数据工作室 — 更新于 ",
+  /* source labels */
+  src_demo:"演示数据",src_live:"实时表格",src_published:"已发布的表格",src_pasted:"粘贴的数据"}
+};
+const t=k=>(I18N[LANG]&&I18N[LANG][k])||I18N.en[k]||k;
+/* translate a known SOURCE string ("demo data" etc.); pass others through */
+const SRC_KEY={"demo data":"src_demo","the live sheet":"src_live",
+ "the published sheet":"src_published","pasted data":"src_pasted"};
+const srcLabel=s=>SRC_KEY[s]?t(SRC_KEY[s]):s;
+function applyStaticI18n(){
+ document.querySelectorAll("[data-i18n]").forEach(el=>{
+  const k=el.dataset.i18n; if(I18N[LANG][k])el.textContent=I18N[LANG][k];});
+ document.querySelectorAll("[data-i18n-html]").forEach(el=>{
+  const k=el.dataset.i18nHtml; if(I18N[LANG][k])el.innerHTML=I18N[LANG][k];});
+ document.querySelectorAll("[data-i18n-ph]").forEach(el=>{
+  const k=el.dataset.i18nPh; if(I18N[LANG][k])el.placeholder=I18N[LANG][k];});
+ document.documentElement.lang=LANG;
+ const tg=document.getElementById("langToggle"); if(tg)tg.textContent=t("translateto");
+ document.querySelectorAll(".page-title").forEach(splitWords);
+ movePill();
+}
+const _trCache=new Map();
+/* Translate `text` into `target` ("en" or "zh").
+   Uses your own Worker if CONFIG.TRANSLATE_ENDPOINT is set;
+   otherwise falls back to Google's free (unofficial) endpoint. */
+async function translateText(text,target){
+ text=String(text||"");
+ if(!text)return null;
+ const ck=target+"::"+text;
+ if(_trCache.has(ck))return _trCache.get(ck);
+ try{
+  let out=null;
+  if(CONFIG.TRANSLATE_ENDPOINT){
+   const r=await fetch(CONFIG.TRANSLATE_ENDPOINT,{method:"POST",
+    headers:{"Content-Type":"application/json"},body:JSON.stringify({text,target})});
+   const d=await r.json(); out=d.translated||null;
+  }else{
+   out=await googleTranslate(text,target);
+  }
+  if(out)_trCache.set(ck,out); return out;
+ }catch{return null}
+}
+/* Free Google Translate endpoint — no API key, auto-detects the source. */
+async function googleTranslate(text,target){
+ const tl=target==="zh"?"zh-CN":"en";
+ const q=text.slice(0,4800);            /* keep the request URL within limits */
+ const url="https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl="
+  +encodeURIComponent(tl)+"&dt=t&q="+encodeURIComponent(q);
+ const r=await fetch(url);
+ if(!r.ok)throw new Error("HTTP "+r.status);
+ const data=await r.json();
+ if(!Array.isArray(data)||!Array.isArray(data[0]))return null;
+ return data[0].map(seg=>(seg&&seg[0])?seg[0]:"").join("");
+}
+
+/* ═════ CONSTANTS ═════ */
+const C={"Ninja":"#4E7FE8","Hunger Station":"#FF7A00","Keeta":"#FFDD2D","Jahez":"#A06BFF"};
+const PAL=["#4E7FE8","#FF7A00","#FFDD2D","#A06BFF","#22D389","#F062A8"];
+const SC={Negative:"#FF6B4A",Positive:"#22D389",Neutral:"#7E8C92"};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const brandColor=(n,i)=>C[n]||PAL[i%PAL.length];
+const REDUCED=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ── brand name canonicalisation ──
+   Anything that normalises to the same key collapses into one canonical brand.
+   Add new spellings/misspellings to ALIASES as you meet them. */
+const ALIASES={
+ "hungerstation":"Hunger Station","hunger station":"Hunger Station","hunger-station":"Hunger Station",
+ "hunger":"Hunger Station","هنقرستيشن":"Hunger Station","هنقر ستيشن":"Hunger Station",
+ "keeta":"Keeta","kita":"Keeta","كيتا":"Keeta",
+ "ninja":"Ninja","ninja app":"Ninja","نينجا":"Ninja",
+ "jahez":"Jahez","jahz":"Jahez","جاهز":"Jahez"};
+function canonBrand(raw){
+ const s=String(raw||"").replace(/\s+/g," ").trim();
+ if(!s)return "Unknown";
+ const k=s.toLowerCase().replace(/[._]/g," ").replace(/\s+/g," ").trim();
+ if(ALIASES[k])return ALIASES[k];
+ const bare=k.replace(/[^a-z؀-ۿ]/g,"");
+ for(const a in ALIASES) if(a.replace(/[^a-z؀-ۿ]/g,"")===bare) return ALIASES[a];
+ return s.replace(/\b\w/g,c=>c.toUpperCase());  /* title-case anything unrecognised */
+}
+
+/* ═════ DEMO RECORDS (so filtering behaves exactly like real data) ═════ */
+const DEMO_QUOTES={
+ Keeta:[["Positive","Order landed in 18 minutes and the courier called ahead. Smoothest one this month.","X"],
+        ["Positive","Keeta's fees are actually what the app said they'd be. Low bar, but nobody else clears it.","X"],
+        ["Negative","App logged me out mid-order and the cart was gone.","Instagram"]],
+ Ninja:[["Positive","Ninja is just faster. I've stopped checking the others.","X"],
+        ["Negative","Third refund request this week and support keeps closing the ticket.","Instagram"],
+        ["Negative","Driver marked delivered. Nothing arrived.","X"]],
+ "Hunger Station":[["Negative","Service fee, delivery fee, then a mandatory drink charge. Nobody explains what any of it is for.","X"],
+        ["Negative","Refund promised in 3 days, been 11.","X"],["Neutral","Does HungerStation still do the weekend promo?","X"]],
+ Jahez:[["Neutral","Anyone know if the promo code stacks with free delivery week?","X"],
+        ["Positive","Jahez support actually picked up the phone. Shocked.","X"],
+        ["Negative","Restaurant selection got worse in my area.","Instagram"]]
+};
+const TOPIC_MIX=[["Customer Support",.196,.78],["Courier",.172,.72],["Brand Perception",.164,.25],
+ ["Generic",.146,.32],["Competitor Comparison",.061,.65],["Delivery Speed",.058,.55],
+ ["App Usability",.053,.80],["Brand Equity",.032,.30],["Delivery Fees",.028,.85],["Others",.09,.50]];
+function makeDemo(){
+ const recs=[],brands=[["Ninja",128],["Hunger Station",93],["Keeta",89],["Jahez",68]];
+ let seed=7; const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+ /* five consecutive weeks, ending Sun 19 Jul 2026 */
+ for(let w=4;w>=0;w--){
+  const wkStart=new Date("2026-07-13"); wkStart.setDate(wkStart.getDate()-w*7);
+  const scale=w===0?1:.72+rnd()*.55;
+  brands.forEach(([b,n])=>{
+   const count=Math.round(n*scale);
+   for(let i=0;i<count;i++){
+    const d=new Date(wkStart); d.setDate(d.getDate()+Math.floor(rnd()*7));
+    let r=rnd(),acc=0,tp=TOPIC_MIX[0];
+    for(const t of TOPIC_MIX){acc+=t[1];if(r<=acc){tp=t;break}}
+    const negBias=b==="Keeta"?tp[2]-.30:b==="Hunger Station"?tp[2]+.10:tp[2];
+    const s=rnd()<negBias?"Negative":rnd()<.68?"Positive":"Neutral";
+    const q=DEMO_QUOTES[b][Math.floor(rnd()*3)];
+    recs.push({id:`d${w}-${b}-${i}`,date:d.toISOString().slice(0,10),brand:b,topic:tp[0],
+     sentiment:s,engagement:Math.floor(rnd()*14)+1,content:q[1],channel:q[2]+" · KSA"});
+   }});
+ }
+ return recs;
+}
+/* ═════ MONTHLY REPORTS ═════
+   One entry per month. Add a line when a new report is ready.
+   label : shown on the card (keep the "MON YYYY" shape)
+   color : card background
+   deck  : Google Slides link — leave "" for months not yet published.
+           Card shows "Coming soon" until a link is added.              */
+const MONTHS=[
+ {label:"JAN 2026", color:"#22D389", deck:"https://docs.google.com/presentation/d/14pGP9tGhGaOsIgAVa0HkU4EFW76rNA7CtjiNmWaYS34/edit"},
+ {label:"FEB 2026", color:"#19B978", deck:""},
+ {label:"MAR 2026", color:"#2BE59A", deck:""},
+ {label:"APR 2026", color:"#1FA86E", deck:""}
+];
+
+/* ═════ WEEK DERIVATION ═════
+   Weeks are computed from the Date column — nothing is archived by hand.
+   KSA work week starts Sunday, so weeks run Sunday → Saturday.       */
+const WEEK_START=0; /* 0=Sunday, 1=Monday */
+function weekKey(iso){
+ const d=new Date(iso+"T00:00:00Z"); if(isNaN(d))return "";
+ const shift=(d.getUTCDay()-WEEK_START+7)%7;
+ d.setUTCDate(d.getUTCDate()-shift);
+ return d.toISOString().slice(0,10);
+}
+function weekLabel(key){
+ const a=new Date(key+"T00:00:00Z"),b=new Date(a);b.setUTCDate(b.getUTCDate()+6);
+ const sameM=a.getUTCMonth()===b.getUTCMonth();
+ if(LANG==="zh"){
+  const am=a.getUTCMonth()+1,bm=b.getUTCMonth()+1;
+  return sameM
+   ? `${am}月${a.getUTCDate()}–${b.getUTCDate()}日 ${b.getUTCFullYear()}`
+   : `${am}月${a.getUTCDate()}日–${bm}月${b.getUTCDate()}日 ${b.getUTCFullYear()}`;
+ }
+ const M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+ return `${a.getUTCDate()}${sameM?"":" "+M[a.getUTCMonth()]}–${b.getUTCDate()} ${M[b.getUTCMonth()]} ${b.getUTCFullYear()}`;
+}
+function weeksOf(recs){
+ const s=new Set(); recs.forEach(r=>{const k=weekKey(r.date); if(k)s.add(k)});
+ return [...s].sort().reverse();          /* newest first */
+}
+
+/* ── month equivalents ── */
+function monthKey(iso){return /^\d{4}-\d{2}/.test(iso||"")?iso.slice(0,7):""} /* YYYY-MM */
+function monthLabel(key){
+ const [y,m]=key.split("-").map(Number);
+ if(LANG==="zh")return `${y}年${m}月`;
+ const M=["January","February","March","April","May","June","July","August","September","October","November","December"];
+ return `${M[m-1]} ${y}`;
+}
+function monthsOf(recs){
+ const s=new Set(); recs.forEach(r=>{const k=monthKey(r.date); if(k)s.add(k)});
+ return [...s].sort().reverse();
+}
+
+/* ── granularity switch: WEEK and MONTH views share one render path ── */
+let GRAN="week"; /* "week" | "month" */
+const periodKey     = iso => GRAN==="month" ? monthKey(iso)   : weekKey(iso);
+const periodLabelOf = k   => GRAN==="month" ? monthLabel(k)   : weekLabel(k);
+const periodsOf     = r   => GRAN==="month" ? monthsOf(r)     : weeksOf(r);
+
+/* ═════ STATE ═════ */
+let RECORDS=makeDemo(), FILTER=null, WEEK=null, SOURCE="demo data";
+
+/* ═════ AGGREGATION ═════ */
+function agg(recs){
+ /* Duplicate posts (same Post ID) are kept in RECORDS so topic×sentiment
+    reflects every signal. But volume, share-of-voice, sentiment share,
+    engagement and the time series must count each post once, or a re-tweet
+    or re-export inflates a brand. So: de-dupe by Post ID for those metrics,
+    use the full list only for the topic breakdown.                        */
+ const uniq=[]; const seenId=new Set();
+ for(const r of recs){
+  if(r.id){ if(seenId.has(r.id))continue; seenId.add(r.id); }
+  uniq.push(r);
+ }
+ const b={},s={Negative:0,Positive:0,Neutral:0},d={};let eng=0;const q=[];
+ uniq.forEach(r=>{
+  b[r.brand]=(b[r.brand]||0)+1; s[r.sentiment]=(s[r.sentiment]||0)+1;
+  eng+=r.engagement||0;
+  if(r.date){d[r.date]=d[r.date]||{};d[r.date][r.brand]=(d[r.date][r.brand]||0)+1}
+  if(r.content&&r.content.length>35&&q.length<60)q.push(r);
+ });
+ /* topics: count ALL rows, duplicates included */
+ const t={};
+ recs.forEach(r=>{
+  t[r.topic]=t[r.topic]||{t:r.topic,Negative:0,Positive:0,Neutral:0};
+  t[r.topic][r.sentiment]++;
+ });
+ const seen=new Set(),quotes=[];
+ for(const r of q){if(seen.has(r.content))continue;seen.add(r.content);quotes.push(r);if(quotes.length>=5)break}
+ return {brands:Object.entries(b).map(([n,v])=>({n,v})).sort((x,y)=>y.v-x.v),
+  sentiment:s,engagement:Math.round(eng),
+  topics:Object.values(t).sort((x,y)=>(y.Negative+y.Positive+y.Neutral)-(x.Negative+x.Positive+x.Neutral)).slice(0,10),
+  dates:Object.keys(d).sort(),byDate:d,quotes};
+}
+
+/* ═════ NARRATIVE SUMMARY ═════
+   Template-driven prose from the live numbers. States what the data shows;
+   description only; interpretation is a human read.                     */
+function pct(a,b){return b?Math.round(a/b*100):0}
+function listify(arr){return arr.length<2?arr[0]||"":arr.slice(0,-1).join(", ")+" and "+arr[arr.length-1]}
+function bs(n,i){return `<b style="color:${brandColor(n,i)}">${esc(n)}</b>`}
+
+function buildSummary(weekRecs,prevRecs,weekName){
+ if(LANG==="zh")return buildSummaryZh(weekRecs,prevRecs,weekName);
+ const PN=GRAN==="month"?"month":"week";           /* period noun */
+ if(!weekRecs.length)return `<p class="hint">No records for this ${PN}.</p>`;
+ const a=agg(weekRecs), total=a.brands.reduce((x,b)=>x+b.v,0);  /* de-duped volume */
+ const order=a.brands, lead=order[0], tail=order[order.length-1];
+ const sTot=Object.values(a.sentiment).reduce((x,y)=>x+y,0)||1;
+ const P=[];
+
+ /* ── para 1: volume shape ── */
+ const dayList=[...new Set(weekRecs.map(r=>r.date).filter(Boolean))].sort();
+ /* expected span: 7 for a week, actual days-in-month for a month */
+ let expected=7;
+ if(GRAN==="month"&&dayList.length){
+  const [yy,mm]=dayList[0].split("-").map(Number);
+  expected=new Date(yy,mm,0).getDate();
+ }
+ const elapsed=dayList.length, partial=elapsed<expected;
+ const spread=pct(lead.v,total)-pct(tail.v,total);
+ const shape=spread<14?"remained relatively balanced across":spread<30?"was moderately concentrated among":"was heavily skewed across";
+ let s1=`This ${PN}'s conversation volume <b>${shape} the ${order.length} brands tracked</b>, with ${bs(lead.n,0)} leading the discussion at ${pct(lead.v,total)}% share of voice`;
+ if(order[1])s1+=`, followed by ${bs(order[1].n,1)} at ${pct(order[1].v,total)}%`;
+ s1+=`. ${bs(tail.n,order.length-1)} generated the lowest volume at ${pct(tail.v,total)}%.`;
+
+ if(prevRecs&&prevRecs.length){
+  /* on a partial period compare only the same number of elapsed days, or the
+     incomplete period reads as a collapse in volume */
+  let base=prevRecs, note="";
+  if(partial){
+   const pDays=[...new Set(prevRecs.map(r=>r.date).filter(Boolean))].sort().slice(0,elapsed);
+   base=prevRecs.filter(r=>pDays.includes(r.date));
+   note=` (first ${elapsed} day${elapsed>1?"s":""} of each ${PN}, like for like)`;
+  }
+  if(base.length){
+   const ch=Math.round((total-base.length)/base.length*100);
+   s1+=` Volume ${Math.abs(ch)<5?"held broadly flat":ch>0?`rose <b>${ch}%</b>`:`fell <b>${Math.abs(ch)}%</b>`} versus the previous ${PN}${note}`;
+   s1+=Math.abs(ch)<5?".":`, from ${base.length} to ${total} mentions.`;
+  }
+ }
+
+ /* spike detection */
+ const dayTot={}; weekRecs.forEach(r=>{if(r.date)dayTot[r.date]=(dayTot[r.date]||0)+1});
+ const days=Object.entries(dayTot).sort((x,y)=>y[1]-x[1]);
+ if(days.length>2){
+  const mean=total/days.length, top=days[0];
+  if(top[1]>mean*1.75){
+   const spikeBrand=agg(weekRecs.filter(r=>r.date===top[0])).brands[0];
+   s1+=` Activity peaked on <b>${top[0]}</b> at ${top[1]} mentions — roughly ${(top[1]/mean).toFixed(1)}× the daily average — driven primarily by ${esc(spikeBrand.n)}.`;
+  }else{
+   s1+=` <b>No single viral event dominated the period</b>; daily volume stayed within a narrow band, with all brands seeing only minor peaks.`;
+  }
+ }
+ P.push(s1);
+
+ /* ── para 2+: one per brand, top 3 by volume ── */
+ order.slice(0,3).forEach((b,idx)=>{
+  const recs=weekRecs.filter(r=>r.brand===b.n), ba=agg(recs);
+  const bt=Object.values(ba.sentiment).reduce((x,y)=>x+y,0)||1;
+  const p=pct(ba.sentiment.Positive,bt), n=pct(ba.sentiment.Negative,bt);
+  const skew=n>p+15?"predominantly negative":p>n+15?"predominantly positive":"broadly mixed";
+  const i=order.findIndex(o=>o.n===b.n);
+
+  const negT=ba.topics.filter(t=>t.Negative>0).sort((x,y)=>y.Negative-x.Negative).slice(0,3).map(t=>t.t.toLowerCase());
+  const posT=ba.topics.filter(t=>t.Positive>0).sort((x,y)=>y.Positive-x.Positive).slice(0,2).map(t=>t.t.toLowerCase());
+
+  let s=idx===0?`${bs(b.n,i)} stood out as the most visible brand this ${PN}`
+       :idx===1?`Meanwhile, ${bs(b.n,i)} accounted for ${pct(b.v,total)}% of conversation`
+       :`${bs(b.n,i)} saw comparatively lower volume at ${pct(b.v,total)}%`;
+  s+=`, with sentiment <b>${skew}</b> — ${p}% positive against ${n}% negative across ${b.v} mentions.`;
+  if(negT.length)s+=` Criticism clustered around ${listify(negT)}.`;
+  if(posT.length&&p>12)s+=` Positive mentions were driven mainly by ${listify(posT)}.`;
+  P.push(s);
+ });
+
+ /* ── closing: sector-level topic read ── */
+ const topTotal=a.topics.reduce((x,tp)=>x+tp.Negative+tp.Positive+tp.Neutral,0)||1;
+ const topT=a.topics.slice(0,3);
+ const worst=[...a.topics].sort((x,y)=>
+   (y.Negative/(y.Negative+y.Positive+y.Neutral))-(x.Negative/(x.Negative+x.Positive+x.Neutral)))
+   .filter(t=>(t.Negative+t.Positive+t.Neutral)>=Math.max(8,topTotal*0.05))[0];
+ let s3=`Across the category, conversation centred on ${listify(topT.map(t=>
+   `<b>${esc(t.t.toLowerCase())}</b> (${pct(t.Negative+t.Positive+t.Neutral,topTotal)}%)`))}.`;
+ if(worst){
+  const wt=worst.Negative+worst.Positive+worst.Neutral;
+  s3+=` <b>${esc(worst.t)}</b> remains the sector's most negative theme, running ${pct(worst.Negative,wt)}% negative across ${wt} mentions`;
+  const wb=agg(weekRecs.filter(r=>r.topic===worst.t&&r.sentiment==="Negative")).brands[0];
+  if(wb)s3+=`, with ${esc(wb.n)} absorbing the largest share of that criticism`;
+  s3+=`.`;
+ }
+ s3+=` Overall sentiment for the ${PN} ran ${pct(a.sentiment.Negative,sTot)}% negative, ${pct(a.sentiment.Positive,sTot)}% positive and ${pct(a.sentiment.Neutral,sTot)}% neutral.`;
+ P.push(s3);
+
+ const caveats=[];
+ if(partial)caveats.push(`<b>This ${PN} is still in progress</b> — ${elapsed} of ${expected} days captured, so totals will rise.`);
+ if(total<60)caveats.push(`Volume is low (${total} mentions), so percentage shifts are volatile and small differences may not be meaningful.`);
+
+ return P.map(p=>`<p>${p}</p>`).join("")+
+  (caveats.length?`<p class="caveat">${caveats.join(" ")}</p>`:"")+
+  `<p class="genline">Generated from ${total} mentions · ${esc(weekName)} · figures update with the sheet.
+   figures are descriptive; interpretation is a human read.</p>`;
+}
+/* Chinese executive summary — mirrors buildSummary's logic in Chinese prose */
+function buildSummaryZh(weekRecs,prevRecs,weekName){
+ const PN=GRAN==="month"?"月":"周";
+ if(!weekRecs.length)return `<p class="hint">${t("norecordsweek")}</p>`;
+ const listifyZh=arr=>arr.length<2?(arr[0]||""):arr.slice(0,-1).join("、")+"和"+arr[arr.length-1];
+ const a=agg(weekRecs), total=a.brands.reduce((x,b)=>x+b.v,0);  /* de-duped volume */
+ const order=a.brands, lead=order[0], tail=order[order.length-1];
+ const sTot=Object.values(a.sentiment).reduce((x,y)=>x+y,0)||1;
+ const P=[];
+
+ /* ── para 1: volume shape ── */
+ const dayList=[...new Set(weekRecs.map(r=>r.date).filter(Boolean))].sort();
+ let expected=7;
+ if(GRAN==="month"&&dayList.length){const [yy,mm]=dayList[0].split("-").map(Number);expected=new Date(yy,mm,0).getDate();}
+ const elapsed=dayList.length, partial=elapsed<expected;
+ const spread=pct(lead.v,total)-pct(tail.v,total);
+ const shape=spread<14?"分布相对均衡":spread<30?"分布较为集中":"分布高度失衡";
+ let s1=`本${PN}讨论量<b>在所追踪的 ${order.length} 个品牌中${shape}</b>，其中 ${bs(lead.n,0)} 以 ${pct(lead.v,total)}% 的声量占比领跑讨论`;
+ if(order[1])s1+=`，其次是 ${bs(order[1].n,1)}（${pct(order[1].v,total)}%）`;
+ s1+=`。${bs(tail.n,order.length-1)} 的讨论量最低，占 ${pct(tail.v,total)}%。`;
+
+ if(prevRecs&&prevRecs.length){
+  let base=prevRecs, note="";
+  if(partial){
+   const pDays=[...new Set(prevRecs.map(r=>r.date).filter(Boolean))].sort().slice(0,elapsed);
+   base=prevRecs.filter(r=>pDays.includes(r.date));
+   note=`（按各${PN}前 ${elapsed} 天同口径对比）`;
+  }
+  if(base.length){
+   const ch=Math.round((total-base.length)/base.length*100);
+   s1+=` 与上一${PN}${note}相比，讨论量${Math.abs(ch)<5?"基本持平":ch>0?`增长了 <b>${ch}%</b>`:`下降了 <b>${Math.abs(ch)}%</b>`}`;
+   s1+=Math.abs(ch)<5?"。":`，从 ${base.length} 条提及变为 ${total} 条。`;
+  }
+ }
+
+ /* spike detection */
+ const dayTot={}; weekRecs.forEach(r=>{if(r.date)dayTot[r.date]=(dayTot[r.date]||0)+1});
+ const days=Object.entries(dayTot).sort((x,y)=>y[1]-x[1]);
+ if(days.length>2){
+  const mean=total/days.length, top=days[0];
+  if(top[1]>mean*1.75){
+   const spikeBrand=agg(weekRecs.filter(r=>r.date===top[0])).brands[0];
+   s1+=` 讨论量在 <b>${top[0]}</b> 达到峰值，共 ${top[1]} 条提及 — 约为日均水平的 ${(top[1]/mean).toFixed(1)} 倍 — 主要由 ${esc(spikeBrand.n)} 带动。`;
+  }else{
+   s1+=` <b>本${PN}没有单一的爆点事件主导讨论</b>；每日讨论量维持在较窄区间内，各品牌仅出现小幅波动。`;
+  }
+ }
+ P.push(s1);
+
+ /* ── para 2+: one per brand, top 3 by volume ── */
+ order.slice(0,3).forEach((b,idx)=>{
+  const recs=weekRecs.filter(r=>r.brand===b.n), ba=agg(recs);
+  const bt=Object.values(ba.sentiment).reduce((x,y)=>x+y,0)||1;
+  const p=pct(ba.sentiment.Positive,bt), n=pct(ba.sentiment.Negative,bt);
+  const skew=n>p+15?"以负面为主":p>n+15?"以正面为主":"正负交织";
+  const i=order.findIndex(o=>o.n===b.n);
+
+  const negT=ba.topics.filter(t=>t.Negative>0).sort((x,y)=>y.Negative-x.Negative).slice(0,3).map(t=>t.t);
+  const posT=ba.topics.filter(t=>t.Positive>0).sort((x,y)=>y.Positive-x.Positive).slice(0,2).map(t=>t.t);
+
+  let s=idx===0?`${bs(b.n,i)} 是本${PN}最受关注的品牌`
+       :idx===1?`与此同时，${bs(b.n,i)} 占据了 ${pct(b.v,total)}% 的讨论量`
+       :`${bs(b.n,i)} 的讨论量相对较低，占 ${pct(b.v,total)}%`;
+  s+=`，情感<b>${skew}</b> — 在 ${b.v} 条提及中，正面占 ${p}%，负面占 ${n}%。`;
+  if(negT.length)s+=` 批评主要集中在 ${listifyZh(negT)}。`;
+  if(posT.length&&p>12)s+=` 正面提及主要来自 ${listifyZh(posT)}。`;
+  P.push(s);
+ });
+
+ /* ── closing: sector-level topic read ── */
+ const topTotal=a.topics.reduce((x,tp)=>x+tp.Negative+tp.Positive+tp.Neutral,0)||1;
+ const topT=a.topics.slice(0,3);
+ const worst=[...a.topics].sort((x,y)=>
+   (y.Negative/(y.Negative+y.Positive+y.Neutral))-(x.Negative/(x.Negative+x.Positive+x.Neutral)))
+   .filter(t=>(t.Negative+t.Positive+t.Neutral)>=Math.max(8,topTotal*0.05))[0];
+ let s3=`在整个品类层面，讨论主要围绕 ${listifyZh(topT.map(t=>
+   `<b>${esc(t.t)}</b>（${pct(t.Negative+t.Positive+t.Neutral,topTotal)}%）`))} 展开。`;
+ if(worst){
+  const wt=worst.Negative+worst.Positive+worst.Neutral;
+  s3+=` <b>${esc(worst.t)}</b> 仍是该品类负面情绪最集中的主题，在 ${wt} 条提及中负面占 ${pct(worst.Negative,wt)}%`;
+  const wb=agg(weekRecs.filter(r=>r.topic===worst.t&&r.sentiment==="Negative")).brands[0];
+  if(wb)s3+=`，其中 ${esc(wb.n)} 承受了其中最大份额的批评`;
+  s3+=`。`;
+ }
+ s3+=` 本${PN}整体情感为负面 ${pct(a.sentiment.Negative,sTot)}%、正面 ${pct(a.sentiment.Positive,sTot)}%、中性 ${pct(a.sentiment.Neutral,sTot)}%。`;
+ P.push(s3);
+
+ const caveats=[];
+ if(partial)caveats.push(`<b>本${PN}尚未结束</b> — 已采集 ${expected} 天中的 ${elapsed} 天，因此总量还会上升。`);
+ if(total<60)caveats.push(`讨论量偏低（${total} 条提及），因此百分比波动较大，细微差异可能并不具有实际意义。`);
+
+ return P.map(p=>`<p>${p}</p>`).join("")+
+  (caveats.length?`<p class="caveat">${caveats.join(" ")}</p>`:"")+
+  `<p class="genline">基于 ${total} 条提及生成 · ${esc(weekName)} · 数据随表格实时更新。
+   数据仅为客观描述，解读需由人工判断。</p>`;
+}
+
+/* ═════ CHARTS ═════ */
+/* donut that sweeps in segment by segment, with the positive share in the middle */
+function donut(obj,colors,centerN,centerL){
+ const tot=Object.values(obj).reduce((a,b)=>a+b,0)||1;let off=0;const R=54,CIR=2*Math.PI*R;
+ const segs=Object.entries(obj).filter(([,v])=>v>0).map(([k,v],i)=>{
+  const len=v/tot*CIR;
+  const s=`<circle class="seg" style="--i:${i}" r="${R}" cx="80" cy="80" fill="none" stroke="${colors[k]}" stroke-width="16"
+   stroke-dasharray="${len} ${CIR-len}" stroke-dashoffset="${-off}" transform="rotate(-90 80 80)"><title>${esc(t(k.toLowerCase()))}: ${v}</title></circle>`;
+  off+=len;return s}).join("");
+ return `<div class="donutwrap"><svg viewBox="0 0 160 160" style="width:100%;display:block">
+   <circle r="${R}" cx="80" cy="80" fill="none" stroke="#13231B" stroke-width="16"/>${segs}</svg>
+   <div class="dc"><div class="n">${centerN}</div><div class="l">${esc(centerL)}</div></div></div>`;
+}
+
+/* multi-series line chart with real labelled axes; lines draw themselves in on scroll */
+let _chartId=0;
+function lineChart(cats,series,opts){
+ opts=opts||{};
+ const id="lc"+(++_chartId);
+ const W=880,H=300,L=52,R=18,T=16,B=52;
+ const max=Math.max(1,...series.flatMap(s=>s.vals))*(opts.labels?1.22:1.12);
+ const step=Math.pow(10,Math.floor(Math.log10(max)))/2;
+ const ticks=[];for(let v=0;v<=max;v+=step)ticks.push(v);
+ if(ticks.length>7)ticks.length&&ticks.splice(0,ticks.length,...ticks.filter((_,i)=>i%2===0));
+ const x=i=>cats.length===1?(L+(W-L-R)/2):L+i*((W-L-R)/(cats.length-1));
+ const y=v=>H-B-(v/max)*(H-T-B);
+ const withArea=series.length<=2&&cats.length>1;
+ let svg=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;overflow:visible" role="img" aria-label="${esc(opts.aria||'Line chart')}"><defs>`;
+ series.forEach((s,si)=>{svg+=`<linearGradient id="${id}g${si}" x1="0" x2="0" y1="0" y2="1">
+   <stop offset="0" stop-color="${s.color}" stop-opacity=".28"/><stop offset="1" stop-color="${s.color}" stop-opacity="0"/></linearGradient>`});
+ svg+=`</defs>`;
+ ticks.forEach(v=>{svg+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="#1C2F25" stroke-dasharray="2 5"/>
+  <text x="${L-9}" y="${y(v)+4}" fill="#8CA79A" font-size="11" font-family="IBM Plex Mono" text-anchor="end">${v}</text>`});
+ svg+=`<line x1="${L}" x2="${W-R}" y1="${H-B}" y2="${H-B}" stroke="#2A4537"/>`;
+ series.forEach((s,si)=>{
+  const pts=s.vals.map((v,i)=>[x(i),y(v)]);
+  if(withArea)svg+=`<path class="area" fill="url(#${id}g${si})" d="M${pts[0][0]},${H-B} L${pts.map(p=>p.join(",")).join(" L")} L${pts[pts.length-1][0]},${H-B} Z"/>`;
+  svg+=`<path class="line" style="--i:${si}" pathLength="1" fill="none" stroke="${s.color}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"
+    d="M${pts.map(p=>p.join(",")).join(" L")}"/>`;
+  svg+=s.vals.map((v,i)=>`<circle class="dot" style="--i:${i}" cx="${x(i)}" cy="${y(v)}" r="3.6" fill="${s.color}" stroke="#0E1914" stroke-width="2"><title>${esc(s.name)} — ${esc(cats[i])}: ${v}</title></circle>`).join("");
+ });
+ if(opts.labels){
+  /* nudge labels apart where series nearly overlap at the same x */
+  cats.forEach((_,i)=>{
+   const pts=series.map(s=>({v:s.vals[i],color:s.color})).sort((a,b)=>b.v-a.v);
+   let lastY=-99;
+   pts.forEach(p=>{
+    let ly=y(p.v)-11;
+    if(ly-lastY<13&&lastY>-99) ly=lastY+13;
+    lastY=ly;
+    svg+=`<text class="lbl" x="${x(i)}" y="${ly}" fill="${p.color}" font-size="11" font-weight="600"
+      font-family="IBM Plex Mono" text-anchor="middle" paint-order="stroke"
+      stroke="#0E1914" stroke-width="3.5" stroke-linejoin="round">${p.v}</text>`});
+  });
+ }
+ const skip=Math.ceil(cats.length/9);
+ cats.forEach((c,i)=>{if(i%skip)return;
+  svg+=`<text x="${x(i)}" y="${H-B+20}" fill="#8CA79A" font-size="11" font-family="IBM Plex Mono" text-anchor="middle">${esc(c)}</text>`});
+ svg+=`<text x="${(L+W-R)/2}" y="${H-8}" fill="#5C7268" font-size="11" font-family="IBM Plex Mono" text-anchor="middle" letter-spacing="1.4">${esc(opts.xLabel||"")}</text>
+  <text transform="rotate(-90 14 ${(T+H-B)/2})" x="14" y="${(T+H-B)/2}" fill="#5C7268" font-size="11" font-family="IBM Plex Mono" text-anchor="middle" letter-spacing="1.4">${esc(opts.yLabel||"")}</text></svg>`;
+ return svg;
+}
+
+/* ═════ MOTION HELPERS ═════ */
+/* wrap each word (or CJK character run) in a mask so it can slide up into view */
+function splitWords(el){
+ if(!el)return;
+ const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT),nodes=[];
+ while(walker.nextNode())if(!walker.currentNode.parentElement.closest(".w"))nodes.push(walker.currentNode);
+ let i=0;
+ nodes.forEach(n=>{
+  const frag=document.createDocumentFragment();
+  n.textContent.split(/(\s+)/).forEach(part=>{
+   if(!part)return;
+   if(/^\s+$/.test(part)){frag.appendChild(document.createTextNode(" "));return}
+   const chunks=/[　-鿿＀-￯]/.test(part)?part.match(/.{1,2}/gu):[part];
+   chunks.forEach(c=>{
+    const w=document.createElement("span"),inner=document.createElement("span");
+    w.className="w"; inner.textContent=c; inner.style.setProperty("--i",i++);
+    w.appendChild(inner); frag.appendChild(w);
+   });
+  });
+  n.replaceWith(frag);
+ });
+}
+
+/* KPI counters roll from their previous value to the new one */
+const PREV_TICK=[];
+function runCounters(){
+ document.querySelectorAll("#tickers .num").forEach((el,i)=>{
+  const to=+el.dataset.to, suf=el.dataset.suf||"", from=PREV_TICK[i]??0;
+  PREV_TICK[i]=to;
+  if(REDUCED||from===to){el.textContent=to.toLocaleString()+suf;return}
+  const t0=performance.now(),dur=1500;
+  const step=now=>{
+   const p=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-p,4);
+   el.textContent=Math.round(from+(to-from)*e).toLocaleString()+suf;
+   if(p<1)requestAnimationFrame(step)};
+  requestAnimationFrame(step);
+ });
+}
+
+/* scroll-triggered reveals: anything with [data-reveal] gets .in once on screen */
+const io=("IntersectionObserver" in window&&!REDUCED)?new IntersectionObserver(es=>es.forEach(e=>{
+ if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}
+}),{threshold:.08,rootMargin:"0px 0px -8% 0px"}):null;
+function observeAll(){document.querySelectorAll("[data-reveal]:not(.in)").forEach(el=>io?io.observe(el):el.classList.add("in"))}
+
+function movePill(){
+ const sel=document.querySelector("nav [aria-selected=true]"),pill=$("#navpill");
+ if(!sel||!pill)return;
+ pill.style.width=sel.offsetWidth+"px";
+ pill.style.transform=`translateX(${sel.offsetLeft}px)`;
+}
+
+/* ═════ RENDER ═════ */
+function render(){
+ const WEEKS=periodsOf(RECORDS);
+ if(!WEEKS.length){$("#periodLabel").textContent=t("nodatedrows");return}
+ if(!WEEK||!WEEKS.includes(WEEK))WEEK=WEEKS[0];
+
+ const inWeek=RECORDS.filter(r=>periodKey(r.date)===WEEK);
+ const prevKey=WEEKS[WEEKS.indexOf(WEEK)+1];
+ const prev=prevKey?agg(RECORDS.filter(r=>periodKey(r.date)===prevKey)):null;
+ const all=agg(inWeek);
+ const view=agg(FILTER?inWeek.filter(r=>r.brand===FILTER):inWeek);
+ const totAll=inWeek.length, sTot=Object.values(view.sentiment).reduce((a,b)=>a+b,0)||1;
+
+ /* granularity toggle + period picker */
+ const gran=`<span class="granwrap">
+   <button class="granbtn${GRAN==="week"?" on":""}" data-gran="week">${t("gran_week")}</button>
+   <button class="granbtn${GRAN==="month"?" on":""}" data-gran="month">${t("gran_month")}</button></span>`;
+ const recordWord=GRAN==="month"
+   ? (WEEKS.length>1?t("monthsonrecord"):t("monthonrecord"))
+   : (WEEKS.length>1?t("weeksonrecord"):t("weekonrecord"));
+ $("#periodLabel").innerHTML=`${gran} <span>${GRAN==="month"?t("reportingmonth"):t("reportingweek")}</span>
+  <select id="weekPick" aria-label="Choose reporting period">${
+   WEEKS.map(k=>`<option value="${k}"${k===WEEK?" selected":""}>${periodLabelOf(k)}${k===WEEKS[0]?" — "+t("latest"):""}</option>`).join("")}
+  </select> <span>· ${WEEKS.length} ${recordWord} · ${esc(srcLabel(SOURCE))}</span>`;
+ $("#weekPick").onchange=e=>{WEEK=e.target.value;render()};
+ $("#periodLabel").querySelectorAll(".granbtn").forEach(b=>b.onclick=()=>{
+  if(b.dataset.gran===GRAN)return;
+  GRAN=b.dataset.gran; WEEK=null; FILTER=null; render();});
+
+ const delta=(cur,pre)=>{if(pre==null||!pre)return"";
+  const p=Math.round((cur-pre)/pre*100);
+  return `<span class="delta ${p>=0?"up":"down"}">${p>=0?"▲":"▼"} ${Math.abs(p)}% ${GRAN==="month"?t("mom"):t("wow")}</span>`};
+
+ $("#headline").innerHTML=FILTER
+   ? `${esc(FILTER)} — <em>${Math.round(view.sentiment.Positive/sTot*100)}% ${t("posthisweek")}</em>`
+   : `${esc(all.brands[0]?.n||"")} ${t("leadsvolume")} <em>${periodLabelOf(WEEK)}.</em>`;
+ splitWords($("#headline"));
+
+ const prevTot=prev?prev.brands.reduce((a,b)=>a+b.v,0):null;
+ const curTot=FILTER?view.brands.reduce((a,b)=>a+b.v,0):totAll;
+ $("#tickers").innerHTML=[
+  [t("mentions"),curTot,"",FILTER?null:delta(curTot,prevTot)],
+  [t("engagement"),view.engagement,"",FILTER?null:delta(view.engagement,prev&&prev.engagement)],
+  [t("pos_share"),Math.round(view.sentiment.Positive/sTot*100),"%",null],
+  [t("neg_share"),Math.round(view.sentiment.Negative/sTot*100),"%",null]]
+  .map(([l,n,suf,d],i)=>`<div class="tick" style="--i:${i}"><div class="n"><span class="num" data-to="${n}" data-suf="${suf}">${n.toLocaleString()}${suf}</span></div>
+   <div class="l"><span>${l}</span>${d||""}</div></div>`).join("");
+ runCounters();
+
+ const sumHTML=buildSummary(inWeek,
+   prevKey?RECORDS.filter(r=>periodKey(r.date)===prevKey):null, periodLabelOf(WEEK));
+ $("#summary").innerHTML=sumHTML;
+ /* Chinese: translate the generated English prose via the Worker if available */
+ if(LANG==="zh"&&CONFIG.TRANSLATE_ENDPOINT){
+  const paras=[...$("#summary").querySelectorAll("p")];
+  paras.forEach(async pel=>{
+   if(pel.classList.contains("genline"))return;
+   const txt=pel.textContent;
+   const zh=await translateText(txt,"zh");
+   if(zh)pel.textContent=zh;            // plain text; loses bold, keeps meaning
+  });
+ }
+ $("#copySum").onclick=()=>{
+  const txt=$("#summary").innerText.replace(/\n{2,}/g,"\n\n");
+  navigator.clipboard.writeText(txt).then(
+   ()=>{$("#copySum").textContent=t("copied");
+        setTimeout(()=>$("#copySum").textContent=t("copy"),1600)},
+   ()=>{$("#copySum").textContent="⌘C"});
+ };
+
+ $("#filterbar").innerHTML=FILTER
+  ? `<span class="chip">${t("filtered")} ${esc(FILTER)} <button id="clearF" aria-label="Clear filter">×</button></span>
+     <span class="filterhint">${t("showonly")} ${esc(FILTER)} ${t("only")}</span>`
+  : `<span class="filterhint">${t("clickbrand")}</span>`;
+ if(FILTER)$("#clearF").onclick=()=>{FILTER=null;render()};
+
+ const max=Math.max(...all.brands.map(b=>b.v),1);
+ $("#brands").innerHTML=all.brands.map((b,i)=>`
+  <div class="brandrow" tabindex="0" role="button" data-b="${esc(b.n)}" data-on="${!FILTER||FILTER===b.n}">
+   <span class="rk">${String(i+1).padStart(2,"0")}</span>
+   <span class="nm" style="color:${brandColor(b.n,i)}">${esc(b.n)}</span>
+   <span class="track"><span class="bar" style="width:${b.v/max*100}%;background:${brandColor(b.n,i)};--i:${i}"></span></span>
+   <span class="v">${b.v}<small>${(b.v/(totAll||1)*100).toFixed(1)}%</small></span></div>`).join("");
+ $("#brands").querySelectorAll(".brandrow").forEach(r=>{
+  const go=()=>{FILTER=FILTER===r.dataset.b?null:r.dataset.b;render()};
+  r.onclick=go; r.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}}});
+ $("#sovLegend").innerHTML=all.brands.map((b,i)=>
+  `<span><i style="background:${brandColor(b.n,i)}"></i>${esc(b.n)} · ${(b.v/(totAll||1)*100).toFixed(1)}%</span>`).join("");
+
+ $("#sentiment").innerHTML=donut(view.sentiment,SC,Math.round(view.sentiment.Positive/sTot*100)+"%",t("positive"))+
+  `<div class="sentbars">${Object.entries(view.sentiment).map(([k,v],i)=>
+   `<div class="sentbar"><span>${t(k.toLowerCase())}</span><span class="tr"><span class="bar" style="width:${v/sTot*100}%;background:${SC[k]};--i:${i+3}"></span></span>
+    <span class="pc">${(v/sTot*100).toFixed(1)}%</span></div>`).join("")}</div>`;
+
+ const showBrands=FILTER?[FILTER]:all.brands.map(b=>b.n);
+ $("#vot").innerHTML=lineChart(view.dates.map(d=>d.slice(5)),
+  showBrands.map(n=>({name:n,color:brandColor(n,all.brands.findIndex(b=>b.n===n)),
+   vals:view.dates.map(d=>(view.byDate[d]||{})[n]||0)})),
+  {xLabel:t("axis_date"),yLabel:t("axis_mentions"),aria:"Daily conversation volume by brand"})
+  +`<div class="legend">${showBrands.map(n=>`<span><i style="background:${brandColor(n,all.brands.findIndex(b=>b.n===n))}"></i>${esc(n)}</span>`).join("")}</div>`;
+
+ const tmax=Math.max(...view.topics.map(t=>t.Negative+t.Positive+t.Neutral),1);
+ $("#topics").innerHTML=view.topics.map((tp,ti)=>{
+  const tot=tp.Negative+tp.Positive+tp.Neutral;
+  return `<div class="topicrow" style="--i:${ti}"><span class="lab">${esc(tp.t)}</span>
+   <span class="sw"><span class="stack" style="width:${tot/tmax*100}%;--i:${ti}">
+    ${["Negative","Positive","Neutral"].map(k=>tp[k]===0?"":`<span style="background:${SC[k]};width:${tp[k]/tot*100}%"></span>`).join("")}
+   </span></span><span class="tot">${tot}</span></div>`}).join("")
+  +`<div class="legend">${Object.keys(SC).map(k=>`<span><i style="background:${SC[k]}"></i>${t(k.toLowerCase())}</span>`).join("")}</div>`;
+
+ $("#quotes").innerHTML=view.quotes.length?view.quotes.map((q,qi)=>{
+  const long=q.content.length>280;
+  const short=long?q.content.slice(0,280).replace(/\s\S*$/,"")+"…":q.content;
+  const link=/^https?:\/\//.test(q.id||"")?
+   `<a href="${esc(q.id)}" target="_blank" rel="noopener noreferrer" class="src">${t("viewpost")}</a>`:"";
+  /* one button per language — translate this verbatim to English or Chinese */
+  const trBtns=`<button class="trbtn" data-lang="en" type="button">English</button>`
+              +`<button class="trbtn" data-lang="zh" type="button">中文</button>`;
+  return `<div class="quote ${q.sentiment==="Positive"?"p":q.sentiment==="Negative"?"n":"u"}" style="--i:${qi}" data-full="${esc(q.content)}">
+   <p dir="auto" class="qt">${esc(short)}</p>
+   ${long?`<p dir="auto" class="qt full hidden">${esc(q.content)}</p>
+     <button class="more" type="button">${t("showfull")}</button>`:""}
+   <p dir="auto" class="qt tr hidden"></p>
+   <div class="meta">${esc(q.brand)} · ${esc(q.topic)} — ${esc(q.channel||"Social")} ${link} ${trBtns}</div></div>`}).join("")
+  :`<p class="emptynote">${t("noverb")}</p>`;
+ $("#quotes").querySelectorAll(".more").forEach(b=>b.onclick=()=>{
+  const box=b.parentElement;
+  const [s,f]=box.querySelectorAll(".qt:not(.tr)");
+  const open=f.classList.contains("hidden");
+  s.classList.toggle("hidden",open); f.classList.toggle("hidden",!open);
+  b.textContent=open?t("showless"):t("showfull")});
+ $("#quotes").querySelectorAll(".trbtn").forEach(b=>b.onclick=async()=>{
+  const box=b.closest(".quote"), tr=box.querySelector(".tr"), full=box.dataset.full;
+  const btns=box.querySelectorAll(".trbtn"), label=b.textContent;
+  /* clicking the already-active language hides the translation (back to original) */
+  if(b.classList.contains("on")){tr.classList.add("hidden");b.classList.remove("on");return}
+  btns.forEach(x=>x.disabled=true); b.textContent="…";
+  const out=await translateText(full,b.dataset.lang);
+  btns.forEach(x=>x.disabled=false); b.textContent=label;
+  if(out){
+   tr.textContent=out; tr.setAttribute("dir","auto"); tr.classList.remove("hidden");
+   btns.forEach(x=>x.classList.remove("on")); b.classList.add("on");
+  }else{
+   b.textContent="—"; setTimeout(()=>b.textContent=label,1500);
+  }
+ });
+
+ /* ── PREVIOUS WEEKS: built from the same records, oldest → newest ── */
+ const ALLWEEKS=weeksOf(RECORDS);
+ const order=[...ALLWEEKS].reverse();
+ const byWeek={}; order.forEach(k=>byWeek[k]=agg(RECORDS.filter(r=>weekKey(r.date)===k)));
+ const names=[...new Set(RECORDS.map(r=>r.brand))]
+   .map(n=>({n,v:RECORDS.filter(r=>r.brand===n).length})).sort((a,b)=>b.v-a.v).map(b=>b.n).slice(0,6);
+ const cats=order.map(k=>weekLabel(k).split("–")[0]);
+ $("#trend").innerHTML=lineChart(cats,names.map((n,i)=>({name:n,color:brandColor(n,i),
+   vals:order.map(k=>(byWeek[k].brands.find(b=>b.n===n)||{v:0}).v)})),
+  {xLabel:t("axis_week"),yLabel:t("axis_mentions"),labels:true,aria:"Weekly volume by brand"});
+ $("#trendLegend").innerHTML=names.map((n,i)=>`<span><i style="background:${brandColor(n,i)}"></i>${esc(n)}</span>`).join("");
+
+ const LATEST=t("latest"), POSSH=t("possh");
+ $("#weeklist").innerHTML=ALLWEEKS.map((k,wi)=>{
+  const a=byWeek[k],tot=a.brands.reduce((s,b)=>s+b.v,0)||1;
+  const st=Object.values(a.sentiment).reduce((s,v)=>s+v,0)||1;
+  return `<div class="weekitem${GRAN==="week"&&k===WEEK?" cur":""}" style="--i:${wi}" tabindex="0" role="button" data-w="${k}">
+   <span class="dt">${weekLabel(k)}${k===ALLWEEKS[0]?" · "+LATEST:""}</span>
+   <span class="wbar">${
+    names.map((n,i)=>{const val=(a.brands.find(b=>b.n===n)||{v:0}).v,p=val/tot*100;
+     return `<span style="background:${brandColor(n,i)};width:${p}%;display:grid;place-items:center;
+      color:${n==="Keeta"?"#111":"#fff"}" title="${esc(n)}: ${val}">${p>7?val:""}</span>`}).join("")}</span>
+   <span class="mono" style="font-size:12px;color:var(--mute)">${tot} · ${Math.round(a.sentiment.Positive/st*100)}% ${POSSH}</span></div>`}).join("");
+ $("#weeklist").querySelectorAll(".weekitem").forEach(el=>{
+  const go=()=>{GRAN="week";WEEK=el.dataset.w;FILTER=null;render();document.querySelector('[data-view=week]').click()};
+  el.onclick=go; el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}}});
+
+ $("#months").innerHTML=MONTHS.map((m,i)=>{
+  const live=!!m.deck, [mon,yr]=m.label.split(" ");
+  const cta=live
+   ? `<a class="btn deck" href="${esc(m.deck)}" target="_blank" rel="noopener noreferrer">${t("opendeck")} ↗</a>`
+   : `<span class="btn deck disabled" aria-disabled="true">${t("comingsoon")}</span>`;
+  return `<div class="month${live?"":" pending"}" style="--c:${m.color};--i:${i}"><div class="inner">
+   <div class="thumb"><span class="mk">${t("digital_listening")}</span>
+    <h3>${esc(mon)}<small>${esc(yr||"")}</small></h3><span class="shine"></span></div>
+   <div class="body"><span class="mono" style="font-size:11px;color:var(--mute)">${t("gslides")}</span>${cta}</div></div></div>`}).join("");
+ if(!REDUCED)$("#months").querySelectorAll(".month").forEach(el=>{
+  const inner=el.querySelector(".inner");
+  el.onpointermove=e=>{const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+   inner.style.transform=`rotateY(${x*10}deg) rotateX(${-y*10}deg) translateY(-6px)`};
+  el.onpointerleave=()=>inner.style.transform="";
+ });
+
+ $("#stamp").textContent=new Date().toLocaleString();
+}
+
+/* ═════ LANGUAGE ═════ */
+document.getElementById("langToggle").onclick=()=>{
+ LANG=LANG==="en"?"zh":"en";
+ applyStaticI18n();
+ render();
+};
+
+/* ═════ NAV ═════ */
+document.querySelectorAll("nav [role=tab]").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll("nav [role=tab]").forEach(x=>x.setAttribute("aria-selected",x===b));
+ ["week","weeks","months","data"].forEach(v=>$("#v-"+v).classList.toggle("hidden",v!==b.dataset.view));
+ movePill();
+ window.scrollTo({top:0,behavior:REDUCED?"auto":"smooth"})});
+addEventListener("resize",movePill);
+$("#toTop").onclick=()=>window.scrollTo({top:0,behavior:REDUCED?"auto":"smooth"});
+
+/* ═════ SCROLL EFFECTS ═════
+   progress bar, shrinking header, hero parallax, and a marquee that leans
+   into the direction (and speed) you scroll.                              */
+(function(){
+ const prog=$("#progress"),hdr=$("header"),bg=$("#heroBg"),word=$("#heroWord"),inner=$("#heroInner"),mq=$(".marquee");
+ let lastY=scrollY,vel=0,running=false;
+ function frame(){
+  const y=scrollY,dy=y-lastY; lastY=y;
+  vel+=(dy-vel)*.18;
+  const h=document.documentElement.scrollHeight-innerHeight;
+  prog.style.transform=`scaleX(${h>0?y/h:0})`;
+  hdr.classList.toggle("scrolled",y>24);
+  if(!REDUCED){
+   if(y<innerHeight*1.2&&!$("#v-week").classList.contains("hidden")){
+    bg.style.transform=`translateY(${y*.35}px)`;
+    word.style.transform=`translateX(${-y*.5}px)`;
+    inner.style.transform=`translateY(${y*.18}px)`;
+    inner.style.opacity=Math.max(0,1-y/(innerHeight*.85));
+   }
+   mq.style.setProperty("--skew",Math.max(-10,Math.min(10,vel*.35))+"deg");
+  }
+  if(Math.abs(vel)>.05||Math.abs(dy)>0)requestAnimationFrame(frame);
+  else{running=false;mq.style.setProperty("--skew","0deg")}
+ }
+ addEventListener("scroll",()=>{if(!running){running=true;requestAnimationFrame(frame)}},{passive:true});
+ frame();
+})();
+
+/* spotlight that follows the pointer across cards */
+document.addEventListener("pointermove",e=>{
+ const c=e.target.closest&&e.target.closest(".card");
+ if(!c)return;
+ const r=c.getBoundingClientRect();
+ c.style.setProperty("--mx",(e.clientX-r.left)+"px");
+ c.style.setProperty("--my",(e.clientY-r.top)+"px");
+},{passive:true});
+
+/* marquee band */
+(function(){
+ const words=["Keeta","Ninja","Hunger Station","Jahez","Digital Listening","KSA"];
+ const once=words.map((w,i)=>`<span class="${i%2?"o":""}">${w}</span>`).join("");
+ $("#mtrack").innerHTML=once+once+once+once;
+})();
+
+/* ═════ INGEST ═════ */
+function parseCSV(text){
+ text=text.replace(/^﻿/,"");
+ const firstLine=text.slice(0,text.indexOf("\n")>-1?text.indexOf("\n"):200);
+ const d=firstLine.includes("\t")?"\t":firstLine.split(";").length>firstLine.split(",").length?";":",";
+ const rows=[];let cur=[],f="",q=false;
+ for(let i=0;i<text.length;i++){const c=text[i];
+  if(q){if(c==='"'&&text[i+1]==='"'){f+='"';i++}else if(c==='"')q=false;else f+=c}
+  else if(c==='"')q=true;
+  else if(c===d){cur.push(f);f=""}
+  else if(c==="\n"){cur.push(f.replace(/\r$/,""));rows.push(cur);cur=[];f=""}
+  else f+=c}
+ if(f||cur.length){cur.push(f);rows.push(cur)}
+ if(!rows.length)return[];
+ const head=rows.shift().map(h=>h.trim().toLowerCase().replace(/^"|"$/g,""));
+ const known=/post id|date|platform|post text|sentiment|topic|brand|engagement|content|channel|source|message|text/;
+ const hasHeader=head.some(h=>known.test(h));
+ /* no header row? assume the sheet's own column order */
+ const cols=hasHeader?head:["post id","date","platform","post text","sentiment","topic","brand","engagement"];
+ if(!hasHeader)rows.unshift(head);
+ return rows.filter(r=>r.length>1&&r.some(c=>c.trim()))
+  .map(r=>Object.fromEntries(cols.map((h,i)=>[h,(r[i]||"").trim()]).filter(([h])=>h)));
+}
+function toRecords(raw){
+ const pick=(o,...ks)=>{for(const k of ks)if(o[k])return o[k];return""};
+ const norm=s=>{s=(s||"").toLowerCase();
+  return /^pos|إيجاب/.test(s)?"Positive":/^neg|سلب/.test(s)?"Negative":"Neutral"};
+ return raw.map(r=>({
+  id:pick(r,"post id","post_id","id"),
+  date:(pick(r,"date","published date","datetime","published_date","day")||"").slice(0,10),
+  brand:canonBrand(pick(r,"brand","brand name","account")),
+  topic:(pick(r,"topic","category","theme","topics")||"Others").replace(/\s+/g," ").trim().replace(/\b\w/g,c=>c.toUpperCase()),
+  sentiment:norm(pick(r,"sentiment","sentiment label","tone")),
+  engagement:parseFloat(String(pick(r,"engagement","total engagement","interactions","engagements")).replace(/[^0-9.]/g,""))||0,
+  content:pick(r,"post text","content","message","text","snippet","post"),
+  channel:pick(r,"platform","channel","source","network")||"Social"}));
+}
+function ingest(raw,label){
+ if(!raw.length)throw new Error("no rows found — check that the first row is a header");
+ const recs=toRecords(raw);
+ if(recs.every(r=>r.brand==="Unknown"))throw new Error("no 'brand' column found");
+ /* Keep every row — duplicates are needed for topic×sentiment. The agg()
+    step de-dupes by Post ID for volume/share/sentiment/engagement, so
+    duplicates no longer inflate those. We only count them here to report. */
+ const seen=new Set();let dupes=0;
+ recs.forEach(r=>{if(r.id){if(seen.has(r.id))dupes++;else seen.add(r.id);}});
+ RECORDS=recs;FILTER=null;WEEK=null;SOURCE=label;
+ render();
+ const unknown=recs.filter(r=>r.brand==="Unknown").length;
+ const undated=recs.filter(r=>!weekKey(r.date)).length;
+ setStatus(`Loaded ${recs.length} rows from ${label} · ${weeksOf(recs).length} weeks detected.`
+  +(dupes?` ${dupes} duplicate Post ID${dupes>1?"s":""} kept for topic analysis, counted once for volume.`:"")
+  +(unknown?` ⚠ ${unknown} row${unknown>1?"s have":" has"} a blank Brand cell.`:"")
+  +(undated?` ⚠ ${undated} row${undated>1?"s have":" has"} an unreadable Date and won't appear in any week.`:""),
+  (unknown||undated)?"err":"ok");
+}
+function setStatus(m,c){const s=$("#status");s.textContent=m;s.className="status "+(c||"")}
+
+$("#csvFile").onchange=e=>{const f=e.target.files[0];if(!f)return;
+ const rd=new FileReader();
+ rd.onload=()=>{try{ingest(parseCSV(rd.result),f.name);document.querySelector('[data-view=week]').click()}
+  catch(err){setStatus("Couldn't read that file: "+err.message,"err")}};
+ rd.readAsText(f,"utf-8")};
+
+$("#loadPaste").onclick=()=>{
+ try{ingest(parseCSV($("#pasteBox").value.trim()),"pasted data");document.querySelector('[data-view=week]').click()}
+ catch(err){setStatus("Couldn't read that: "+err.message,"err")}};
+
+$("#loadSheet").onclick=async()=>{
+ let url=$("#sheetUrl").value.trim();
+ if(!url)return setStatus("Paste the published CSV link first.","err");
+ if(!/output=csv/.test(url)){
+  const id=(url.match(/\/d\/e\/([\w-]+)/)||url.match(/\/d\/([\w-]+)/)||[])[1];
+  if(!id)return setStatus("That doesn't look like a Google Sheets link.","err");
+  const gid=(url.match(/gid=(\d+)/)||[,"0"])[1];
+  url=`https://docs.google.com/spreadsheets/d/e/${id}/pub?gid=${gid}&single=true&output=csv`;
+  setStatus("That was an edit link, not a published one. Trying anyway — if it fails, use File → Share → Publish to web.");
+ }
+ try{
+  const res=await fetch(url);
+  if(!res.ok)throw new Error("HTTP "+res.status);
+  const txt=await res.text();
+  if(/<html/i.test(txt.slice(0,400)))throw new Error("the sheet returned a login page, so it isn't published yet");
+  ingest(parseCSV(txt),"the published sheet");
+ }catch(err){
+  setStatus("Connection failed: "+err.message+
+   ". Use File → Share → Publish to web → CSV, or paste the data into Option C below.","err")}};
+
+$("#useDemo").onclick=()=>{RECORDS=makeDemo();FILTER=null;WEEK=null;SOURCE="demo data";render();setStatus(t("status_demo5"))};
+
+
+/* ═════ BOOT ═════ */
+async function loadFromConfig(silent){
+ if(!CONFIG.SHEET_CSV_URL)return false;
+ try{
+  const res=await fetch(CONFIG.SHEET_CSV_URL+(CONFIG.SHEET_CSV_URL.includes("?")?"&":"?")+"_="+Date.now());
+  if(!res.ok)throw new Error("HTTP "+res.status);
+  const txt=await res.text();
+  if(/<html/i.test(txt.slice(0,400)))throw new Error("the sheet isn't published to web yet");
+  ingest(parseCSV(txt),"the live sheet");
+  return true;
+ }catch(err){
+  if(!silent){
+   setStatus("Live sheet unavailable: "+err.message+". Showing demo data.","err");
+   const b=document.createElement("div");
+   b.className="banner";
+   b.textContent="Live data couldn't be loaded, so these are sample figures. "+err.message+".";
+   document.querySelector("header").after(b);
+  }
+  return false;
+ }
+}
+
+if(!CONFIG.SHOW_DATA_TAB){const dt=document.querySelector('[data-view=data]');if(dt)dt.remove();}
+
+/* the loader covers the first sheet fetch so the page never flashes demo numbers;
+   when it lifts, the hero plays its intro and counters roll up from zero */
+let _booted=false;
+function lift(){
+ if(_booted)return; _booted=true;
+ PREV_TICK.length=0;
+ $("#hero").classList.add("intro");
+ render();
+ $("#loader").classList.add("done");
+ document.body.classList.remove("loading");
+ observeAll();
+ setTimeout(()=>$("#hero").classList.remove("intro"),3200);
+ setTimeout(()=>$("#loader").remove(),1200);
+}
+
+applyStaticI18n();
+render();
+setTimeout(lift,6000);                 /* never hold the page longer than this */
+loadFromConfig(false).then(ok=>{
+ setTimeout(lift,REDUCED?0:500);
+ if(ok&&CONFIG.REFRESH_MINUTES>0)
+  setInterval(()=>loadFromConfig(true),CONFIG.REFRESH_MINUTES*60000);
+});
+</script>
+</body>
+</html>
