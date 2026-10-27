@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Keeta — Digital Listening Hub</title>
+<script>try{var _t=localStorage.getItem("keeta-theme");if(_t)document.documentElement.dataset.theme=_t}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -13,7 +14,9 @@
  --line:#1C2F25;--line-2:#2A4537;
  --green:#22D389;--yellow:#FFDD2D;--paper:#F2F5F2;--mute:#8CA79A;--dim:#5C7268;
  --neg:#FF6B4A;--pos:#22D389;--neu:#7E8C92;
- --ease:cubic-bezier(.16,1,.3,1);--r:20px}
+ --yellow-ink:#FFDD2D;--text-2:#C9D6CE;--track:rgba(255,255,255,.03);--track-solid:#13231B;
+ --outline:rgba(255,221,45,.09);--outline-2:rgba(255,221,45,.13);--warn-ink:#FFC9A8;--shine:#FFF7C2;
+ --ease:cubic-bezier(.16,1,.3,1);--r:20px;color-scheme:dark}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 html,body{overflow-x:clip}
@@ -40,7 +43,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 #loader .lt{display:flex;align-items:flex-end;gap:.3em;font:400 clamp(40px,8vw,88px)/.9 "Archivo Black";letter-spacing:-.04em;overflow:hidden;padding-bottom:.12em}
 #loader .lt .lw1{display:inline-block;animation:wordUp 1s var(--ease) both}
 #loader .lt .keeta-logo{--keeta-logo-h:clamp(34px,6.4vw,70px)}
-#loader .lt em{color:var(--yellow);font-size:1.05em;line-height:.75}
+#loader .lt em{color:var(--yellow-ink);font-size:1.05em;line-height:.75}
 #loader .lroad{position:relative;width:240px;height:44px;border-bottom:2px dashed var(--line-2)}
 #loader .lrider{position:absolute;bottom:-1px;width:52px;animation:lride 1.9s ease-in-out infinite alternate}
 #loader .lrider .rider{display:block;width:100%}
@@ -50,7 +53,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 /* ── progress + header ── */
 header{position:sticky;top:0;z-index:100;transition:background .4s,border-color .4s,backdrop-filter .4s;
  border-bottom:1px solid transparent}
-header.scrolled{background:rgba(6,14,10,.78);backdrop-filter:blur(14px) saturate(1.3);border-color:var(--line)}
+header.scrolled{background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(14px) saturate(1.3);border-color:var(--line)}
 .hbar{display:flex;align-items:center;gap:20px;height:72px;transition:height .4s var(--ease)}
 header.scrolled .hbar{height:60px}
 .logo{display:flex;align-items:center;gap:10px;flex:none}
@@ -59,7 +62,7 @@ header.scrolled .hbar{height:60px}
 .logo .lsub{font:500 10px "IBM Plex Mono";letter-spacing:.14em;text-transform:uppercase;color:var(--mute);
  padding-left:10px;margin-left:2px;border-left:1px solid var(--line)}
 nav{position:relative;display:flex;gap:2px;margin-left:auto;padding:4px;border:1px solid var(--line);
- border-radius:99px;background:rgba(11,22,17,.6)}
+ border-radius:99px;background:color-mix(in srgb,var(--bg-2) 60%,transparent)}
 nav button{position:relative;z-index:1;background:none;border:0;color:var(--mute);font:600 13px Archivo;
  padding:8px 15px;border-radius:99px;cursor:pointer;transition:color .3s;white-space:nowrap}
 nav button:hover{color:var(--paper)}
@@ -73,7 +76,7 @@ nav button[aria-selected=true]{color:#111}
 @media(max-width:760px){
  .hbar{flex-wrap:wrap;height:auto;padding:12px 0;gap:12px}
  header.scrolled .hbar{height:auto}
- .lang{margin-left:auto}
+ .hbtns{margin-left:auto}
  nav{order:3;width:100%;margin:0;overflow-x:auto;scrollbar-width:none}
  nav::-webkit-scrollbar{display:none}}
 .banner{background:#3A2418;border-bottom:1px solid #6B3A22;color:#FFC9A8;font:500 12px "IBM Plex Mono";
@@ -114,17 +117,17 @@ nav button[aria-selected=true]{color:#111}
 .hero-inner{position:relative;will-change:transform,opacity}
 .hero-word{position:absolute;bottom:-.18em;left:0;white-space:nowrap;pointer-events:none;
  font:400 clamp(140px,26vw,380px)/1 "Archivo Black";letter-spacing:-.05em;color:transparent;
- -webkit-text-stroke:1px rgba(255,221,45,.13);will-change:transform}
+ -webkit-text-stroke:1px var(--outline-2);will-change:transform}
 .eyebrow{font:500 11px "IBM Plex Mono";letter-spacing:.18em;text-transform:uppercase;color:var(--green);
  display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:2.2}
-#weekPick{background:var(--bg-2);color:var(--yellow);border:1px solid var(--line-2);border-radius:99px;
+#weekPick{background:var(--bg-2);color:var(--yellow-ink);border:1px solid var(--line-2);border-radius:99px;
  padding:6px 12px;font:600 11px "IBM Plex Mono";letter-spacing:.06em;cursor:pointer}
 .granwrap{display:inline-flex;gap:2px;background:var(--bg-2);border:1px solid var(--line-2);border-radius:99px;padding:3px}
 .granbtn{background:none;border:0;color:var(--mute);font:600 11px Archivo;padding:4px 13px;border-radius:99px;cursor:pointer;transition:.25s;letter-spacing:0;text-transform:none}
 .granbtn:hover{color:var(--paper)}
 .granbtn.on{background:var(--yellow);color:#111}
 .hero h1{font-size:clamp(42px,8.2vw,112px);line-height:.92;margin:26px 0 26px;max-width:15ch}
-.hero h1 em{color:var(--yellow);font-size:1.08em;line-height:.8}
+.hero h1 em{color:var(--yellow-ink);font-size:1.08em;line-height:.8}
 .filterbar{display:flex;align-items:center;gap:12px;min-height:34px;flex-wrap:wrap;margin-bottom:34px}
 .chip{background:var(--yellow);color:#111;border-radius:99px;padding:7px 8px 7px 15px;font:700 12px Archivo;display:inline-flex;align-items:center;gap:9px;animation:pop .5s var(--ease)}
 .chip button{background:#111;color:var(--yellow);border:0;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:12px;line-height:1;display:grid;place-items:center}
@@ -133,7 +136,7 @@ nav button[aria-selected=true]{color:#111}
 .tickerrow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 @media(max-width:900px){.tickerrow{grid-template-columns:repeat(2,1fr)}}
 .tick{position:relative;overflow:hidden;transition:transform .4s var(--ease);padding:20px 20px 18px;border:1px solid var(--line);border-radius:18px;
- background:linear-gradient(160deg,rgba(17,31,24,.75),rgba(9,18,14,.6));backdrop-filter:blur(10px)}
+ background:linear-gradient(160deg,color-mix(in srgb,var(--card-2) 78%,transparent),color-mix(in srgb,var(--bg) 60%,transparent));backdrop-filter:blur(10px)}
 .tick::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;transform-origin:left;
  background:linear-gradient(90deg,var(--yellow),transparent)}
 .tick .n{font-family:"Archivo Black";font-size:clamp(28px,3.6vw,44px);line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
@@ -165,9 +168,9 @@ nav button[aria-selected=true]{color:#111}
 /* ── section blocks ── */
 .block{padding:clamp(72px,11vw,140px) 0 0}
 .sechead{position:relative;isolation:isolate;display:flex;align-items:flex-end;gap:18px 24px;margin-bottom:30px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--line)}
-.sechead .idx{font:500 12px "IBM Plex Mono";color:var(--yellow);letter-spacing:.2em;padding-bottom:10px}
+.sechead .idx{font:500 12px "IBM Plex Mono";color:var(--yellow-ink);letter-spacing:.2em;padding-bottom:10px}
 .sechead h2{font-size:clamp(34px,6vw,76px);line-height:.92}
-.sechead h2 em{color:var(--yellow)}
+.sechead h2 em{color:var(--yellow-ink)}
 .sechead .act{margin-left:auto;padding-bottom:6px}
 .grid{display:grid;gap:18px}
 .g2{grid-template-columns:1fr 1fr}
@@ -186,7 +189,7 @@ nav button[aria-selected=true]{color:#111}
 
 /* ── summary ── */
 .summary{padding:clamp(24px,4vw,44px)}
-.summary p{font-size:16px;line-height:1.75;margin:0 0 16px;max-width:80ch;color:#C9D6CE}
+.summary p{font-size:16px;line-height:1.75;margin:0 0 16px;max-width:80ch;color:var(--text-2)}
 .summary p:first-child{font-size:clamp(18px,2vw,22px);line-height:1.55;color:var(--paper)}
 .summary p b{color:var(--paper);font-weight:700}
 #summary p{opacity:0}
@@ -194,7 +197,7 @@ nav button[aria-selected=true]{color:#111}
 .in #summary p:nth-child(2){animation-delay:.1s}.in #summary p:nth-child(3){animation-delay:.2s}
 .in #summary p:nth-child(4){animation-delay:.3s}.in #summary p:nth-child(5){animation-delay:.4s}
 .in #summary p:nth-child(n+6){animation-delay:.5s}
-.summary .caveat{font-size:13px!important;line-height:1.6!important;color:#FFC9A8!important;background:rgba(255,122,0,.08);
+.summary .caveat{font-size:13px!important;line-height:1.6!important;color:var(--warn-ink)!important;background:rgba(255,122,0,.08);
  border:1px solid rgba(255,122,0,.28);border-radius:12px;padding:12px 15px;margin:6px 0 0}
 .summary .genline{font:500 11px "IBM Plex Mono"!important;color:var(--mute)!important;line-height:1.6!important;
  margin:22px 0 0!important;padding-top:14px;border-top:1px solid var(--line)}
@@ -206,7 +209,7 @@ nav button[aria-selected=true]{color:#111}
 .brandrow[data-on=false]{opacity:.3}
 .brandrow .rk{font:500 11px "IBM Plex Mono";color:var(--dim)}
 .brandrow .nm{font-weight:700;font-size:15px}
-.brandrow .track{height:26px;border-radius:6px;background:rgba(255,255,255,.025);overflow:hidden}
+.brandrow .track{height:26px;border-radius:6px;background:var(--track);overflow:hidden}
 .bar,.stack{transform:scaleX(0);transform-origin:left}
 .bar{display:block;height:100%;border-radius:6px;position:relative;overflow:hidden}
 .bar::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transform:translateX(-100%)}
@@ -228,7 +231,7 @@ nav button[aria-selected=true]{color:#111}
 .in .dc{animation:pop .7s var(--ease) .9s backwards}
 .sentbars{display:grid;gap:12px;margin-top:22px}
 .sentbar{display:grid;grid-template-columns:76px 1fr 48px;align-items:center;gap:10px;font-size:12px;color:var(--mute)}
-.sentbar .tr{height:6px;border-radius:6px;background:rgba(255,255,255,.04);overflow:hidden}
+.sentbar .tr{height:6px;border-radius:6px;background:var(--track);overflow:hidden}
 .sentbar .tr .bar{border-radius:6px}
 .sentbar .pc{font-family:"IBM Plex Mono";text-align:right;color:var(--paper)}
 
@@ -245,7 +248,7 @@ nav button[aria-selected=true]{color:#111}
 /* ── topics ── */
 .topicrow{display:flex;align-items:center;gap:12px;margin-bottom:11px;font-size:13px;opacity:0}
 .in .topicrow{opacity:1;animation:rise .7s var(--ease) calc(.1s + var(--i)*.05s) backwards}
-.topicrow .lab{width:150px;flex:none;color:#C9D6CE}
+.topicrow .lab{width:150px;flex:none;color:var(--text-2)}
 .topicrow .sw{flex:1;min-width:0}
 .stack{height:14px;display:flex;border-radius:4px;overflow:hidden;gap:2px}
 .in .stack{transform:none;animation:grow 1.1s var(--ease) calc(.3s + var(--i)*.06s) backwards}
@@ -254,13 +257,13 @@ nav button[aria-selected=true]{color:#111}
 
 /* ── quotes ── */
 .quote{position:relative;border:1px solid var(--line);border-radius:14px;padding:16px 16px 12px 20px;margin-bottom:12px;
- background:rgba(6,14,10,.45);opacity:0;transition:border-color .3s,transform .4s var(--ease)}
+ background:color-mix(in srgb,var(--bg) 45%,transparent);opacity:0;transition:border-color .3s,transform .4s var(--ease)}
 .quote::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:var(--neu)}
 .quote.p::before{background:var(--pos)}.quote.n::before{background:var(--neg)}
 .quote:hover{border-color:var(--line-2);transform:translateX(4px)}
 .in .quote{opacity:1;animation:rise .8s var(--ease) calc(.15s + var(--i)*.1s) backwards}
 .quote p{margin:0 0 8px;font-size:14.5px;line-height:1.65;unicode-bidi:plaintext}
-.quote .qt:not(.tr)::before{content:"“";font-family:"Instrument Serif";color:var(--yellow);font-size:1.6em;line-height:0;vertical-align:-.3em;margin-right:3px}
+.quote .qt:not(.tr)::before{content:"“";font-family:"Instrument Serif";color:var(--yellow-ink);font-size:1.6em;line-height:0;vertical-align:-.3em;margin-right:3px}
 .quote .more{background:none;border:0;color:var(--green);font:600 11px "IBM Plex Mono";cursor:pointer;padding:0 0 8px;text-decoration:underline;text-underline-offset:3px}
 .quote .src{color:var(--mute);text-decoration:none;border-bottom:1px solid var(--line-2);margin-left:4px}
 .quote .src:hover{color:var(--green)}
@@ -307,12 +310,12 @@ nav button[aria-selected=true]{color:#111}
 .btn{background:var(--yellow);color:#111;border:0;border-radius:99px;padding:10px 18px;font:700 12px Archivo;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:transform .3s var(--ease),box-shadow .3s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px -8px rgba(255,221,45,.5)}
 .btn.ghost{background:none;border:1px solid var(--line-2);color:var(--paper)}
-.btn.ghost:hover{border-color:var(--yellow);box-shadow:none}
+.btn.ghost:hover{border-color:var(--yellow-ink);box-shadow:none}
 .btn.sm{padding:7px 14px;font-size:11px}
 .btn.deck.disabled{background:none;border:1px solid var(--line);color:var(--mute);cursor:default;transform:none;box-shadow:none}
 
 /* ── data panels ── */
-.datapanel{border:1px dashed var(--line-2);border-radius:var(--r);padding:26px;margin:18px 0;background:rgba(11,22,17,.5)}
+.datapanel{border:1px dashed var(--line-2);border-radius:var(--r);padding:26px;margin:18px 0;background:color-mix(in srgb,var(--bg-2) 50%,transparent)}
 .datapanel h3{font-size:18px;margin-bottom:10px}
 .datapanel input[type=text],.datapanel textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--paper);padding:12px 14px;border-radius:12px;font:400 13px "IBM Plex Mono";margin:10px 0 14px}
 .datapanel textarea{min-height:120px;resize:vertical}
@@ -322,10 +325,10 @@ nav button[aria-selected=true]{color:#111}
 /* ── footer ── */
 footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overflow:hidden}
 .fbig{font:400 clamp(44px,11vw,170px)/.9 "Archivo Black";letter-spacing:-.05em;padding:56px 0 18px}
-.fbig em{color:var(--yellow);font-size:1.1em}
+.fbig em{color:var(--yellow-ink);font-size:1.1em}
 .frow{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:22px 0 28px;color:var(--mute);font-size:12px;border-top:1px solid var(--line)}
 .totop{background:none;border:1px solid var(--line-2);color:var(--paper);border-radius:99px;padding:8px 16px;font:600 12px Archivo;cursor:pointer;transition:.25s}
-.totop:hover{border-color:var(--yellow);color:var(--yellow)}
+.totop:hover{border-color:var(--yellow-ink);color:var(--yellow-ink)}
 
 :lang(zh){font-family:Archivo,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif}
 
@@ -337,13 +340,13 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
 .lockup .lx{margin-top:calc(var(--kh)*.4 - .5em)}
 .keeta-logo{--keeta-logo-h:calc(var(--kh,19px)*.8085);display:inline-block;line-height:0}
 .keeta-logo img{height:var(--keeta-logo-h);width:auto;display:block}
-.kl-text{display:block;font:400 calc(var(--keeta-logo-h)*1.36)/.74 "Archivo Black";color:var(--yellow);letter-spacing:-.02em}
+.kl-text{display:block;font:400 calc(var(--keeta-logo-h)*1.36)/.74 "Archivo Black";color:var(--yellow-ink);letter-spacing:-.02em}
 
 /* ── hero extras ── */
 #heroCanvas{position:absolute;inset:0;width:100%;height:100%;
  -webkit-mask-image:radial-gradient(ellipse 75% 65% at 50% 40%,#000 25%,transparent 80%);
  mask-image:radial-gradient(ellipse 75% 65% at 50% 40%,#000 25%,transparent 80%)}
-.hero h1 em .w>span{background:linear-gradient(110deg,var(--yellow) 35%,#FFF7C2 50%,var(--yellow) 65%);background-size:260% 100%;
+.hero h1 em .w>span{background:linear-gradient(110deg,var(--yellow-ink) 35%,var(--shine) 50%,var(--yellow-ink) 65%);background-size:260% 100%;
  background-position:100% 0;-webkit-background-clip:text;background-clip:text;color:transparent;
  animation:wordUp 1.05s var(--ease) calc(.05s + var(--i)*.055s) backwards,shimmer 4s ease-in-out calc(1.8s + var(--i)*.09s) infinite}
 
@@ -351,16 +354,16 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
 .story{position:relative;height:250vh}
 .story-pin{position:sticky;top:0;height:100vh;display:flex;align-items:center;overflow:hidden}
 .story-num{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;will-change:transform;
- font:400 clamp(150px,30vw,500px)/1 "Archivo Black";letter-spacing:-.06em;color:transparent;-webkit-text-stroke:1px rgba(255,221,45,.09)}
+ font:400 clamp(150px,30vw,500px)/1 "Archivo Black";letter-spacing:-.06em;color:transparent;-webkit-text-stroke:1px var(--outline)}
 .story .wrap{position:relative;width:100%}
 .story-text{font:400 clamp(26px,3.6vw,52px)/1.12 "Archivo Black";letter-spacing:-.03em;max-width:24ch;margin:20px 0 0}
-.story-text em{color:var(--yellow);font-size:1.12em}
+.story-text em{color:var(--yellow-ink);font-size:1.12em}
 .story-text .sw{opacity:.12;transition:opacity .4s ease,filter .4s ease;filter:blur(2px)}
 .story-text .sw.lit{opacity:1;filter:none}
 
-/* ── ghost section numbers ── */
-.ghost{position:absolute;right:-1vw;top:-.4em;z-index:-1;pointer-events:none;will-change:transform;
- font:400 clamp(130px,24vw,340px)/1 "Archivo Black";letter-spacing:-.06em;color:transparent;-webkit-text-stroke:1px rgba(255,221,45,.09)}
+/* ── outlined section numbers ── */
+.secnum{position:absolute;right:-1vw;top:-.4em;z-index:-1;pointer-events:none;will-change:transform;
+ font:400 clamp(130px,24vw,340px)/1 "Archivo Black";letter-spacing:-.06em;color:transparent;-webkit-text-stroke:1px var(--outline)}
 
 /* ── magnetic + tilt ── */
 .mag{transition:transform .35s var(--ease),box-shadow .3s,border-color .25s,color .25s}
@@ -376,7 +379,7 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
 
 /* ── delivery road scroller ── */
 #road{position:fixed;left:0;right:0;bottom:0;height:66px;z-index:90;pointer-events:none;
- background:linear-gradient(180deg,rgba(6,14,10,0),rgba(6,14,10,.88) 45%,rgba(6,14,10,.97))}
+ background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--bg) 88%,transparent) 45%,color-mix(in srgb,var(--bg) 97%,transparent))}
 #road:focus-visible{outline:none}
 #road:focus-visible .rtrack{outline:2px solid var(--green);outline-offset:4px;border-radius:8px}
 .rwrap{max-width:1240px;margin:0 auto;padding:0 24px 10px;height:100%;display:flex;align-items:flex-end;gap:12px}
@@ -393,7 +396,7 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
  filter:drop-shadow(0 4px 10px rgba(255,221,45,.28))}
 .rrider.flip svg{transform:scaleX(-1)}
 .reta{flex:none;font:500 10px "IBM Plex Mono";letter-spacing:.08em;text-transform:uppercase;color:var(--mute);
- padding:5px 10px;border:1px solid var(--line-2);border-radius:99px;background:rgba(11,22,17,.92);margin-bottom:6px;
+ padding:5px 10px;border:1px solid var(--line-2);border-radius:99px;background:color-mix(in srgb,var(--bg-2) 92%,transparent);margin-bottom:6px;
  white-space:nowrap;transition:background .3s,color .3s,border-color .3s}
 .reta.done{background:var(--yellow);color:#111;border-color:var(--yellow)}
 .rhouse .h-win{fill:#1C2F25;transition:fill .4s}
@@ -431,10 +434,10 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
 
 /* ── cursor ── */
 #cursor,#cursorDot{position:fixed;left:0;top:0;pointer-events:none;z-index:300;border-radius:50%}
-#cursor{width:38px;height:38px;margin:-19px 0 0 -19px;border:1.5px solid rgba(255,221,45,.75);
+#cursor{width:38px;height:38px;margin:-19px 0 0 -19px;border:1.5px solid var(--yellow-ink);
  transition:width .35s var(--ease),height .35s var(--ease),margin .35s var(--ease),background .35s,opacity .3s}
-#cursor.hot{width:66px;height:66px;margin:-33px 0 0 -33px;background:rgba(255,221,45,.1);border-color:var(--yellow)}
-#cursorDot{width:6px;height:6px;margin:-3px 0 0 -3px;background:var(--yellow);transition:opacity .3s}
+#cursor.hot{width:66px;height:66px;margin:-33px 0 0 -33px;background:rgba(255,221,45,.1);border-color:var(--yellow-ink)}
+#cursorDot{width:6px;height:6px;margin:-3px 0 0 -3px;background:var(--yellow-ink);transition:opacity .3s}
 .cursor-off #cursor,.cursor-off #cursorDot{opacity:0}
 
 /* ── footer ── */
@@ -443,6 +446,162 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
 .fbig.in .w>span{transform:none;animation:wordUp 1.2s var(--ease) calc(var(--i)*.1s) backwards}
 .frow .lockup{--kh:16px}
 
+/* ── header buttons + theme toggle ── */
+.hbtns{display:flex;gap:6px;flex:none}
+#themeToggle{display:grid;place-items:center;padding:8px 11px}
+#themeToggle .moon{display:none}
+:root[data-theme=light] #themeToggle .sun{display:none}
+:root[data-theme=light] #themeToggle .moon{display:block}
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+
+/* ── live badge + new-data pill ── */
+.livebadge{display:inline-flex;align-items:center;gap:6px;color:var(--paper);padding:2px 10px;border:1px solid var(--line-2);border-radius:99px;line-height:1.8}
+.livebadge i{width:6px;height:6px;border-radius:50%;background:#FF4D4D;animation:livePulse 1.6s ease-in-out infinite}
+#livePill{position:fixed;top:84px;left:50%;z-index:97;display:flex;align-items:center;gap:12px;max-width:calc(100vw - 32px);
+ padding:8px 8px 8px 14px;border-radius:99px;background:var(--yellow);color:#111;font:700 13px Archivo;cursor:pointer;
+ transform:translate(-50%,-240px);visibility:hidden;transition:transform .7s var(--ease),visibility 0s .7s;box-shadow:0 18px 40px -14px rgba(255,221,45,.55)}
+#livePill.show{transform:translate(-50%,0);visibility:visible;transition:transform .7s var(--ease)}
+.lp-road{position:relative;flex:none;width:76px;height:26px;border-bottom:2px dashed rgba(0,0,0,.3)}
+.lp-rider{position:absolute;bottom:-1px;left:0;width:34px}
+#livePill .rider{--rb:#111;--rbox:#fff;--rj:#111;--rp:#333;--rh:#111;--rv:#FFDD2D;--rt:#111;--rs:#555}
+#livePill.show .lp-rider{animation:lpRide 1.1s var(--ease) .35s backwards}
+#livePill.show .rider .wheel{animation:spin .4s linear 3}
+.lp-box{position:absolute;right:2px;bottom:2px;width:13px;height:11px;border-radius:2px;background:#111}
+#livePill.show .lp-box{animation:pop .5s var(--ease) 1.35s backwards}
+.lp-x{flex:none;width:26px;height:26px;border-radius:50%;border:0;background:#111;color:var(--yellow);cursor:pointer;font-size:13px}
+@media(max-width:760px){#livePill{top:124px}}
+
+/* ── spike markers + day drawer ── */
+#vot .dot{cursor:pointer}
+.spike{cursor:pointer;opacity:0;outline:none}
+.in .spike{opacity:1;animation:fade .6s ease calc(1.7s + var(--i)*.12s) backwards}
+.spk-line{stroke:var(--yellow-ink);stroke-dasharray:3 5;opacity:.55}
+.spk-dot{fill:var(--yellow);stroke:var(--card);stroke-width:2}
+.spk-ring{fill:none;stroke:var(--yellow);stroke-width:2;transform-box:fill-box;transform-origin:center;animation:spkPing 1.8s ease-out infinite}
+.spk-lbl{fill:var(--yellow-ink);font:600 11px "IBM Plex Mono";letter-spacing:.06em;paint-order:stroke;stroke:var(--card);stroke-width:4px}
+.spike:focus-visible{outline:none}
+.spike:focus-visible .spk-dot{stroke:var(--green);stroke-width:3}
+.vothint{font:500 11px "IBM Plex Mono";color:var(--mute);margin-left:auto}
+#drawer{position:fixed;inset:0;z-index:140;visibility:hidden;transition:visibility 0s .55s}
+#drawer.open{visibility:visible;transition:none}
+.dscrim{position:absolute;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(3px);opacity:0;transition:opacity .4s}
+#drawer.open .dscrim{opacity:1}
+.dpanel{position:absolute;top:0;right:0;bottom:0;width:min(540px,100%);background:var(--bg-2);border-left:1px solid var(--line);
+ padding:30px 26px 100px;overflow-y:auto;transform:translateX(100%);transition:transform .55s var(--ease)}
+#drawer.open .dpanel{transform:none}
+.dclose,.wall-x{width:42px;height:42px;border-radius:50%;border:1px solid var(--line-2);background:none;color:var(--paper);font-size:18px;cursor:pointer;flex:none}
+.dclose{position:absolute;top:18px;right:18px}
+#drawerTitle{font-size:clamp(28px,4vw,42px);line-height:.95;margin:12px 50px 22px 0}
+.dkpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+.dkpis div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.dkpis b{display:block;font:400 22px "Archivo Black";letter-spacing:-.02em}
+.dkpis span{font:500 9px "IBM Plex Mono";letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.dsplit{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px;margin-bottom:10px}
+.dsplit span{transform-origin:left;animation:grow .9s var(--ease) .2s backwards}
+.dh{font:500 11px "IBM Plex Mono";letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin:26px 0 12px}
+.dpost,.wcard{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 11px 18px;margin-bottom:10px}
+.dpost::before,.wcard::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;background:var(--neu)}
+.s-p::before{background:var(--pos)!important}.s-n::before{background:var(--neg)!important}
+.dpost p,.wcard p{margin:0 0 9px;font-size:14.5px;line-height:1.6;unicode-bidi:plaintext}
+#drawer.open .dpost{animation:rise .6s var(--ease) calc(.2s + var(--i)*.06s) backwards}
+.wmeta{font:500 10px "IBM Plex Mono";letter-spacing:.08em;text-transform:uppercase;color:var(--mute);line-height:1.8}
+.wmeta a{color:var(--mute)}
+@media(max-width:600px){.dkpis{grid-template-columns:repeat(2,1fr)}}
+
+/* ── topic sentiment shift ── */
+.shift{width:54px;flex:none;text-align:right;font:600 10px "IBM Plex Mono";white-space:nowrap}
+.shift.bad{color:var(--neg)}.shift.good{color:var(--pos)}.shift.flat,.shift.none{color:var(--dim)}
+.in .shift{animation:fade .6s ease calc(1s + var(--i)*.05s) backwards}
+
+/* ── keeta vs. ── */
+.vschips{display:flex;gap:6px;flex-wrap:wrap}
+.vschip,.wchip{background:none;border:1px solid var(--line-2);color:var(--mute);font:600 12px Archivo;padding:7px 13px;border-radius:99px;cursor:pointer;transition:.25s}
+.vschip:hover,.wchip:hover{color:var(--paper);border-color:var(--c,var(--yellow-ink))}
+.vschip.on,.wchip.on{background:var(--c,var(--yellow));border-color:var(--c,var(--yellow));color:#111}
+.vsb-head,.vsb-row{display:grid;grid-template-columns:1fr 150px 1fr;align-items:center;gap:14px}
+.vsb-head{font:400 clamp(20px,2.6vw,30px) "Archivo Black";letter-spacing:-.02em;margin-bottom:12px}
+.vsb-head span:last-child,.vsv.r{text-align:left}.vsb-head span:first-child,.vsv:not(.r){text-align:right}
+.vsb-row{padding:10px 0;border-bottom:1px solid var(--line);opacity:0}
+.in .vsb-row{opacity:1;animation:rise .7s var(--ease) calc(.1s + var(--i)*.07s) backwards}
+.vsl{text-align:center;font:500 10px "IBM Plex Mono";letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.vsv{font:400 clamp(20px,2.4vw,30px) "Archivo Black";letter-spacing:-.02em;color:var(--dim);font-variant-numeric:tabular-nums}
+.vsv.win{color:var(--paper)}
+.vsv.win::after{content:"";display:block;height:3px;width:44px;border-radius:3px;background:var(--yellow);margin:6px 0 0 auto}
+.vsv.r.win::after{margin:6px auto 0 0}
+.vsr-legend{font:500 11px "IBM Plex Mono";color:var(--mute);margin:30px 0 12px;text-align:center}
+.vsr{display:grid;grid-template-columns:1fr 170px 1fr;align-items:center;gap:14px;padding:8px 0;border-bottom:1px solid var(--line);opacity:0}
+.in .vsr{opacity:1;animation:fade .6s ease calc(.2s + var(--i)*.05s) backwards}
+.vsr-side{display:flex;align-items:center;gap:10px;min-width:0}
+.vsr-side.l{justify-content:flex-end}
+.vsr-t{text-align:center;font-size:13px;color:var(--text-2)}
+.vsr-n{flex:none;width:58px;font:600 13px "IBM Plex Mono";line-height:1.1}
+.vsr-side.l .vsr-n{text-align:right}
+.vsr-n small{display:block;font-size:9.5px;font-weight:500;color:var(--dim)}
+.mbar{display:block;height:18px;border-radius:5px;flex:none;transform:scaleX(0)}
+.mbar.l{transform-origin:right}.mbar.r{transform-origin:left}
+.in .mbar{transform:none;animation:grow 1.1s var(--ease) calc(.3s + var(--i)*.06s) backwards}
+@media(max-width:700px){.vsb-head,.vsb-row{grid-template-columns:1fr 92px 1fr;gap:8px}
+ .vsr{grid-template-columns:1fr 92px 1fr;gap:8px}.vsr-t{font-size:11px}.vsr-n{width:44px}}
+
+/* ── verbatim wall ── */
+.wallbtn{margin-top:6px}
+#wall{position:fixed;inset:0;z-index:160;background:var(--bg);display:flex;flex-direction:column;
+ opacity:0;visibility:hidden;transform:scale(1.03);transition:opacity .45s var(--ease),transform .6s var(--ease),visibility 0s .45s}
+#wall.open{opacity:1;visibility:visible;transform:none;transition:opacity .45s var(--ease),transform .6s var(--ease)}
+.wall-bar{display:flex;align-items:center;gap:14px 24px;flex-wrap:wrap;padding:18px 24px;border-bottom:1px solid var(--line)}
+.wall-bar h2{font-size:clamp(24px,3.2vw,40px);line-height:1}
+.wall-filters{display:flex;gap:6px 14px;flex-wrap:wrap;margin-left:auto;align-items:center}
+.wall-filters .grp{display:flex;gap:6px;flex-wrap:wrap}
+.wall-cols{flex:1;min-height:0;display:grid;grid-template-columns:repeat(var(--cols,4),1fr);gap:16px;padding:16px 24px 0;overflow:hidden;
+ -webkit-mask-image:linear-gradient(transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(transparent,#000 7%,#000 93%,transparent)}
+.wcol{overflow:hidden;min-width:0}
+.wtrack{display:flex;flex-direction:column;gap:16px;animation:wallUp var(--dur,60s) linear infinite}
+.wcol[data-dir=down] .wtrack{animation-direction:reverse}
+.wcol:hover .wtrack{animation-play-state:paused}
+.wcard{margin:0;transition:transform .35s var(--ease),border-color .3s}
+.wcard:hover{transform:scale(1.02);border-color:var(--line-2)}
+.wcard p{font-size:15px;display:-webkit-box;-webkit-line-clamp:9;-webkit-box-orient:vertical;overflow:hidden}
+#wall.open .wcard{animation:rise .7s var(--ease) calc(var(--i)*.035s) backwards}
+.wempty{grid-column:1/-1;text-align:center;color:var(--mute);padding:60px 0}
+@media(max-width:600px){.wall-bar{position:relative;padding:14px 66px 14px 16px}.wall-x{position:absolute;top:14px;right:14px}.wall-cols{padding:12px 16px 0}}
+@media(prefers-reduced-motion:reduce){.wall-cols{overflow:auto}.wcol{overflow:visible}}
+
+/* ── month thumbnails ── */
+.mthumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.month:hover .mthumb{transform:scale(1.08)}
+.month .thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,17,12,.15) 20%,rgba(6,17,12,.88));opacity:0;pointer-events:none}
+.month .thumb:has(.mthumb){color:#fff}
+.month .thumb:has(.mthumb)::after{opacity:1}
+.month .mk,.month .thumb h3{position:relative;z-index:1}
+.month .shine{z-index:2}
+.mlatest{position:absolute;top:16px;right:16px;z-index:2;background:#0B1310;color:#FFDD2D;font:600 10px "IBM Plex Mono";
+ letter-spacing:.14em;text-transform:uppercase;padding:5px 10px;border-radius:99px}
+
+/* ── light theme ── */
+:root[data-theme=light]{color-scheme:light;
+ --bg:#F5F3EA;--bg-2:#ECE9DD;--card:#FFFFFF;--card-2:#FCFBF7;--line:#E2DED1;--line-2:#CDC8B8;
+ --paper:#0B1310;--mute:#566E62;--dim:#86998F;--green:#0E9A5F;--pos:#12A866;--neg:#E04A29;
+ --yellow-ink:#9E7A00;--text-2:#33463C;--track:rgba(11,19,16,.06);--track-solid:#EEEBE1;
+ --outline:rgba(158,122,0,.16);--outline-2:rgba(158,122,0,.24);--warn-ink:#9A4A12;--shine:#FFE873}
+:root[data-theme=light] .orb{opacity:.14}
+:root[data-theme=light] .card,:root[data-theme=light] .weekitem,:root[data-theme=light] .month .inner{box-shadow:0 1px 0 rgba(11,19,16,.03),0 12px 30px -22px rgba(11,19,16,.25)}
+:root[data-theme=light] #road .rider,:root[data-theme=light] #loader .rider{--rb:#1B2B23;--rt:#0B1310;--rs:#4A6357;--rp:#4A6357}
+:root[data-theme=light] .dscrim{background:rgba(11,19,16,.25)}
+
+/* ── print: clean, light, no motion ── */
+@media print{
+ :root{--bg:#fff;--bg-2:#f4f4f0;--card:#fff;--card-2:#fff;--line:#ddd;--line-2:#ccc;--paper:#0B1310;--mute:#555;--dim:#888;
+  --yellow-ink:#8a6a00;--text-2:#333;--track:#eee;--track-solid:#eee;--outline:transparent;--outline-2:transparent;--warn-ink:#9A4A12}
+ #road,#cursor,#cursorDot,#loader,#curtain,.marquee,.scrollcue,#toast,#confetti,#livePill,.hero-bg,.hero-word,nav,.hbtns,.secnum,.story-num,.wallbtn,#copySum,footer .totop,.banner{display:none!important}
+ body{padding:0;background:#fff}
+ header{position:static}
+ .hero{min-height:0;padding:24px 0}
+ .story{height:auto}.story-pin{position:static;height:auto;padding:40px 0}
+ .story-text .sw{opacity:1!important;filter:none!important}
+ [data-reveal],.sechead h2,.sechead .idx{opacity:1!important;transform:none!important;clip-path:none!important}
+ *,*::before,*::after{animation:none!important;transition:none!important}
+ .card,.weekitem{break-inside:avoid}
+ .block{padding-top:36px}}
 /* ── keyframes ── */
 @keyframes rise{from{opacity:0;transform:translateY(28px)}}
 @keyframes fade{from{opacity:0}}
@@ -459,6 +618,10 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
 @keyframes viewIn{from{opacity:0;transform:translateY(16px)}}
 
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes livePulse{50%{opacity:.35;transform:scale(.7)}}
+@keyframes lpRide{from{left:-44px;opacity:0}}
+@keyframes spkPing{from{transform:scale(.6);opacity:.9}to{transform:scale(2.6);opacity:0}}
+@keyframes wallUp{to{transform:translateY(calc(-50% - 8px))}}
 @keyframes lride{from{left:-6px}to{left:190px}}
 @keyframes rideAcross{to{transform:translateX(calc(100vw + 40px))}}
 @keyframes dust{to{transform:translate(var(--dx),-10px) scale(2.4);opacity:0}}
@@ -489,7 +652,10 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
   <button role="tab" aria-selected="false" data-view="months" data-i18n="nav_months">Monthly reports</button>
   <button role="tab" aria-selected="false" data-view="data" data-i18n="nav_data">Data source</button>
  </nav>
- <button id="langToggle" class="lang" aria-label="Switch language">中文</button>
+ <div class="hbtns">
+  <button id="themeToggle" class="lang" type="button" aria-label="Switch to light theme"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><g class="sun"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></g><path class="moon" d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>
+  <button id="langToggle" class="lang" aria-label="Switch language">中文</button>
+ </div>
 </div></header>
 
 <main>
@@ -517,7 +683,7 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
 
  <div class="block"><div class="wrap">
   <div class="sechead" data-reveal="head">
-   <span class="idx">01</span><span class="ghost" aria-hidden="true">01</span>
+   <span class="idx">01</span><span class="secnum" aria-hidden="true">01</span>
    <h2 data-i18n="exec">Executive summary</h2>
    <div class="act"><button class="btn sm ghost" id="copySum" data-i18n="copy">Copy text</button></div>
   </div>
@@ -526,7 +692,7 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
 
  <div class="block"><div class="wrap">
   <div class="sechead" data-reveal="head">
-   <span class="idx">02</span><span class="ghost" aria-hidden="true">02</span>
+   <span class="idx">02</span><span class="secnum" aria-hidden="true">02</span>
    <h2 data-i18n="sec_sov">Share of voice</h2>
   </div>
   <div class="grid g75">
@@ -537,21 +703,30 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
 
  <div class="block"><div class="wrap">
   <div class="sechead" data-reveal="head">
-   <span class="idx">03</span><span class="ghost" aria-hidden="true">03</span>
+   <span class="idx">03</span><span class="secnum" aria-hidden="true">03</span>
    <h2 data-i18n="sec_trend">Momentum</h2>
   </div>
-  <div class="card" data-reveal="scale"><h3 data-i18n="vot">Volume over time</h3><div id="vot"></div></div>
+  <div class="card" data-reveal="scale"><h3><span data-i18n="vot">Volume over time</span><span class="vothint" data-i18n="vot_hint">Click any point to see that day's posts.</span></h3><div id="vot"></div></div>
  </div></div>
 
  <div class="block"><div class="wrap">
   <div class="sechead" data-reveal="head">
-   <span class="idx">04</span><span class="ghost" aria-hidden="true">04</span>
+   <span class="idx">04</span><span class="secnum" aria-hidden="true">04</span>
    <h2 data-i18n="sec_topics">What people talk about</h2>
   </div>
   <div class="grid g2">
    <div class="card" data-reveal><h3 data-i18n="txs">Topic × sentiment</h3><div id="topics"></div></div>
-   <div class="card" data-reveal style="--d:.12s"><h3 data-i18n="qual">Qualitative deep dive — verbatims</h3><div id="quotes"></div></div>
+   <div class="card" data-reveal style="--d:.12s"><h3 data-i18n="qual">Qualitative deep dive — verbatims</h3><div id="quotes"></div><button class="btn sm ghost wallbtn" id="openWall" type="button" data-i18n="wall_open">Open the verbatim wall ↗</button></div>
   </div>
+ </div></div>
+
+ <div class="block" id="vsBlock"><div class="wrap">
+  <div class="sechead" data-reveal="head">
+   <span class="idx">05</span><span class="secnum" aria-hidden="true">05</span>
+   <h2 id="vsTitle">Keeta <em>vs.</em></h2>
+   <div class="act vschips" id="vsChips"></div>
+  </div>
+  <div class="card" data-reveal><div id="vsBoard"></div><div id="vsRows"></div></div>
  </div></div>
 </section>
 
@@ -628,6 +803,20 @@ footer{margin-top:clamp(90px,12vw,160px);border-top:1px solid var(--line);overfl
 </div>
 <div id="curtain" aria-hidden="true"><div class="crider" data-rider></div><div class="ctext" id="ctext"></div></div>
 <canvas id="confetti" aria-hidden="true"></canvas>
+<div id="livePill" role="status" aria-live="polite"><span class="lp-road" aria-hidden="true"><span class="lp-rider" data-rider></span><span class="lp-box"></span></span><span id="lpText"></span><button class="lp-x" type="button" aria-label="Dismiss">×</button></div>
+<aside id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true">
+ <div class="dscrim" data-close></div>
+ <div class="dpanel"><button class="dclose" type="button" data-close aria-label="Close">×</button>
+  <div class="eyebrow" id="drawerEb"></div><h2 id="drawerTitle"></h2><div id="drawerBody"></div></div>
+</aside>
+<div id="wall" role="dialog" aria-modal="true" aria-labelledby="wallTitle" aria-hidden="true">
+ <div class="wall-bar">
+  <div><div class="eyebrow" id="wallEb"></div><h2 id="wallTitle" data-i18n="wall_title">The verbatim wall</h2></div>
+  <div class="wall-filters" id="wallFilters"></div>
+  <button class="wall-x" id="wallClose" type="button" aria-label="Close">×</button>
+ </div>
+ <div class="wall-cols" id="wallCols"></div>
+</div>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -671,6 +860,13 @@ const I18N={
   delivered:"Delivered ✓",toast_done:"Insights delivered — thanks for reading!",eta:"{km} km · {min} min",
   story_eb_week:"The week in one breath",story_eb_month:"The month in one breath",
   footer_big1:"Insights,",footer_big2:"delivered.",road_label:"Page progress — drag the courier to scroll",
+  day_eb:"Daily deep dive",spike:"Spike",vs_avg:"vs daily avg",top_posts:"Top posts by engagement",
+  vot_hint:"Click any point to see that day's posts.",no_posts:"No posts with text on this day.",
+  vs:"vs.",vs_neg_note:"Bars = mentions per topic · % = share of those mentions that were negative",neg_short:"neg",
+  shift_note_w:"▲▼ change in negative share vs previous week, in points",shift_note_m:"▲▼ change in negative share vs previous month, in points",
+  wall_open:"Open the verbatim wall ↗",wall_title:"The verbatim wall",all:"All",wall_empty:"Nothing matches these filters.",
+  live:"Live",live_new_1:"+{n} new mention since you opened this",live_new_n:"+{n} new mentions since you opened this",
+  theme_light:"Switch to light theme",theme_dark:"Switch to dark theme",latest_deck:"Latest",
   /* dynamic UI */
   reportingweek:"Reporting week",weekonrecord:"week on record",weeksonrecord:"weeks on record",
   reportingmonth:"Reporting month",monthonrecord:"month on record",monthsonrecord:"months on record",
@@ -717,6 +913,13 @@ const I18N={
   delivered:"已送达 ✓",toast_done:"洞察已送达 — 感谢阅读！",eta:"{km} 公里 · {min} 分钟",
   story_eb_week:"一句话看本周",story_eb_month:"一句话看本月",
   footer_big1:"洞察，",footer_big2:"准时送达。",road_label:"页面进度 — 拖动骑手即可滚动",
+  day_eb:"单日深度分析",spike:"峰值",vs_avg:"相对日均",top_posts:"互动量最高的帖子",
+  vot_hint:"点击任一数据点查看当天的帖子。",no_posts:"当天没有带文字的帖子。",
+  vs:"对比",vs_neg_note:"柱长 = 各话题提及量 · % = 其中负面占比",neg_short:"负面",
+  shift_note_w:"▲▼ 负面占比较上周的变化（百分点）",shift_note_m:"▲▼ 负面占比较上月的变化（百分点）",
+  wall_open:"打开原声墙 ↗",wall_title:"原声墙",all:"全部",wall_empty:"没有符合筛选条件的内容。",
+  live:"实时",live_new_1:"自您打开以来新增 {n} 条提及",live_new_n:"自您打开以来新增 {n} 条提及",
+  theme_light:"切换到浅色主题",theme_dark:"切换到深色主题",latest_deck:"最新",
   /* dynamic UI */
   reportingweek:"报告周",weekonrecord:"周记录",weeksonrecord:"周记录",
   reportingmonth:"报告月",monthonrecord:"月记录",monthsonrecord:"月记录",
@@ -761,6 +964,7 @@ function applyStaticI18n(){
  const tg=document.getElementById("langToggle"); if(tg)tg.textContent=t("translateto");
  document.querySelectorAll("[data-i18n-aria]").forEach(el=>el.setAttribute("aria-label",t(el.dataset.i18nAria)));
  document.querySelectorAll(".page-title,.fbig").forEach(splitWords);
+ setThemeLabel();
  movePill();
 }
 const _trCache=new Map();
@@ -803,7 +1007,9 @@ const PAL=["#4E7FE8","#FF7A00","#FFDD2D","#A06BFF","#22D389","#F062A8"];
 const SC={Negative:"#FF6B4A",Positive:"#22D389",Neutral:"#7E8C92"};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const brandColor=(n,i)=>C[n]||PAL[i%PAL.length];
+let THEME=document.documentElement.dataset.theme==="light"?"light":"dark";
+const C_LIGHT={"#FFDD2D":"#C9A000"};
+const brandColor=(n,i)=>{const c=C[n]||PAL[i%PAL.length];return (THEME==="light"&&C_LIGHT[c])||c};
 const REDUCED=matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ── brand name canonicalisation ──
@@ -869,12 +1075,17 @@ function makeDemo(){
    label : shown on the card (keep the "MON YYYY" shape)
    color : card background
    deck  : Google Slides link — leave "" for months not yet published.
-           Card shows "Coming soon" until a link is added.              */
+           Card shows "Coming soon" until a link is added. The card cover is
+           the deck's first slide, shown to viewers whose Google account can
+           open the deck; everyone else sees the colour card.
+   Newest appears first.                                                */
 const MONTHS=[
- {label:"JAN 2026", color:"#22D389", deck:"https://docs.google.com/presentation/d/14pGP9tGhGaOsIgAVa0HkU4EFW76rNA7CtjiNmWaYS34/edit"},
- {label:"FEB 2026", color:"#19B978", deck:""},
- {label:"MAR 2026", color:"#2BE59A", deck:""},
- {label:"APR 2026", color:"#1FA86E", deck:""}
+ {label:"DEC 2025", color:"#22D389", deck:"https://docs.google.com/presentation/d/1bZwEBycm0QBnsIHa3Sgsp8uQNwj57S7f8bT5N0KLabU/edit"},
+ {label:"JAN 2026", color:"#19B978", deck:"https://docs.google.com/presentation/d/14pGP9tGhGaOsIgAVa0HkU4EFW76rNA7CtjiNmWaYS34/edit"},
+ {label:"FEB 2026", color:"#2BE59A", deck:"https://docs.google.com/presentation/d/1rSsVgtdIWNYwvAeUkbwhQCnvFlw_UX6hFNrqxvwh1Zg/edit"},
+ {label:"MAR 2026", color:"#1FA86E", deck:"https://docs.google.com/presentation/d/1JifmFbOxjj1WiOaL24YDKCUfBkrwfGCGVsiFHHFcZ8Y/edit"},
+ {label:"APR 2026", color:"#22D389", deck:"https://docs.google.com/presentation/d/1G-tHg2d2h0fbdy2zzZ2JFEVbscTeR7gkK0GMfAYnNHY/edit"},
+ {label:"MAY 2026", color:"#19B978", deck:"https://docs.google.com/presentation/d/1yo2U71J6XyuXE_mcw43i0cpL9siZgfKWzI6MO-LWmek/edit"}
 ];
 
 /* ═════ WEEK DERIVATION ═════
@@ -924,7 +1135,7 @@ const periodLabelOf = k   => GRAN==="month" ? monthLabel(k)   : weekLabel(k);
 const periodsOf     = r   => GRAN==="month" ? monthsOf(r)     : weeksOf(r);
 
 /* ═════ STATE ═════ */
-let RECORDS=makeDemo(), FILTER=null, WEEK=null, SOURCE="demo data";
+let RECORDS=makeDemo(), FILTER=null, WEEK=null, SOURCE="demo data", VS=null;
 
 /* ═════ AGGREGATION ═════ */
 function agg(recs){
@@ -1214,7 +1425,7 @@ function donut(obj,colors,centerN,centerL){
    stroke-dasharray="${len} ${CIR-len}" stroke-dashoffset="${-off}" transform="rotate(-90 80 80)"><title>${esc(t(k.toLowerCase()))}: ${v}</title></circle>`;
   off+=len;return s}).join("");
  return `<div class="donutwrap"><svg viewBox="0 0 160 160" style="width:100%;display:block">
-   <circle r="${R}" cx="80" cy="80" fill="none" stroke="#13231B" stroke-width="16"/>${segs}</svg>
+   <circle r="${R}" cx="80" cy="80" fill="none" style="stroke:var(--track-solid)" stroke-width="16"/>${segs}</svg>
    <div class="dc"><div class="n">${centerN}</div><div class="l">${esc(centerL)}</div></div></div>`;
 }
 
@@ -1235,15 +1446,15 @@ function lineChart(cats,series,opts){
  series.forEach((s,si)=>{svg+=`<linearGradient id="${id}g${si}" x1="0" x2="0" y1="0" y2="1">
    <stop offset="0" stop-color="${s.color}" stop-opacity=".28"/><stop offset="1" stop-color="${s.color}" stop-opacity="0"/></linearGradient>`});
  svg+=`</defs>`;
- ticks.forEach(v=>{svg+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="#1C2F25" stroke-dasharray="2 5"/>
-  <text x="${L-9}" y="${y(v)+4}" fill="#8CA79A" font-size="11" font-family="IBM Plex Mono" text-anchor="end">${v}</text>`});
- svg+=`<line x1="${L}" x2="${W-R}" y1="${H-B}" y2="${H-B}" stroke="#2A4537"/>`;
+ ticks.forEach(v=>{svg+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--line)" stroke-dasharray="2 5"/>
+  <text x="${L-9}" y="${y(v)+4}" style="fill:var(--mute)" font-size="11" font-family="IBM Plex Mono" text-anchor="end">${v}</text>`});
+ svg+=`<line x1="${L}" x2="${W-R}" y1="${H-B}" y2="${H-B}" style="stroke:var(--line-2)"/>`;
  series.forEach((s,si)=>{
   const pts=s.vals.map((v,i)=>[x(i),y(v)]);
   if(withArea)svg+=`<path class="area" fill="url(#${id}g${si})" d="M${pts[0][0]},${H-B} L${pts.map(p=>p.join(",")).join(" L")} L${pts[pts.length-1][0]},${H-B} Z"/>`;
   svg+=`<path class="line" style="--i:${si}" pathLength="1" fill="none" stroke="${s.color}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"
     d="M${pts.map(p=>p.join(",")).join(" L")}"/>`;
-  svg+=s.vals.map((v,i)=>`<circle class="dot" style="--i:${i}" cx="${x(i)}" cy="${y(v)}" r="3.6" fill="${s.color}" stroke="#0E1914" stroke-width="2"><title>${esc(s.name)} — ${esc(cats[i])}: ${v}</title></circle>`).join("");
+  svg+=s.vals.map((v,i)=>`<circle class="dot" data-x="${i}" style="--i:${i};stroke:var(--card)" cx="${x(i)}" cy="${y(v)}" r="3.6" fill="${s.color}" stroke-width="2"><title>${esc(s.name)} — ${esc(cats[i])}: ${v}</title></circle>`).join("");
  });
  if(opts.labels){
   /* nudge labels apart where series nearly overlap at the same x */
@@ -1256,14 +1467,20 @@ function lineChart(cats,series,opts){
     lastY=ly;
     svg+=`<text class="lbl" x="${x(i)}" y="${ly}" fill="${p.color}" font-size="11" font-weight="600"
       font-family="IBM Plex Mono" text-anchor="middle" paint-order="stroke"
-      stroke="#0E1914" stroke-width="3.5" stroke-linejoin="round">${p.v}</text>`});
+      style="stroke:var(--card)" stroke-width="3.5" stroke-linejoin="round">${p.v}</text>`});
   });
  }
+ (opts.spikes||[]).forEach((sp,k)=>{
+  const cx=x(sp.i),cy=y(Math.max(...series.map(s=>s.vals[sp.i]||0)));
+  svg+=`<g class="spike" data-x="${sp.i}" tabindex="0" role="button" aria-label="${esc(opts.spikeLabel)} ${esc(cats[sp.i])}" style="--i:${k}">
+   <line class="spk-line" x1="${cx}" x2="${cx}" y1="${T}" y2="${H-B}"/><circle class="spk-ring" cx="${cx}" cy="${cy}" r="9"/>
+   <circle class="spk-dot" cx="${cx}" cy="${cy}" r="5.5"/>
+   <text class="spk-lbl" x="${cx}" y="${Math.max(T+12,cy-18)}" text-anchor="middle">${esc(opts.spikeLabel)} ${sp.r.toFixed(1)}×</text></g>`});
  const skip=Math.ceil(cats.length/9);
  cats.forEach((c,i)=>{if(i%skip)return;
-  svg+=`<text x="${x(i)}" y="${H-B+20}" fill="#8CA79A" font-size="11" font-family="IBM Plex Mono" text-anchor="middle">${esc(c)}</text>`});
- svg+=`<text x="${(L+W-R)/2}" y="${H-8}" fill="#5C7268" font-size="11" font-family="IBM Plex Mono" text-anchor="middle" letter-spacing="1.4">${esc(opts.xLabel||"")}</text>
-  <text transform="rotate(-90 14 ${(T+H-B)/2})" x="14" y="${(T+H-B)/2}" fill="#5C7268" font-size="11" font-family="IBM Plex Mono" text-anchor="middle" letter-spacing="1.4">${esc(opts.yLabel||"")}</text></svg>`;
+  svg+=`<text x="${x(i)}" y="${H-B+20}" style="fill:var(--mute)" font-size="11" font-family="IBM Plex Mono" text-anchor="middle">${esc(c)}</text>`});
+ svg+=`<text x="${(L+W-R)/2}" y="${H-8}" style="fill:var(--dim)" font-size="11" font-family="IBM Plex Mono" text-anchor="middle" letter-spacing="1.4">${esc(opts.xLabel||"")}</text>
+  <text transform="rotate(-90 14 ${(T+H-B)/2})" x="14" y="${(T+H-B)/2}" style="fill:var(--dim)" font-size="11" font-family="IBM Plex Mono" text-anchor="middle" letter-spacing="1.4">${esc(opts.yLabel||"")}</text></svg>`;
  return svg;
 }
 
@@ -1342,7 +1559,7 @@ function render(){
  $("#periodLabel").innerHTML=`${gran} <span>${GRAN==="month"?t("reportingmonth"):t("reportingweek")}</span>
   <select id="weekPick" aria-label="Choose reporting period">${
    WEEKS.map(k=>`<option value="${k}"${k===WEEK?" selected":""}>${periodLabelOf(k)}${k===WEEKS[0]?" — "+t("latest"):""}</option>`).join("")}
-  </select> <span>· ${WEEKS.length} ${recordWord} · ${esc(srcLabel(SOURCE))}</span>`;
+  </select> <span>· ${WEEKS.length} ${recordWord} · ${esc(srcLabel(SOURCE))}</span>${SOURCE==="the live sheet"?` <span class="livebadge"><i></i>${t("live")}</span>`:""}`;
  $("#weekPick").onchange=e=>{WEEK=e.target.value;render()};
  $("#periodLabel").querySelectorAll(".granbtn").forEach(b=>b.onclick=()=>{
   if(b.dataset.gran===GRAN)return;
@@ -1415,20 +1632,65 @@ function render(){
     <span class="pc">${(v/sTot*100).toFixed(1)}%</span></div>`).join("")}</div>`;
 
  const showBrands=FILTER?[FILTER]:all.brands.map(b=>b.n);
+ /* spikes: days running at 1.75× the period's daily average or more */
+ const dayTot=view.dates.map(d=>Object.values(view.byDate[d]||{}).reduce((a,b)=>a+b,0));
+ const dayMean=dayTot.reduce((a,b)=>a+b,0)/(dayTot.length||1);
+ const spikes=dayTot.length>2?dayTot.map((v,i)=>({i,r:dayMean?v/dayMean:0})).filter(sp=>sp.r>=1.75):[];
  $("#vot").innerHTML=lineChart(view.dates.map(d=>d.slice(5)),
   showBrands.map(n=>({name:n,color:brandColor(n,all.brands.findIndex(b=>b.n===n)),
    vals:view.dates.map(d=>(view.byDate[d]||{})[n]||0)})),
-  {xLabel:t("axis_date"),yLabel:t("axis_mentions"),aria:"Daily conversation volume by brand"})
+  {xLabel:t("axis_date"),yLabel:t("axis_mentions"),aria:"Daily conversation volume by brand",spikes,spikeLabel:t("spike")})
   +`<div class="legend">${showBrands.map(n=>`<span><i style="background:${brandColor(n,all.brands.findIndex(b=>b.n===n))}"></i>${esc(n)}</span>`).join("")}</div>`;
 
+ $("#vot").onclick=e=>{const g=e.target.closest("[data-x]");if(g&&view.dates[+g.dataset.x])openDay(view.dates[+g.dataset.x])};
+ $("#vot").onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&e.target.closest(".spike")){e.preventDefault();e.target.closest(".spike").dispatchEvent(new MouseEvent("click",{bubbles:true}))}};
+
+ /* negative-share shift per topic vs the previous period (same brand filter) */
+ const prevT={};
+ if(prevKey)RECORDS.forEach(r=>{if(periodKey(r.date)!==prevKey||(FILTER&&r.brand!==FILTER))return;
+  const o=prevT[r.topic]=prevT[r.topic]||{n:0,neg:0};o.n++;if(r.sentiment==="Negative")o.neg++});
+ const shiftOf=(tp,tot)=>{const pv=prevT[tp.t];
+  if(!pv||pv.n<3||tot<3)return `<span class="shift none">—</span>`;
+  const now=Math.round(tp.Negative/tot*100),was=Math.round(pv.neg/pv.n*100),d=now-was;
+  const ttl=`${t("neg_share")}: ${was}% → ${now}%`;
+  return d===0?`<span class="shift flat" title="${ttl}">±0</span>`
+   :`<span class="shift ${d>0?"bad":"good"}" title="${ttl}">${d>0?"▲":"▼"} ${Math.abs(d)}</span>`};
  const tmax=Math.max(...view.topics.map(t=>t.Negative+t.Positive+t.Neutral),1);
  $("#topics").innerHTML=view.topics.map((tp,ti)=>{
   const tot=tp.Negative+tp.Positive+tp.Neutral;
   return `<div class="topicrow" style="--i:${ti}"><span class="lab">${esc(tp.t)}</span>
    <span class="sw"><span class="stack" style="width:${tot/tmax*100}%;--i:${ti}">
     ${["Negative","Positive","Neutral"].map(k=>tp[k]===0?"":`<span style="background:${SC[k]};width:${tp[k]/tot*100}%"></span>`).join("")}
-   </span></span><span class="tot">${tot}</span></div>`}).join("")
-  +`<div class="legend">${Object.keys(SC).map(k=>`<span><i style="background:${SC[k]}"></i>${t(k.toLowerCase())}</span>`).join("")}</div>`;
+   </span></span><span class="tot">${tot}</span>${shiftOf(tp,tot)}</div>`}).join("")
+  +`<div class="legend">${Object.keys(SC).map(k=>`<span><i style="background:${SC[k]}"></i>${t(k.toLowerCase())}</span>`).join("")}${prevKey?`<span>${t(GRAN==="month"?"shift_note_m":"shift_note_w")}</span>`:""}</div>`;
+
+ /* ── KEETA VS. — head to head with one competitor ── */
+ const HOME=canonBrand(CONFIG.CLIENT), rivals=all.brands.map(b=>b.n).filter(n=>n!==HOME&&n!=="Unknown");
+ const canVs=all.brands.some(b=>b.n===HOME)&&rivals.length>0;
+ $("#vsBlock").classList.toggle("hidden",!canVs);
+ if(canVs){
+  if(!VS||!rivals.includes(VS))VS=rivals[0];
+  const ci=n=>all.brands.findIndex(b=>b.n===n);
+  const side=n=>{const recs=inWeek.filter(r=>r.brand===n),a=agg(recs),tot=a.brands.reduce((x,b)=>x+b.v,0),
+   s=a.sentiment,st=s.Positive+s.Negative+s.Neutral||1;
+   return{n,recs,tot,sov:pct(tot,totAll),pos:pct(s.Positive,st),neg:pct(s.Negative,st),eng:a.engagement,c:brandColor(n,ci(n))}};
+  const A=side(HOME),Z=side(VS);
+  $("#vsTitle").innerHTML=`<span style="color:${A.c}">${esc(HOME)}</span> <em>${t("vs")}</em> <span style="color:${Z.c}">${esc(VS)}</span>`;
+  $("#vsChips").innerHTML=rivals.map(n=>`<button class="vschip${n===VS?" on":""}" type="button" data-vs="${esc(n)}" style="--c:${brandColor(n,ci(n))}">${esc(n)}</button>`).join("");
+  $("#vsChips").querySelectorAll(".vschip").forEach(b=>b.onclick=()=>{VS=b.dataset.vs;render()});
+  const M=[["mentions","tot",1,""],["share","sov",1,"%"],["pos_share","pos",1,"%"],["neg_share","neg",-1,"%"],["engagement","eng",1,""]];
+  $("#vsBoard").innerHTML=`<div class="vsb-head"><span style="color:${A.c}">${esc(A.n)}</span><span></span><span style="color:${Z.c}">${esc(Z.n)}</span></div>`
+   +M.map(([k,f,dir,suf],i)=>{const a=A[f],b=Z[f],w=a===b?0:((a>b)===(dir>0)?-1:1);
+    return `<div class="vsb-row" style="--i:${i}"><span class="vsv${w<0?" win":""}">${a.toLocaleString()}${suf}</span><span class="vsl">${t(k)}</span><span class="vsv r${w>0?" win":""}">${b.toLocaleString()}${suf}</span></div>`}).join("");
+  const tm={};[A,Z].forEach((S,si)=>S.recs.forEach(r=>{const o=tm[r.topic]=tm[r.topic]||[{n:0,neg:0},{n:0,neg:0}];o[si].n++;if(r.sentiment==="Negative")o[si].neg++}));
+  const rowsT=Object.entries(tm).sort((x,y)=>(y[1][0].n+y[1][1].n)-(x[1][0].n+x[1][1].n)).slice(0,8);
+  const mx=Math.max(1,...rowsT.flatMap(([,v])=>[v[0].n,v[1].n]));
+  const num=o=>`<span class="vsr-n">${o.n}<small>${o.n?pct(o.neg,o.n)+"% "+t("neg_short"):"&nbsp;"}</small></span>`;
+  $("#vsRows").innerHTML=`<div class="vsr-legend">${t("vs_neg_note")}</div>`+rowsT.map(([tp,[a,b]],i)=>`<div class="vsr" style="--i:${i}">
+   <div class="vsr-side l">${num(a)}<span class="mbar l" style="width:calc((100% - 68px) * ${a.n/mx});background:${A.c}"></span></div>
+   <div class="vsr-t">${esc(tp)}</div>
+   <div class="vsr-side r"><span class="mbar r" style="width:calc((100% - 68px) * ${b.n/mx});background:${Z.c}"></span>${num(b)}</div></div>`).join("");
+ }
 
  $("#quotes").innerHTML=view.quotes.length?view.quotes.map((q,qi)=>{
   const long=q.content.length>280;
@@ -1494,13 +1756,15 @@ function render(){
   const go=()=>{GRAN="week";WEEK=el.dataset.w;FILTER=null;render();document.querySelector('[data-view=week]').click()};
   el.onclick=go; el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}}});
 
- $("#months").innerHTML=MONTHS.map((m,i)=>{
-  const live=!!m.deck, [mon,yr]=m.label.split(" ");
+ const mOrder=[...MONTHS].reverse(), latestDeck=mOrder.find(m=>m.deck);
+ $("#months").innerHTML=mOrder.map((m,i)=>{
+  const live=!!m.deck, [mon,yr]=m.label.split(" "), deckId=(m.deck.match(/\/d\/([\w-]+)/)||[])[1];
+  const cover=deckId?`<img class="mthumb" alt="" loading="lazy" referrerpolicy="no-referrer" src="https://drive.google.com/thumbnail?id=${deckId}&sz=w1000" onerror="this.remove()">`:"";
   const cta=live
    ? `<a class="btn deck mag" href="${esc(m.deck)}" target="_blank" rel="noopener noreferrer">${t("opendeck")} ↗</a>`
    : `<span class="btn deck disabled" aria-disabled="true">${t("comingsoon")}</span>`;
   return `<div class="month${live?"":" pending"}" style="--c:${m.color};--i:${i}"><div class="inner">
-   <div class="thumb"><span class="mk">${t("digital_listening")}</span>
+   <div class="thumb">${cover}<span class="mk">${t("digital_listening")}</span>${m===latestDeck?`<span class="mlatest">${t("latest_deck")}</span>`:""}
     <h3>${esc(mon)}<small>${esc(yr||"")}</small></h3><span class="shine"></span></div>
    <div class="body"><span class="mono" style="font-size:11px;color:var(--mute)">${t("gslides")}</span>${cta}</div></div></div>`}).join("");
  if(!REDUCED)$("#months").querySelectorAll(".month").forEach(el=>{
@@ -1573,7 +1837,8 @@ function scramble(el){
   el.textContent=final.slice(0,n)+final.slice(n).replace(/\S/g,()=>chars[Math.random()*chars.length|0]);
   if(f<total)requestAnimationFrame(step);else{el.textContent=final;el._scr=0}})();
 }
-function scrambleIn(root){if(REDUCED||LANG==="zh")return;root.querySelectorAll(".card > h3, .idx").forEach(scramble)}
+function scrambleIn(root){if(REDUCED||LANG==="zh")return;
+ root.querySelectorAll(".card > h3, .card > h3 > span:first-child, .idx").forEach(el=>{if(!el.children.length)scramble(el)})}
 
 function toast(msg){
  const el=$("#toast");el.textContent=msg;el.classList.remove("show");void el.offsetWidth;el.classList.add("show");
@@ -1602,29 +1867,30 @@ const heroFX=(()=>{
  const s=()=>Math.random()<.5?1:-1;
  function mk(){const cols=Math.max(1,Math.floor(W/G)),rows=Math.max(1,Math.floor(H/G)),h=Math.random()<.5;
   return{x:Math.floor(Math.random()*(cols+1))*G,y:Math.floor(Math.random()*(rows+1))*G,dx:h?s():0,dy:h?0:s(),
-   sp:.45+Math.random()*1.1,left:G,tr:[],c:Math.random()<.75?"255,221,45":"34,211,137"}}
+   sp:.45+Math.random()*1.1,left:G,tr:[],k:Math.random()<.75?0:1}}
  function size(){const d=Math.min(2,devicePixelRatio||1);W=cv.clientWidth;H=cv.clientHeight;if(!W)return;
   cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);cs=Array.from({length:W<700?10:20},mk)}
  addEventListener("resize",size);size();
  return{tick(){
   if(!W){size();if(!W)return}
+  const P=THEME==="light"?["176,135,0","14,154,95"]:["255,221,45","34,211,137"];
   ctx.clearRect(0,0,W,H);ctx.lineCap="round";
   for(const c of cs){
    const m=Math.min(c.sp,c.left);c.x+=c.dx*m;c.y+=c.dy*m;c.left-=m;
    if(c.left<=0){c.left=G;
     if(Math.random()<.35){if(c.dx){c.dy=s();c.dx=0}else{c.dx=s();c.dy=0}}
     if(c.x+c.dx*G<0||c.x+c.dx*G>W)c.dx*=-1;if(c.y+c.dy*G<0||c.y+c.dy*G>H)c.dy*=-1;
-    if(Math.random()<.05)pings.push({x:c.x,y:c.y,r:2,a:.9,c:c.c})}
+    if(Math.random()<.05)pings.push({x:c.x,y:c.y,r:2,a:.9,k:c.k})}
    c.tr.push(c.x,c.y);if(c.tr.length>90)c.tr.splice(0,2);
    ctx.lineWidth=2;
-   for(let i=2;i<c.tr.length;i+=2){ctx.strokeStyle=`rgba(${c.c},${(i/c.tr.length)*.5})`;
+   for(let i=2;i<c.tr.length;i+=2){ctx.strokeStyle=`rgba(${P[c.k]},${(i/c.tr.length)*.5})`;
     ctx.beginPath();ctx.moveTo(c.tr[i-2],c.tr[i-1]);ctx.lineTo(c.tr[i],c.tr[i+1]);ctx.stroke()}
-   ctx.fillStyle=`rgba(${c.c},.16)`;ctx.beginPath();ctx.arc(c.x,c.y,7,0,7);ctx.fill();
-   ctx.fillStyle=`rgb(${c.c})`;ctx.beginPath();ctx.arc(c.x,c.y,2.6,0,7);ctx.fill();
+   ctx.fillStyle=`rgba(${P[c.k]},.16)`;ctx.beginPath();ctx.arc(c.x,c.y,7,0,7);ctx.fill();
+   ctx.fillStyle=`rgb(${P[c.k]})`;ctx.beginPath();ctx.arc(c.x,c.y,2.6,0,7);ctx.fill();
   }
   ctx.lineWidth=1.5;
   pings=pings.filter(p=>{p.r+=.6;p.a-=.014;if(p.a<=0)return false;
-   ctx.strokeStyle=`rgba(${p.c},${p.a})`;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.stroke();return true});
+   ctx.strokeStyle=`rgba(${P[p.k]},${p.a})`;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.stroke();return true});
  }};
 })();
 
@@ -1696,7 +1962,7 @@ addEventListener("pointermove",e=>{
 (function(){
  const hdr=$("header"),bg=$("#heroBg"),word=$("#heroWord"),inner=$("#heroInner"),mq=$(".marquee"),
   rows=[{el:$("#mtrack1"),x:0,dir:-1},{el:$("#mtrack2"),x:null,dir:1}],
-  story=$("#story"),snum=$("#storyNum"),week=$("#v-week"),ghosts=[...document.querySelectorAll(".ghost")];
+  story=$("#story"),snum=$("#storyNum"),week=$("#v-week"),ghosts=[...document.querySelectorAll(".secnum")];
  let lastY=scrollY,vel=0;
  function tick(now){
   const y=scrollY,dy=y-lastY;lastY=y;vel+=(dy-vel)*.2;
@@ -1742,6 +2008,124 @@ addEventListener("pointermove",e=>{
  $("#mtrack1").innerHTML=row(a);$("#mtrack2").innerHTML=row(b);
 })();
 
+/* ═════ OVERLAYS: day drawer + verbatim wall ═════ */
+let _lastFocus=null;
+function openLayer(el){
+ _lastFocus=document.activeElement;el.classList.add("open");el.setAttribute("aria-hidden","false");
+ document.documentElement.style.overflow="hidden";
+ const f=el.querySelector(".dclose,.wall-x");if(f)setTimeout(()=>f.focus({preventScroll:true}),60);
+}
+function closeLayer(el){
+ el.classList.remove("open");el.setAttribute("aria-hidden","true");
+ if(!document.querySelector("#drawer.open,#wall.open"))document.documentElement.style.overflow="";
+ if(_lastFocus&&_lastFocus.focus)_lastFocus.focus({preventScroll:true});
+}
+document.addEventListener("keydown",e=>{
+ if(e.key!=="Escape")return;
+ const o=document.querySelector("#wall.open")||document.querySelector("#drawer.open");if(o)closeLayer(o);
+});
+$("#drawer").addEventListener("click",e=>{if(e.target.closest("[data-close]"))closeLayer($("#drawer"))});
+$("#wallClose").onclick=()=>closeLayer($("#wall"));
+
+function dayLabel(iso){
+ const d=new Date(iso+"T00:00:00Z");
+ if(LANG==="zh")return `${d.getUTCFullYear()}年${d.getUTCMonth()+1}月${d.getUTCDate()}日 周${"日一二三四五六"[d.getUTCDay()]}`;
+ return d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric",timeZone:"UTC"});
+}
+const sentCls=s=>s==="Positive"?"s-p":s==="Negative"?"s-n":"s-u";
+function postLink(id){return /^https?:\/\//.test(id||"")?` · <a href="${esc(id)}" target="_blank" rel="noopener noreferrer">${t("viewpost")}</a>`:""}
+function uniqPosts(recs){
+ const seen=new Set();
+ return recs.filter(r=>r.content&&r.content.length>20).sort((a,b)=>(b.engagement||0)-(a.engagement||0))
+  .filter(r=>{if(seen.has(r.content))return false;seen.add(r.content);return true});
+}
+
+/* click any point on the volume chart (or a spike marker) to open that day */
+function openDay(date){
+ const inP=RECORDS.filter(r=>periodKey(r.date)===WEEK&&(!FILTER||r.brand===FILTER));
+ const recs=inP.filter(r=>r.date===date),a=agg(recs),pa=agg(inP);
+ const tot=a.brands.reduce((x,b)=>x+b.v,0),mean=pa.brands.reduce((x,b)=>x+b.v,0)/(pa.dates.length||1),ratio=mean?tot/mean:0;
+ const s=a.sentiment,st=s.Positive+s.Negative+s.Neutral||1;
+ const col=n=>brandColor(n,pa.brands.findIndex(b=>b.n===n));
+ $("#drawerEb").textContent=t("day_eb")+(ratio>=1.75?` · ${t("spike")} ${ratio.toFixed(1)}×`:"");
+ $("#drawerTitle").textContent=dayLabel(date);
+ const posts=uniqPosts(recs).slice(0,8);
+ $("#drawerBody").innerHTML=`<div class="dkpis">
+   <div><b>${tot}</b><span>${t("mentions")}</span></div><div><b>${ratio.toFixed(1)}×</b><span>${t("vs_avg")}</span></div>
+   <div><b>${pct(s.Positive,st)}%</b><span>${t("pos_share")}</span></div><div><b>${pct(s.Negative,st)}%</b><span>${t("neg_share")}</span></div></div>
+  <div class="dsplit">${a.brands.map(b=>`<span style="flex:${b.v};background:${col(b.n)}" title="${esc(b.n)}: ${b.v}"></span>`).join("")}</div>
+  <div class="legend" style="margin-top:0">${a.brands.map(b=>`<span><i style="background:${col(b.n)}"></i>${esc(b.n)} · ${b.v}</span>`).join("")}</div>
+  <div class="dh">${t("top_posts")}</div>
+  ${posts.length?posts.map((r,i)=>`<article class="dpost ${sentCls(r.sentiment)}" style="--i:${i}"><p dir="auto">${esc(r.content)}</p>
+   <div class="wmeta"><b style="color:${col(r.brand)}">${esc(r.brand)}</b> · ${esc(r.topic)} · ${esc(r.channel||"Social")} · ♥ ${(r.engagement||0).toLocaleString()}${postLink(r.id)}</div></article>`).join("")
+   :`<p class="emptynote">${t("no_posts")}</p>`}`;
+ openLayer($("#drawer"));
+}
+
+/* the verbatim wall: every post of the period drifting past in columns */
+const WALL={brand:null,sent:null};
+function openWall(){buildWall();openLayer($("#wall"))}
+function buildWall(){
+ const inP=RECORDS.filter(r=>periodKey(r.date)===WEEK);
+ const brands=agg(inP).brands.map(b=>b.n),col=n=>brandColor(n,brands.indexOf(n));
+ if(WALL.brand&&!brands.includes(WALL.brand))WALL.brand=null;
+ $("#wallEb").textContent=periodLabelOf(WEEK);
+ const chip=(grp,val,label,c)=>`<button class="wchip${WALL[grp]===val?" on":""}" data-g="${grp}" data-v="${val??""}"${c?` style="--c:${c}"`:""}>${esc(label)}</button>`;
+ $("#wallFilters").innerHTML=`<div class="grp">${chip("brand",null,t("all"))}${brands.map(n=>chip("brand",n,n,col(n))).join("")}</div>
+  <div class="grp">${chip("sent",null,t("all"))}${["Positive","Negative","Neutral"].map(k=>chip("sent",k,t(k.toLowerCase()),SC[k])).join("")}</div>`;
+ $("#wallFilters").querySelectorAll(".wchip").forEach(b=>b.onclick=()=>{WALL[b.dataset.g]=b.dataset.v||null;buildWall()});
+ const posts=uniqPosts(inP.filter(r=>(!WALL.brand||r.brand===WALL.brand)&&(!WALL.sent||r.sentiment===WALL.sent))).slice(0,120);
+ const n=innerWidth>1100?4:innerWidth>760?3:innerWidth>520?2:1, box=$("#wallCols");
+ box.style.setProperty("--cols",n);
+ if(!posts.length){box.innerHTML=`<p class="wempty">${t("wall_empty")}</p>`;return}
+ const card=(r,i,hide)=>`<article class="wcard ${sentCls(r.sentiment)}" style="--i:${Math.min(i,24)}"${hide?' aria-hidden="true"':""}><p dir="auto">${esc(r.content)}</p>
+  <div class="wmeta"><b style="color:${col(r.brand)}">${esc(r.brand)}</b> · ${esc(r.topic)} · ${esc(r.channel||"Social")} · ${esc(r.date)}${hide?"":postLink(r.id)}</div></article>`;
+ const cols=Array.from({length:n},()=>[]);posts.forEach((p,i)=>cols[i%n].push(p));
+ box.innerHTML=cols.map((c,ci)=>{
+  if(!c.length)return `<div class="wcol"></div>`;
+  let list=c;if(!REDUCED)while(list.length<8)list=list.concat(c);
+  const html=list.map((r,i)=>card(r,i*n+ci,false)).join("");
+  return `<div class="wcol" data-dir="${ci%2?"down":"up"}"><div class="wtrack">${html}${REDUCED?"":list.map((r,i)=>card(r,i,true)).join("")}</div></div>`;
+ }).join("");
+ if(!REDUCED)box.querySelectorAll(".wtrack").forEach((tr,i)=>tr.style.setProperty("--dur",(tr.scrollHeight/2/(22+i%3*6)).toFixed(1)+"s"));
+}
+$("#openWall").onclick=openWall;
+
+/* ═════ LIVE: celebrate new mentions arriving on the background refresh ═════ */
+let LIVE_BASE=null,LIVE_LAST=0;
+const uniqueCount=recs=>{const s=new Set();let n=0;recs.forEach(r=>{if(!r.id)n++;else s.add(r.id)});return n+s.size};
+function trackLive(){
+ const n=uniqueCount(RECORDS);
+ if(LIVE_BASE===null){LIVE_BASE=LIVE_LAST=n;return}
+ if(n>LIVE_LAST)liveNotice(n-LIVE_BASE);
+ LIVE_LAST=n;
+}
+function liveNotice(n){
+ const pill=$("#livePill");
+ $("#lpText").textContent=t(n===1?"live_new_1":"live_new_n").replace("{n}",n.toLocaleString());
+ pill.classList.remove("show");void pill.offsetWidth;pill.classList.add("show");
+ clearTimeout(pill._t);pill._t=setTimeout(()=>pill.classList.remove("show"),15000);
+}
+$("#livePill").addEventListener("click",e=>{
+ $("#livePill").classList.remove("show");
+ if(!e.target.closest(".lp-x"))window.scrollTo({top:0,behavior:REDUCED?"auto":"smooth"});
+});
+
+/* ═════ THEME: dark ↔ light with a circular reveal from the toggle ═════ */
+function setThemeLabel(){$("#themeToggle").setAttribute("aria-label",t(THEME==="light"?"theme_dark":"theme_light"))}
+$("#themeToggle").onclick=e=>{
+ const next=THEME==="light"?"dark":"light";
+ const apply=()=>{THEME=next;document.documentElement.dataset.theme=next;
+  try{localStorage.setItem("keeta-theme",next)}catch{}
+  setThemeLabel();render()};
+ if(!document.startViewTransition||REDUCED){apply();return}
+ const r=e.currentTarget.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,
+  R=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+ document.startViewTransition(apply).ready.then(()=>document.documentElement.animate(
+  {clipPath:[`circle(0px at ${x}px ${y}px)`,`circle(${R}px at ${x}px ${y}px)`]},
+  {duration:750,easing:"cubic-bezier(.16,1,.3,1)",pseudoElement:"::view-transition-new(root)"}));
+};
+
 /* ═════ INGEST ═════ */
 function parseCSV(text){
  text=text.replace(/^﻿/,"");
@@ -1779,7 +2163,7 @@ function toRecords(raw){
   content:pick(r,"post text","content","message","text","snippet","post"),
   channel:pick(r,"platform","channel","source","network")||"Social"}));
 }
-function ingest(raw,label){
+function ingest(raw,label,keep){
  if(!raw.length)throw new Error("no rows found — check that the first row is a header");
  const recs=toRecords(raw);
  if(recs.every(r=>r.brand==="Unknown"))throw new Error("no 'brand' column found");
@@ -1788,7 +2172,7 @@ function ingest(raw,label){
     duplicates no longer inflate those. We only count them here to report. */
  const seen=new Set();let dupes=0;
  recs.forEach(r=>{if(r.id){if(seen.has(r.id))dupes++;else seen.add(r.id);}});
- RECORDS=recs;FILTER=null;WEEK=null;SOURCE=label;
+ RECORDS=recs;if(!keep){FILTER=null;WEEK=null}SOURCE=label;
  render();
  const unknown=recs.filter(r=>r.brand==="Unknown").length;
  const undated=recs.filter(r=>!weekKey(r.date)).length;
@@ -1841,7 +2225,8 @@ async function loadFromConfig(silent){
   if(!res.ok)throw new Error("HTTP "+res.status);
   const txt=await res.text();
   if(/<html/i.test(txt.slice(0,400)))throw new Error("the sheet isn't published to web yet");
-  ingest(parseCSV(txt),"the live sheet");
+  ingest(parseCSV(txt),"the live sheet",silent);
+  trackLive();
   return true;
  }catch(err){
   if(!silent){
@@ -1884,7 +2269,7 @@ const KEETA_LOGO_FILES=["keeta-logo.svg","keeta-logo.png"];
  img.onerror=()=>loadKeetaLogo(i+1);
  img.src=KEETA_LOGO_FILES[i];
 })(0);
-document.querySelectorAll("#langToggle,#copySum,#toTop,.datapanel .btn").forEach(el=>el.classList.add("mag"));
+document.querySelectorAll("#themeToggle,#langToggle,#copySum,#toTop,#openWall,.datapanel .btn").forEach(el=>el.classList.add("mag"));
 
 applyStaticI18n();
 render();
